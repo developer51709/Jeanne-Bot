@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from enum import Enum
-from random import choice, randint, shuffle
+from random import choice, randint
 import aiohttp
 from humanfriendly import parse_timespan
 from discord import (
@@ -18,7 +18,7 @@ from discord import (
 
 from discord.ext.commands import Bot, Context
 from requests import get
-from config import db, BB_WEBHOOK, CATBOX_HASH
+from config import db, BB_WEBHOOK, CATBOX_HASH, GELBOORU_API, GELBOORU_USER, RULE34_API, RULE34_USER
 from typing import Literal, Optional, List
 from discord.app_commands import locale_str as T
 
@@ -1319,18 +1319,16 @@ def get_richest(member: Member) -> int:
 
 
 class NsfwApis(Enum):
+    GelbooruApi = f"https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&api_key={GELBOORU_API}&user_id={GELBOORU_USER}&limit=100&tags=rating:explicit+"
     KonachanApi = "https://konachan.com/post.json?s=post&q=index&limit=100&tags=score:>10+rating:explicit+"
     YandereApi = "https://yande.re/post.json?limit=100&tags=score:>10+rating:explicit+"
-    
-    DanbooruApi = (
-        "https://danbooru.donmai.us/posts.json?limit=100&tags=rating:explicit+"
-    )
+    DanbooruApi = "https://danbooru.donmai.us/posts.json?limit=100&tags=rating:explicit+"
+    Rule34Api = f"https://api.rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&api_key={RULE34_API}&user_id={RULE34_USER}&limit=100&tags=rating:explicit+"
 
 
 class Hentai:
-    def __init__(self, plus: Optional[bool] = None):
-        self.plus = plus
-        self.blacklisted_tags = [
+    def __init__(self):
+        self.blacklisted_tags = {
             "loli",
             "shota",
             "cub",
@@ -1348,9 +1346,28 @@ class Hentai:
             "short_stack",
             "cunny",
             "lxli",
-        ]
+            "urine",
+            "scat",
+            "fart",
+            "diaper",
+            "diapers",
+            "urination",
+            "piss",
+            "bestiality",
+            "shit",
+            "feces",
+            "excrement",
+            "decapitation",
+            "guro",
+            "beheading",
+            "brain_bite",
+            "pregnant",
+            "pee",
+            "pee_in_container",
+            "piss_bottle",
+        }
 
-    def format_tags(self, tags: str = None) -> str:
+    def format_tags(self, tags: Optional[str] = None) -> str:
         if tags:
             tags = [
                 tag.strip().replace(" ", "_")
@@ -1362,85 +1379,303 @@ class Hentai:
         else:
             return ""
 
-    async def get_nsfw_image(self, provider: NsfwApis, tags: str = None) -> list | None:
-        bl = self.get_blacklisted_links()
-        tags = tags.lower() if tags else None
-        url = provider.value + self.format_tags(tags)
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as resp:
-                nsfw_images: dict = await resp.json()
-        if not nsfw_images:
-            return None
-
+    def format_cache_tags(self, tags: Optional[str] = None) -> str:
+        if tags:
+            tags = [
+                tag.strip().replace(" ", "_")
+                for tag in tags.split(",")
+                if tag.strip().replace(" ", "_") and not tag.startswith("-")
+            ]
+            tags_string = " ".join(tags)
+            return tags_string
         else:
-            nsfw_images_list = list(nsfw_images)
-        shuffle(nsfw_images_list)
-        if (not tags) or (tags is None):
-            tags = ""
-        tags_list = [
-            tag.strip().replace(" ", "_")
-            for tag in tags.split(",")
-            if tag.strip().replace(" ", "_") not in self.blacklisted_tags
-        ]
-        if len(tags_list) == 0 or len(tags_list) > 3:
-            return None
-        filtered_images = []
-        for image in nsfw_images_list:
-            if provider.value == provider.DanbooruApi.value:
-                img_tags = str(image["tag_string"]).lower().split(" ")
-            else:
-                img_tags = str(image["tags"]).lower().split(" ")
-            try:
-                urls = str(image["file_url"])
-            except Exception:
-                continue
-            if any(tag in self.blacklisted_tags for tag in img_tags):
-                continue
-            if any(url in bl for url in urls):
-                continue
-            filtered_images.append(image)
-        return filtered_images
+            return ""
 
-    async def add_blacklisted_link(self, link: str):
-        db.execute("INSERT OR IGNORE INTO hentaiBlacklist (links) VALUES (?)", (link,))
+    def load_cache(self, tags: Optional[str] = None) -> list | None:
+        cur = db.cursor()
+        if tags:
+            pattern = "".join([f"%{i}%" for i in self.format_cache_tags(tags).split()])
+            cur.execute(
+                "SELECT source, tags, file_url FROM hentaiCache WHERE lower(tags) LIKE lower(?)",
+                (pattern,),
+            )
+        elif tags == "" or tags is None:
+            cur.execute("SELECT source, tags, file_url FROM hentaiCache")
+
+        rows = cur.fetchall()
+        if not rows:
+            return None
+        posts = []
+        for r in rows:
+            posts.append({"source": str(r[0]), "tags": str(r[1]), "file_url": str(r[2])})
+        return posts
+
+    def save_cache(self, source: str, tags: str, file_url: str) -> None:
+        cur = db.cursor()
+        cur.execute(
+            "INSERT OR IGNORE INTO hentaiCache (source, tags, file_url) VALUES (?, ?, ?)",
+            (source, tags, file_url),
+        )
         db.commit()
 
+    def _filter_blacklisted(self, tag_string: str) -> bool:
+        tags = {t.lower() for t in tag_string.split() if t}
+        return bool(self.blacklisted_tags.intersection(tags))
+
     def get_blacklisted_links(self) -> list[str] | None:
-        data = db.execute("SELECT links FROM hentaiBlacklist").fetchall()
+        cur = db.cursor()
+        data = cur.execute("SELECT links FROM hentaiBlacklist").fetchall()
         db.commit()
         return [str(link[0]) for link in data] if data else None
 
+    def add_blacklisted_link(self, link: str):
+        cur = db.cursor()
+        cur.execute("INSERT OR IGNORE INTO hentaiBlacklist (links) VALUES (?)", (link,))
+        cur.execute("DELETE FROM hentaiCache WHERE file_url = ?", (link,))
+        db.commit()
 
-    async def yandere(self, tag: Optional[str] = None):
-        images = await self.get_nsfw_image(NsfwApis.YandereApi, tag)
-        if self.plus:
-            return images
-        return choice(images)["sample_url"]
+    def get_images_rule34(self, tags: Optional[str] = None):
 
-    async def konachan(self, tag: Optional[str] = None):
+        try:
+            cache = [i for i in self.load_cache(tags) if i["source"] == "rule34"]
+        except Exception:
+            cache = []
 
-        images = await self.get_nsfw_image(NsfwApis.KonachanApi, tag)
-        if self.plus:
-            return images
-        return choice(images)["file_url"]
+        if len(cache) < 100:
+            tag_part = self.format_tags(tags)
 
-    async def danbooru(self, tag: Optional[str] = None):
+            url = NsfwApis.Rule34Api.value
+            if tag_part:
+                url = f"{url}+{tag_part}"
 
-        if not tag or tag is None:
-            tag = None
+            resp = get(url, timeout=10)
+            data = resp.json()
+
+            posts = data
+            filtered = []
+            bl = self.get_blacklisted_links()
+            for p in posts:
+                if len(cache) < 100:
+                    tags_field = str(p.get("tags", ""))
+
+                if not tags_field:
+                    continue
+                if any(tag in self.blacklisted_tags for tag in tags_field):
+                    continue
+
+                if len(cache) < 100:
+                    file_url = str(p.get("file_url"))
+                    if any(url in bl for url in file_url):
+                        continue
+                    self.save_cache("rule34", tags_field, file_url)
+
+                if not file_url:
+                    continue
+                filtered.append(
+                    {"source": "Rule34", "tags": tags_field, "file_url": file_url}
+                )
+            if filtered:
+                post_list = filtered
+
         else:
-            tag = ",".join(tag.split(",")[:2])
-        images = await self.get_nsfw_image(NsfwApis.DanbooruApi, tag)
-        if self.plus:
-            return images
-        return choice(images)["file_url"]
+            post_list = cache
 
-    async def hentai(self):
-        yandere_image = await self.yandere()
-        konachan_image = await self.konachan()
-        danbooru_image = await self.danbooru()
-        h = [yandere_image, konachan_image, danbooru_image]
+        return post_list
+
+
+    def get_images_gelbooru(self, tags: Optional[str] = None):
+        try:
+            cache = [i for i in self.load_cache(tags) if i["source"] == "gelbooru"]
+        except Exception:
+            cache = []
+
+        if len(cache) < 100:
+            tag_part = self.format_tags(tags)
+
+            url = NsfwApis.GelbooruApi.value
+            if tag_part:
+                url = f"{url}+{tag_part}"
+
+            resp = get(url, timeout=10)
+            data = resp.json()
+
+            posts = data.get("post", [])
+            filtered = []
+            bl = self.get_blacklisted_links()
+            for p in posts:
+                if len(cache) < 100:
+                    tags_field = str(p.get("tags", ""))
+
+                if not tags_field:
+                    continue
+                if any(tag in self.blacklisted_tags for tag in tags_field):
+                    continue
+
+                if len(cache) < 100:
+                    file_url = str(p.get("file_url"))
+                    if any(url in bl for url in file_url):
+                        continue
+                    self.save_cache("gelbooru", tags_field, file_url)
+
+                if not file_url:
+                    continue
+                filtered.append(
+                    {"source": "Gelbooru", "tags": tags_field, "file_url": file_url}
+                )
+            if filtered:
+                post_list = filtered
+
+        else:
+            post_list = cache
+
+        return post_list
+
+    def get_images_konachan(self, tags: Optional[str] = None):
+        try:
+            cache = [i for i in self.load_cache(tags) if i["source"] == "konachan"]
+        except Exception:
+            cache = []
+
+        if len(cache) < 100:
+            tag_part = self.format_tags(tags)
+
+            url = NsfwApis.KonachanApi.value
+            if tag_part:
+                url = f"{url}+{tag_part}"
+
+            resp = get(url, timeout=10)
+            data = resp.json()
+
+            posts = data
+            filtered = []
+            for p in posts:
+                if len(cache) < 100:
+                    tags_field = str(p.get("tags", ""))
+                else:
+                    tags_field = str(p[1] if len(p) > 1 else "")
+                if not tags_field:
+                    continue
+                if self._filter_blacklisted(tags_field.lower()):
+                    continue
+
+                if len(cache) < 100:
+                    file_url = str(p.get("file_url"))
+                    self.save_cache("konachan", tags_field, file_url)
+                if not file_url:
+                    continue
+                filtered.append(
+                    {"source": "Konachan", "tags": tags_field, "file_url": file_url}
+                )
+            if filtered:
+                post_list = filtered
+
+        else:
+            post_list = cache
+
+        return post_list
+
+    def get_images_yandere(self, tags: Optional[str] = None):
+        try:
+            cache = [i for i in self.load_cache(tags) if i["source"] == "yandere"]
+        except Exception:
+            cache = []
+
+        if len(cache) < 100:
+            tag_part = self.format_tags(tags)
+
+            url = NsfwApis.YandereApi.value
+            if tag_part:
+                url = f"{url}+{tag_part}"
+
+            resp = get(url, timeout=10)
+            data = resp.json()
+
+            posts = data
+            filtered = []
+            for p in posts:
+                if len(cache) < 100:
+                    tags_field = str(p.get("tags", ""))
+                else:
+                    tags_field = str(p[1] if len(p) > 1 else "")
+                if not tags_field:
+                    continue
+                if self._filter_blacklisted(tags_field.lower()):
+                    continue
+
+                if len(cache) < 100:
+                    file_url = str(p.get("file_url"))
+                    self.save_cache("yandere", tags_field, file_url)
+
+                if not file_url:
+                    continue
+                filtered.append(
+                    {"source": "Yandere", "tags": tags_field, "file_url": file_url}
+                )
+            if filtered:
+                post_list = filtered
+
+        else:
+            post_list = cache
+
+        return post_list
+
+    def get_images_danbooru(self, tags: Optional[str] = None):
+        try:
+            cache = [i for i in self.load_cache(tags) if i["source"] == "danbooru"]
+        except Exception:
+            cache = []
+
+        if len(cache) < 100:
+            tag_part = self.format_tags(tags)
+
+            url = NsfwApis.DanbooruApi.value
+            if tag_part:
+                url = f"{url}+{tag_part}"
+
+            resp = get(url, timeout=10)
+            data = resp.json()
+
+            posts = data
+            filtered = []
+            for p in posts:
+                if len(cache) < 100:
+                    tags_field = str(p.get("tag_string", ""))
+                else:
+                    tags_field = str(p[1] if len(p) > 1 else "")
+                if not tags_field:
+                    continue
+                if self._filter_blacklisted(tags_field.lower()):
+                    continue
+
+                if len(cache) < 100:
+                    file_url = str(p.get("file_url"))
+                    self.save_cache("danbooru", tags_field, file_url)
+                if not file_url:
+                    continue
+
+                filtered.append(
+                    {"source": "Danbooru", "tags": tags_field, "file_url": file_url}
+                )
+            if filtered:
+                post_list = filtered
+
+        else:
+            post_list = cache
+
+        return post_list
+
+    def hentai(self):
+        rule34_image = choice(self.get_images_rule34())["file_url"]
+        gelbooru_image = choice(self.get_images_gelbooru())["file_url"]
+        yandere_image = choice(self.get_images_yandere())["file_url"]
+        konachan_image = choice(self.get_images_konachan())["file_url"]
+        danbooru_image = choice(self.get_images_danbooru())["file_url"]
+        h = [rule34_image, gelbooru_image, yandere_image, konachan_image, danbooru_image]
         hentai: str = choice(h)
+        if hentai == rule34_image:
+            return hentai, "Rule34"
+        if hentai == gelbooru_image:
+            return hentai, "Gelbooru"
         if hentai == yandere_image:
             return hentai, "Yande.re"
         if hentai == konachan_image:
@@ -1701,14 +1936,17 @@ class BetaTest:
             )
 
     async def check(self, user: User) -> bool | None:
-        server = await self.bot.fetch_guild(740584420645535775)
-        beta_role = server.get_role(1130430961587335219)
         try:
-            member = await server.fetch_member(user.id)
-            if beta_role in member.roles:
-                return True
-        except Exception:
-            return False
+            server = await self.bot.fetch_guild(740584420645535775)
+            beta_role = server.get_role(1130430961587335219)
+            try:
+                member = await server.fetch_member(user.id)
+                if beta_role in member.roles:
+                    return True
+            except Exception:
+                return False
+        except Exception as e:
+            print(e)
 
     async def remove(self, ctx: Context, user: User):
         server = await self.bot.fetch_guild(740584420645535775)

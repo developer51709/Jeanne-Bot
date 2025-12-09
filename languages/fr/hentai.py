@@ -1,4 +1,4 @@
-from random import randint
+from random import choice, randint
 from discord import (
     Color,
     Embed,
@@ -51,7 +51,152 @@ class nsfw(Cog):
             except (NotFound, HTTPException):
                 return
 
+    async def gelbooru(
+        self,
+        ctx: Interaction,
+        tag: Optional[str] = None,
+        plus: Optional[bool] = None,
+    ) -> None:
+        await ctx.response.defer()
+        image = Hentai().get_images_gelbooru(tag)
+        if plus:
+            images = [
+                img
+                for img in (image[randint(1, len(image)) - 1] for _ in range(4))
+            ]
+            media = [
+                j["file_url"]
+                for j in images
+                if "mp4" in j["file_url"] or "webm" in j["file_url"]
+            ]
+            view = ReportContentPlus(ctx, *[img["file_url"] for img in images])
+            if media:
+                await ctx.followup.send("\n".join(media), view=view)
+                await view.wait()
+                if view.value is None:
+                    try:
+                        await ctx.edit_original_response(view=None)
+                    except (NotFound, HTTPException):
+                        return
+                return
+            color = Color.random()
+            embeds = [
+                Embed(color=color, url="https://gelbooru.com")
+                .set_image(url=img["file_url"])
+                .set_footer(
+                    text="Récupéré depuis Gelbooru • Les crédits doivent revenir à l'artiste"
+                )
+                for img in images
+            ]
+            await ctx.followup.send(embeds=embeds, view=view)
+            return
+        try:
+            image = choice(image)["file_url"]
+            view = ReportContent(ctx, image)
+            if str(image).endswith(("mp4", "webm")):
+                await ctx.followup.send(image, view=view)
+                return
+            embed = (
+                Embed(color=Color.purple())
+                .set_image(url=image)
+                .set_footer(
+                    text="Récupéré depuis Gelbooru • Les crédits doivent revenir à l'artiste"
+                )
+            )
+            await ctx.followup.send(embed=embed, view=view)
+            await view.wait()
+            if view.value is None:
+                try:
+                    await ctx.edit_original_response(view=None)
+                except (NotFound, HTTPException):
+                    return
+            return
+        except Exception:
+            image = choice(image)["file_url"]
+            if str(image).endswith(("mp4", "webm")):
+                await ctx.followup.send(image)
+                return
+            embed = (
+                Embed(color=Color.purple())
+                .set_image(url=image)
+                .set_footer(
+                    text="Récupéré depuis Gelbooru • Les crédits doivent revenir à l'artiste\nSi vous voyez un contenu illégal, veuillez utiliser /botreport et joindre le lien lors du signalement"
+                )
+            )
+            await ctx.followup.send(embed=embed)
 
+    async def rule34(
+        self,
+        ctx: Interaction,
+        tag: Optional[str] = None,
+        plus: Optional[bool] = None,
+    ) -> None:
+        await ctx.response.defer()
+        image = Hentai().get_images_rule34(tag)
+        if plus:
+            images = [
+                img for img in (image[randint(1, len(image)) - 1] for _ in range(4))
+            ]
+            media = [
+                j["file_url"]
+                for j in images
+                if "mp4" in j["file_url"] or "webm" in j["file_url"]
+            ]
+            view = ReportContentPlus(ctx, *[img["file_url"] for img in images])
+            if media:
+                await ctx.followup.send("\n".join(media), view=view)
+                await view.wait()
+                if view.value is None:
+                    try:
+                        await ctx.edit_original_response(view=None)
+                    except (NotFound, HTTPException):
+                        return
+                return
+            color = Color.random()
+            embeds = [
+                Embed(color=color, url="https://rule34.xxx")
+                .set_image(url=img["file_url"])
+                .set_footer(
+                    text="Récupéré depuis Rule34 • Les crédits doivent revenir à l'artiste"
+                )
+                for img in images
+            ]
+            await ctx.followup.send(embeds=embeds, view=view)
+            return
+        try:
+            image = choice(image)["file_url"]
+            view = ReportContent(ctx, image)
+            if str(image).endswith(("mp4", "webm")):
+                await ctx.followup.send(image, view=view)
+                return
+            embed = (
+                Embed(color=Color.purple())
+                .set_image(url=image)
+                .set_footer(
+                    text="Récupéré depuis Rule34 • Les crédits doivent revenir à l'artiste"
+                )
+            )
+            await ctx.followup.send(embed=embed, view=view)
+            await view.wait()
+            if view.value is None:
+                try:
+                    await ctx.edit_original_response(view=None)
+                except (NotFound, HTTPException):
+                    return
+            return
+        except Exception:
+            image = choice(image)["file_url"]
+            if str(image).endswith(("mp4", "webm")):
+                await ctx.followup.send(image)
+                return
+            embed = (
+                Embed(color=Color.purple())
+                .set_image(url=image)
+                .set_footer(
+                    text="Récupéré depuis Rule34 • Les crédits doivent revenir à l'artiste\nSi vous voyez un contenu illégal, veuillez utiliser /botreport et joindre le lien lors du signalement"
+                )
+            )
+            await ctx.followup.send(embed=embed)
 
     async def yandere(
         self,
@@ -60,15 +205,15 @@ class nsfw(Cog):
         plus: Optional[bool] = None,
     ) -> None:
         await ctx.response.defer()
-        if tag == "02":
+        if "02" in tag:
             await ctx.followup.send(
                 "Ce tag a été mis sur liste noire car il retourne du contenu extrême"
             )
             return
-        image = await Hentai(plus).yandere(tag)
+        image = Hentai().get_images_yandere(tag)
         if plus:
             images = [image[randint(1, len(image)) - 1] for _ in range(4)]
-            shortened_urls = [shorten_url(img["sample_url"]) for img in images]
+            shortened_urls = [shorten_url(img["file_url"]) for img in images]
             view = ReportContentPlus(ctx, *shortened_urls)
             color = Color.random()
             embeds = [
@@ -96,6 +241,7 @@ class nsfw(Cog):
                 await ctx.followup.send(embeds=embeds)
             return
         color = Color.random()
+        image = choice(image)["file_url"]
         shortened_url = shorten_url(str(image))
         embed = Embed(color=color, url="https://yande.re")
         embed.set_image(url=shortened_url)
@@ -111,7 +257,7 @@ class nsfw(Cog):
                 except (NotFound, HTTPException):
                     return
             return
-        except:
+        except Exception:
             footer_text += "\nSi vous voyez un contenu illégal, veuillez utiliser /botreport et joindre le lien lors du signalement"
             embed.set_footer(text=footer_text)
             await ctx.followup.send(embed=embed)
@@ -123,7 +269,7 @@ class nsfw(Cog):
         plus: Optional[bool] = None,
     ) -> None:
         await ctx.response.defer()
-        image = await Hentai(plus).konachan(tag)
+        image = Hentai().get_images_konachan(tag)
         if plus:
             images = [image[randint(1, len(image)) - 1] for _ in range(4)]
             try:
@@ -163,6 +309,7 @@ class nsfw(Cog):
                 await ctx.followup.send(embeds=embeds)
             return
         color = Color.random()
+        image= choice(image)["file_url"]
         embed = Embed(color=color, url="https://konachan.com")
         embed.set_image(url=shorten_url(str(image)))
         footer_text = "Récupéré depuis Konachan • Les crédits doivent revenir à l'artiste"
@@ -177,7 +324,7 @@ class nsfw(Cog):
                 except (NotFound, HTTPException):
                     return
             return
-        except:
+        except Exception:
             footer_text += "\nSi vous voyez un contenu illégal, veuillez utiliser /botreport et joindre le lien lors du signalement"
             embed.set_footer(text=footer_text)
             await ctx.followup.send(embed=embed)
@@ -189,12 +336,11 @@ class nsfw(Cog):
         plus: Optional[bool] = None,
     ) -> None:
         await ctx.response.defer()
-        image = await Hentai(plus).danbooru(tag)
+        image = Hentai().get_images_danbooru(tag)
         if plus:
             images = [img for img in (image[randint(1, len(image)) - 1] for _ in range(4)) if ".zip" not in img["file_url"]]
+            media = [j["file_url"] for j in images if "mp4" in j["file_url"] or "webm" in j["file_url"]]
             view = ReportContentPlus(ctx, *[img["file_url"] for img in images])
-            vids = [i for i in images if "mp4" in i["file_url"] or "webm" in i["file_url"]]
-            media = [j["file_url"] for j in vids]
             if media:
                 await ctx.followup.send("\n".join(media), view=view)
                 await view.wait()
@@ -216,6 +362,7 @@ class nsfw(Cog):
             await ctx.followup.send(embeds=embeds, view=view)
             return
         try:
+            image=choice([img for img in image if ".zip" not in img["file_url"]])["file_url"]
             view = ReportContent(ctx, image)
             if str(image).endswith(("mp4", "webm")):
                 await ctx.followup.send(image, view=view)
@@ -236,6 +383,7 @@ class nsfw(Cog):
                     return
             return
         except Exception:
+            image=choice([img for img in image if ".zip" not in img["file_url"]])["file_url"]
             if str(image).endswith(("mp4", "webm")):
                 await ctx.followup.send(image)
                 return
@@ -261,5 +409,3 @@ class nsfw(Cog):
                 color=Color.red(),
             )
             await ctx.response.send_message(embed=cooldown)
-
-

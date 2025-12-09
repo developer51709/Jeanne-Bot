@@ -50,6 +50,147 @@ class nsfw(Cog):
         await en.nsfw(self.bot).hentai(ctx)
 
 
+    @Jeanne.command(
+        description=T("rule34_desc"),
+        nsfw=True,
+        extras={
+            "nsfw": True,
+            "en": {
+                "name": "rule34",
+                "description": "Get a random media content from Rule34",
+                "parameters": [
+                    {"name": "tag", "description": "Add your tags", "required": False},
+                    {
+                        "name": "plus",
+                        "description": "Need more content? (up to 4)",
+                        "required": False,
+                    },
+                ],
+            },
+            "fr": {
+                "name": "rule34",
+                "description": "Obtenez un contenu multimédia aléatoire de Rule34",
+                "parameters": [
+                    {
+                        "name": "tag",
+                        "description": "Ajoutez vos tags",
+                        "required": False,
+                    },
+                    {
+                        "name": "plus",
+                        "description": "Besoin de plus de contenu? (jusqu'à 4)",
+                        "required": False,
+                    },
+                ],
+            },
+            "de": {
+                "name": "rule34",
+                "description": "Holen Sie sich einen zufälligen Medieninhalt von Rule34",
+                "parameters": [
+                    {
+                        "name": "tag",
+                        "description": "Fügen Sie Ihre Tags hinzu",
+                        "required": False,
+                    },
+                    {
+                        "name": "plus",
+                        "description": "Brauchen Sie mehr Inhalte? (bis zu 4)",
+                        "required": False,
+                    },
+                ],
+            },
+        },
+    )
+    @Jeanne.checks.cooldown(1, 5, key=lambda i: (i.user.id))
+    @Jeanne.describe(tag=T("tag_parm_desc"), plus=T("plus_parm_desc"))
+    @Jeanne.rename(tag=T("tag_parm_name"), plus=T("plus_parm_name"))
+    @Jeanne.check(check_botbanned_app_command)
+    @Jeanne.check(check_disabled_app_command)
+    @Jeanne.check(is_suspended)
+    async def rule34(
+        self,
+        ctx: Interaction,
+        tag: Optional[str] = None,
+        plus: Optional[bool] = None,
+    ) -> None:
+        if ctx.locale.value == "fr":
+            await fr.nsfw(self.bot).rule34(ctx, tag, plus)
+            return
+        if ctx.locale.value == "de":
+            await de.nsfw(self.bot).rule34(ctx, tag, plus)
+            return
+        await en.nsfw(self.bot).rule34(ctx, tag, plus)
+    
+    @Jeanne.command(
+        description=T("gelbooru_desc"),
+        nsfw=True,
+        extras={
+            "nsfw": True,
+            "en": {
+                "name": "gelbooru",
+                "description": "Get a random media content from Gelbooru",
+                "parameters": [
+                    {"name": "tag", "description": "Add your tags", "required": False},
+                    {
+                        "name": "plus",
+                        "description": "Need more content? (up to 4)",
+                        "required": False,
+                    },
+                ],
+            },
+            "fr": {
+                "name": "gelbooru",
+                "description": "Obtenez un contenu multimédia aléatoire de Gelbooru",
+                "parameters": [
+                    {
+                        "name": "tag",
+                        "description": "Ajoutez vos tags",
+                        "required": False,
+                    },
+                    {
+                        "name": "plus",
+                        "description": "Besoin de plus de contenu? (jusqu'à 4)",
+                        "required": False,
+                    },
+                ],
+            },
+            "de": {
+                "name": "gelbooru",
+                "description": "Holen Sie sich einen zufälligen Medieninhalt von Gelbooru",
+                "parameters": [
+                    {
+                        "name": "tag",
+                        "description": "Fügen Sie Ihre Tags hinzu",
+                        "required": False,
+                    },
+                    {
+                        "name": "plus",
+                        "description": "Brauchen Sie mehr Inhalte? (bis zu 4)",
+                        "required": False,
+                    },
+                ],
+            },
+        },
+    )
+    @Jeanne.checks.cooldown(1, 5, key=lambda i: (i.user.id))
+    @Jeanne.describe(tag=T("tag_parm_desc"), plus=T("plus_parm_desc"))
+    @Jeanne.rename(tag=T("tag_parm_name"), plus=T("plus_parm_name"))
+    @Jeanne.check(check_botbanned_app_command)
+    @Jeanne.check(check_disabled_app_command)
+    @Jeanne.check(is_suspended)
+    async def gelbooru(
+        self,
+        ctx: Interaction,
+        tag: Optional[str] = None,
+        plus: Optional[bool] = None,
+    ) -> None:
+        if ctx.locale.value == "fr":
+            await fr.nsfw(self.bot).gelbooru(ctx, tag, plus)
+            return
+        if ctx.locale.value == "de":
+            await de.nsfw(self.bot).gelbooru(ctx, tag, plus)
+            return
+        await en.nsfw(self.bot).gelbooru(ctx, tag, plus)
 
     @Jeanne.command(
         description=T("yandere_desc"),
