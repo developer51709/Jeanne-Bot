@@ -19,7 +19,7 @@ import languages.de.info as de
 class InfoCog(Cog, name="InfoSlash"):
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.bot_version = "v5.2 DE Patch"
+        self.bot_version = "v5.3 DE Patch"
         self.userinfo_context = Jeanne.ContextMenu(
             name="Userinfo", callback=self.userinfo_callback
         )
