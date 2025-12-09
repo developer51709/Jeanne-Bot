@@ -1,6 +1,6 @@
 """Everything such as APIs and tokens for the bot, commands and functions to run on"""
 
-from os import getenv
+from os import getenv, environ
 from dotenv import load_dotenv
 from sqlite3 import connect
 
@@ -25,6 +25,11 @@ KITSUNE = str(getenv("kitsune_album"))
 CATBOX_HASH = str(getenv("catbox_hash"))
 BADGES = str(getenv("badges_album"))
 STATUS_WEBHOOK=str(getenv("status"))
+
+GELBOORU_API=environ["GELBOORU_API_KEY"]
+GELBOORU_USER=environ["GELBOORU_USER_ID"]
+RULE34_API=environ["RULE34_API_KEY"]
+RULE34_USER=environ["RULE34_USER_ID"]
 
 db = connect("database.db")
 
