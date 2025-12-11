@@ -507,7 +507,7 @@ class currency(Cog, name="CurrencySlash"):
     def __init__(self, bot: Bot):
         self.bot = bot
         self.balance_context = Jeanne.ContextMenu(
-            name=T("balance_name"), callback=self.balance_callback
+            name=str(T("balance_name")).title(), callback=self.balance_callback
         )
         self.bot.tree.add_command(self.balance_context)
 
