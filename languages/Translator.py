@@ -654,7 +654,7 @@ class MyTranslator(Jeanne.Translator):
                 "fr": "Vérifiez tous les fonds d'écran disponibles",
                 "de": "Überprüfen Sie alle verfügbaren Hintergründe",
             },
-            "buy-custom_desc": {
+            "buycustom_desc": {
                 "en-GB": "Buy a custom background pic for your level card",
                 "en-US": "Buy a custom background pic for your level card",
                 "fr": "Acheter une image d'arrière-plan personnalisée pour votre carte de niveau",
