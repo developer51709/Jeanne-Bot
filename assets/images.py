@@ -1,8 +1,6 @@
 from random import choice
 from discord import Color, Embed, File, Interaction
-import requests
 from config import ANIMEME, JEANNE, KITSUNE, MEDUSA, MORGAN, SABER, WALLPAPER, NEKO
-import lxml.etree as ET
 from os import listdir, path
 
 
@@ -229,13 +227,3 @@ def get_kistune_pic(ctx: Interaction) -> tuple[Embed, File]:
 
     return embed, file
 
-
-def safebooru_pic() -> str:
-    response = requests.get(
-        "https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=100&tags=-rating:questionable+-animated+score:>=10"
-    ).text.encode("utf-8")
-    parser = ET.XMLParser(recover=True)
-    tree = ET.ElementTree(ET.fromstring(response, parser=parser))
-    root = tree.getroot()
-    image = choice(root).attrib["file_url"]
-    return str(image)

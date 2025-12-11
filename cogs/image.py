@@ -3,7 +3,7 @@ from functions import (
     check_disabled_app_command,
     is_suspended,
 )
-from discord import Color, Embed, Interaction, app_commands as Jeanne
+from discord import Interaction, app_commands as Jeanne
 from discord.ext.commands import GroupCog, Bot
 from assets.images import (
     get_jeanne_pic,
@@ -13,7 +13,6 @@ from assets.images import (
     get_neko_pic,
     get_saber_pic,
     get_wallpaper_pic,
-    safebooru_pic,
 )
 from discord.app_commands import locale_str as T
 
@@ -185,46 +184,6 @@ class images(GroupCog, name="image"):
         await ctx.response.defer()
         embed, file = get_medusa_pic(ctx)
         await ctx.followup.send(embed=embed, file=file)
-
-    @Jeanne.command(
-        description=T("safebooru_desc"),
-        extras={
-            "en": {
-                "name": "safebooru",
-                "description": "Get a random image from Safebooru",
-            },
-            "fr": {
-                "name": "safebooru",
-                "description": "Obtenez une image aléatoire de Safebooru",
-            },
-            "de": {
-                "name": "safebooru",
-                "description": "Holen Sie sich ein zufälliges Bild von Safebooru",
-            },
-        },
-    )
-    @Jeanne.check(check_botbanned_app_command)
-    @Jeanne.check(check_disabled_app_command)
-    @Jeanne.check(is_suspended)
-    async def safebooru(self, ctx: Interaction):
-        await ctx.response.defer()
-        embed = Embed(color=Color.random())
-        embed.set_image(url=safebooru_pic())
-        if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
-            embed.set_footer(
-                text="Fetched from Safebooru • Credits must go to the artist"
-            )
-            return
-        if ctx.locale.value=="de":
-            embed.set_footer(
-                text="Von Safebooru abgerufen • Die Credits müssen an den Künstler gehen"
-            )
-            return
-        if ctx.locale.value == "fr":
-            embed.set_footer(
-                text="Récupéré depuis Safebooru • Les crédits doivent aller à l'artiste"
-            )
-        await ctx.followup.send(embed=embed)
 
 
 async def setup(bot: Bot):
