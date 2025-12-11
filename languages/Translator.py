@@ -464,6 +464,18 @@ class MyTranslator(Jeanne.Translator):
                 "fr": "Obtenez un contenu multimédia aléatoire de Konachan",
                 "de": "Holen Sie sich einen zufälligen Medieninhalt von Konachan",
             },
+            "gelbooru_desc": {
+                "en-GB": "Get a random media content from Gelbooru",
+                "en-US": "Get a random media content from Gelbooru",
+                "fr": "Obtenez un contenu multimédia aléatoire de Gelbooru",
+                "de": "Holen Sie sich einen zufälligen Medieninhalt von Gelbooru",
+            },
+            "rule34_desc": {
+                "en-GB": "Get a random media content from Rule34",
+                "en-US": "Get a random media content from Rule34",
+                "fr": "Obtenez un contenu multimédia aléatoire de Rule34",
+                "de": "Holen Sie sich einen zufälligen Medieninhalt von Rule34",
+            },
             "tag_parm_name": {"en-GB": "tag", "en-US": "tag", "fr": "tag", "de": "tag"},
             "tag_parm_desc": {
                 "en-GB": "Add your tag",
