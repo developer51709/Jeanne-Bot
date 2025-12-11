@@ -611,6 +611,12 @@ class MyTranslator(Jeanne.Translator):
                 "fr": "Quel canal devrait dire au revoir aux membres?",
                 "de": "Welcher Kanal sollte sich von den Mitgliedern verabschieden?",
             },
+            "stciker_parm_name": {
+                "en-GB": "sticker",
+                "en-US": "sticker",
+                "fr": "sticker",
+                "de": "aufkleber",
+            },
             "sticker_parm_desc": {
                 "en-GB": "Insert message ID with the sticker or name of the sticker in the server",
                 "en-US": "Insert message ID with the sticker or name of the sticker in the server",
@@ -961,6 +967,12 @@ class MyTranslator(Jeanne.Translator):
                 "en-US": "role",
                 "fr": "rôle",
                 "de": "rolle",
+            },
+            "image_parm_desc": {
+                "en-GB": "Add an image",
+                "en-US": "Add an image",
+                "fr": "Ajouter une image",
+                "de": "Fügen Sie ein Bild hinzu",
             },
             "edit_server_name": {
                 "en-GB": "server",
@@ -1342,11 +1354,23 @@ class MyTranslator(Jeanne.Translator):
                 "fr": "Lister toutes les commandes désactivées sur le serveur",
                 "de": "Liste aller deaktivierten Befehle auf dem Server",
             },
+            "disable_name": {
+                "en-GB": "disable",
+                "en-US": "disable",
+                "fr": "désactiver",
+                "de": "deaktivieren",
+            },
             "disable_command_description": {
                 "en-GB": "Disables a command",
                 "en-US": "Disables a command",
                 "fr": "Désactive une commande",
                 "de": "Deaktiviert einen Befehl",
+            },
+            "enable_name": {
+                "en-GB": "enable",
+                "en-US": "enable",
+                "fr": "activer",
+                "de": "aktivieren",
             },
             "enable_command_description": {
                 "en-GB": "Enables a command",
@@ -1563,6 +1587,24 @@ class MyTranslator(Jeanne.Translator):
                 "en-US": "Insert an image for the splash",
                 "fr": "Insérez une image pour le splash",
                 "de": "Fügen Sie ein Bild für den Splash ein",
+            },
+            "banner_parm_name": {
+                "en-GB": "banner",
+                "en-US": "banner",
+                "fr": "bannière",
+                "de": "banner",
+            },
+            "verification_level_parm_name": {
+                "en-GB": "verification_level",
+                "en-US": "verification_level",
+                "fr": "niveau_de_vérification",
+                "de": "verifizierungsniveau",
+            },
+            "message_parm_name": {
+                "en-GB": "message",
+                "en-US": "message",
+                "fr": "message",
+                "de": "nachricht",
             },
             "banner_parm_desc": {
                 "en-GB": "Insert an image for the banner",
@@ -2056,7 +2098,6 @@ class MyTranslator(Jeanne.Translator):
                 "fr": "fichierjson",
                 "de": "jsondatei",
             },
-
             "jsonscript_parm_desc": {
                 "en-GB": "Insert JSON script",
                 "en-US": "Insert JSON script",

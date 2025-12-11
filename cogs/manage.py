@@ -143,6 +143,13 @@ class Create_Group(GroupCog, name=T("create")):
         slowmode=T("slowmode_parm_name"),
         nsfw_enabled=T("nsfw_parm_name"),
     )
+    @Jeanne.describe(
+        name=T("name_parm_desc"),
+        topic=T("topic_parm_desc"),
+        category=T("category_parm_desc"),
+        slowmode=T("slowmode_parm_desc"),
+        nsfw_enabled=T("nsfw_parm_desc"),
+    )
     @Jeanne.checks.bot_has_permissions(manage_channels=True)
     @Jeanne.checks.has_permissions(manage_channels=True)
     @Jeanne.check(check_botbanned_app_command)
@@ -422,6 +429,7 @@ class Create_Group(GroupCog, name=T("create")):
     @Jeanne.describe(
         name=T("name_parm_desc"),
         category=T("category_parm_desc"),
+        users=T("users_parm_desc")
     )
     @Jeanne.rename(
         name=T("name_parm_name"),
@@ -1020,8 +1028,8 @@ class Create_Group(GroupCog, name=T("create")):
     )
     @Jeanne.rename(
         name=T("name_parm_name"),
-        emoji_link=T("emoji_link_parm_name"),
-        emoji_image=T("emoji_image_parm_name"),
+        emoji_link=T("link_parm_name"),
+        emoji_image=T("image_parm_name"),
     )
     @Jeanne.checks.bot_has_permissions(manage_expressions=True, create_expressions=True)
     @Jeanne.checks.has_permissions(manage_expressions=True, create_expressions=True)
@@ -1144,8 +1152,8 @@ class Create_Group(GroupCog, name=T("create")):
     @Jeanne.describe(
         name=T("name_parm_desc"),
         emoji=T("emoji_parm_desc"),
-        sticker_link=T("sticker_link_parm_desc"),
-        sticker_image=T("sticker_image_parm_desc"),
+        sticker_link=T("link_parm_desc"),
+        sticker_image=T("image_parm_desc"),
     )
     @Jeanne.rename(
         name=T("name_parm_name"),
@@ -1431,15 +1439,14 @@ class Delete_Group(GroupCog, name=T("delete")):
     @Jeanne.check(check_disabled_app_command)
     @Jeanne.check(is_suspended)
     async def sticker(
-        self, ctx: Interaction, sticker: str, name: Jeanne.Range[str, 2, 30]
+        self, ctx: Interaction, sticker: Jeanne.Range[str, 2, 30]
     ):
         if ctx.guild.preferred_locale.value == "en-GB" or ctx.guild.preferred_locale.value == "en-US":
-            await en.Delete_Group(self.bot).sticker(ctx, sticker, name)
+            await en.Delete_Group(self.bot).sticker(ctx, sticker)
         elif ctx.guild.preferred_locale.value == "fr":
-            await fr.Delete_Group(self.bot).sticker(ctx, sticker, name)
+            await fr.Delete_Group(self.bot).sticker(ctx, sticker)
         elif ctx.guild.preferred_locale.value == "de":
-            await de.Delete_Group(self.bot).sticker(ctx, sticker, name)
-
+            await de.Delete_Group(self.bot).sticker(ctx, sticker)
 
 class Edit_Group(GroupCog, name="edit"):
     def __init__(self, bot: Bot) -> None:
@@ -2606,7 +2613,6 @@ class Set_Group(GroupCog, name="set"):
         },
     )
     @Jeanne.describe(bio=T("bio_parm_desc"))
-    @Jeanne.rename(bio=T("bio_parm_name"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     @Jeanne.check(is_suspended)
@@ -2935,6 +2941,7 @@ class manage(Cog):
     @Jeanne.describe(
         channel=T("channel_parm_desc"),
         name=T("clone_name_desc"),
+        category=T("category_parm_desc"),
     )
     @Jeanne.rename(
         channel=T("channel_parm_name"),
@@ -3047,7 +3054,7 @@ class Rename_Group(GroupCog, name="rename"):
             await de.Rename_Group(self.bot).emoji(ctx, emoji, name)
 
     @Jeanne.command(
-        name=T("rename_category_name"),
+        name=T("category_parm_name"),
         description=T("rename_category_description"),
         extras={
             "en": {
@@ -3220,7 +3227,7 @@ class Command_Group(GroupCog, name="command"):
         super().__init__()
 
     @Jeanne.command(
-        name=T("disable_command_name"),
+        name=T("disable_name"),
         description=T("disable_command_description"),
         extras={
             "en": {
@@ -3263,7 +3270,7 @@ class Command_Group(GroupCog, name="command"):
     )
     @Jeanne.autocomplete(command=AutoCompleteChoices.command_choices)
     @Jeanne.describe(command=T("disable_command_param_desc"))
-    @Jeanne.rename(command=T("command_param_name"))
+    @Jeanne.rename(command=T("command_parm_name"))
     @Jeanne.checks.has_permissions(manage_guild=True)
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(is_suspended)
@@ -3280,7 +3287,7 @@ class Command_Group(GroupCog, name="command"):
             await de.Command_Group(self.bot)._disable(ctx, command)
 
     @Jeanne.command(
-        name=T("enable_command_name"),
+        name=T("enable_name"),
         description=T("enable_command_description"),
         extras={
             "en": {
@@ -3323,7 +3330,7 @@ class Command_Group(GroupCog, name="command"):
     )
     @Jeanne.autocomplete(command=AutoCompleteChoices.disabled_commands)
     @Jeanne.describe(command=T("enable_command_param_desc"))
-    @Jeanne.rename(command=T("command_param_name"))
+    @Jeanne.rename(command=T("command_parm_name"))
     @Jeanne.checks.has_permissions(manage_guild=True)
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(is_suspended)
