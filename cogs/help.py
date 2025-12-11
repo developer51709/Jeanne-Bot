@@ -16,15 +16,15 @@ class HelpGroup(GroupCog, name=T("help_group_name")):
 
     @Jeanne.command(
         name=T("command_name"),
-        description=T("command_desc"),
+        description=T("help_command_desc"),
         extras={
             "en": {
                 "name": "help command",
-                "description": "Get help with a command",
+                "description": "Get help on a certain command",
                 "parameters": [
                     {
                         "name": "command",
-                        "description": "Get help on a certain command",
+                        "description": "Which command you need help with?",
                         "required": True,
                     }
                 ],
@@ -35,7 +35,7 @@ class HelpGroup(GroupCog, name=T("help_group_name")):
                 "parameters": [
                     {
                         "name": "commande",
-                        "description": "Obtenez de l'aide sur une certaine commande",
+                        "description": "Avec quelle commande avez-vous besoin d'aide?",
                         "required": True,
                     }
                 ],
@@ -46,7 +46,7 @@ class HelpGroup(GroupCog, name=T("help_group_name")):
                 "parameters": [
                     {
                         "name": "befehl",
-                        "description": "Holen Sie sich Hilfe zu einem bestimmten Befehl",
+                        "description": "Mit welchem Befehl benötigen Sie Hilfe?",
                         "required": True,
                     }
                 ],
@@ -67,7 +67,6 @@ class HelpGroup(GroupCog, name=T("help_group_name")):
             return
         await en.HelpGroup(self.bot).command(ctx, command)
 
-
     @command.error
     async def command_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
         if isinstance(error, Jeanne.CommandInvokeError) and isinstance(
@@ -80,7 +79,6 @@ class HelpGroup(GroupCog, name=T("help_group_name")):
                 await de.HelpGroup(self.bot).command_error(ctx)
                 return
             await en.HelpGroup(self.bot).command_error(ctx)
-
 
     @Jeanne.command(
         name=T("support_name"),
