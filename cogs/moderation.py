@@ -149,16 +149,16 @@ class moderation(Cog):
     @Jeanne.check(is_suspended)
     @Jeanne.autocomplete(reason=AutoCompleteChoices.default_ban_options)
     @Jeanne.describe(
-        member=T("member_param_desc"),
+        member=T("member_parm_desc"),
         reason=T("reason_param_desc"),
         delete_message_history=T("delete_msg_history_param_desc"),
         time=T("temp_time_param_desc"),
     )
     @Jeanne.rename(
-        member=T("member_param_name"),
-        reason=T("reason_param_name"),
+        member=T("member_parm_name"),
+        reason=T("reason_parm_name"),
         delete_message_history=T("delete_msg_history_param_name"),
-        time=T("time_param_name"),
+        time=T("time_parm_name"),
     )
     @Jeanne.checks.has_permissions(ban_members=True)
     @Jeanne.checks.bot_has_permissions(ban_members=True)
@@ -259,12 +259,12 @@ class moderation(Cog):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.describe(
-        member=T("member_param_desc"),
-        reason=T("reason_param_desc"),
+        member=T("member_parm_desc"),
+        reason=T("ban_reason_parm_desc"),
     )
     @Jeanne.rename(
-        member=T("member_param_name"),
-        reason=T("reason_param_name"),
+        member=T("member_parm_name"),
+        reason=T("reason_parm_name"),
     )
     @Jeanne.checks.has_permissions(kick_members=True)
     @Jeanne.check(check_botbanned_app_command)
@@ -323,10 +323,10 @@ class moderation(Cog):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.describe(
-        member=T("member_param_desc"),
+        member=T("member_parm_desc"),
     )
     @Jeanne.rename(
-        member=T("member_param_name"),
+        member=T("member_parm_name"),
     )
     @Jeanne.autocomplete(member=AutoCompleteChoices.warned_users)
     @Jeanne.check(check_botbanned_app_command)
@@ -413,11 +413,11 @@ class moderation(Cog):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.describe(
-        member=T("member_param_desc"),
+        member=T("member_parm_desc"),
         warn_id=T("warn_id_param_desc"),
     )
     @Jeanne.rename(
-        member=T("member_param_name"),
+        member=T("member_parm_name"),
         warn_id=T("warn_id_param_name"),
     )
     @Jeanne.checks.has_permissions(kick_members=True)
@@ -493,12 +493,12 @@ class moderation(Cog):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.describe(
-        member=T("member_param_desc"),
+        member=T("member_parm_desc"),
         reason=T("reason_param_desc"),
     )
     @Jeanne.rename(
-        member=T("member_param_name"),
-        reason=T("reason_param_name"),
+        member=T("member_parm_name"),
+        reason=T("reason_parm_name"),
     )
     @Jeanne.checks.has_permissions(kick_members=True)
     @Jeanne.checks.bot_has_permissions(kick_members=True)
@@ -579,12 +579,12 @@ class moderation(Cog):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.describe(
-        limit=T("limit_param_desc"),
-        member=T("member_param_desc"),
+        limit=T("prune_limit_parm_desc"),
+        member=T("member_parm_desc"),
     )
     @Jeanne.rename(
-        limit=T("limit_param_name"),
-        member=T("member_param_name"),
+        limit=T("limit_parm_name"),
+        member=T("member_parm_name"),
     )
     @Jeanne.checks.has_permissions(manage_messages=True, read_message_history=True)
     @Jeanne.checks.bot_has_permissions(manage_messages=True, read_message_history=True)
@@ -665,12 +665,12 @@ class moderation(Cog):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.describe(
-        member=T("member_param_desc"),
-        nickname=T("nickname_param_desc"),
+        member=T("member_parm_desc"),
+        nickname=T("nickname_parm_desc"),
     )
     @Jeanne.rename(
-        member=T("member_param_name"),
-        nickname=T("nickname_param_name"),
+        member=T("member_parm_name"),
+        nickname=T("nickname_parm_name"),
     )
     @Jeanne.checks.has_permissions(manage_nicknames=True)
     @Jeanne.checks.bot_has_permissions(manage_nicknames=True)
@@ -751,12 +751,11 @@ class moderation(Cog):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.describe(
-        user_id=T("user_id_param_desc"),
+        user_id=T("user_id_parm_desc"),
         reason=T("unban_reason_parm"),
     )
     @Jeanne.rename(
-        user_id=T("user_id_param_name"),
-        reason=T("reason_param_name"),
+        reason=T("reason_parm_name"),
     )
     @Jeanne.autocomplete(user_id=AutoCompleteChoices.banned_users)
     @Jeanne.checks.has_permissions(ban_members=True)
@@ -861,14 +860,14 @@ class moderation(Cog):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.describe(
-        member=T("member_param_desc"),
+        member=T("member_parm_desc"),
         time=T("timeout_time_desc"),
-        reason=T("reason_param_desc"),
+        reason=T("timeout_reason_parm_desc"),
     )
     @Jeanne.rename(
-        member=T("member_param_name"),
-        time=T("time_param_name"),
-        reason=T("reason_param_name"),
+        member=T("member_parm_name"),
+        time=T("time_parm_name"),
+        reason=T("reason_parm_name"),
     )
     @Jeanne.checks.has_permissions(moderate_members=True)
     @Jeanne.checks.bot_has_permissions(moderate_members=True)
@@ -962,12 +961,12 @@ class moderation(Cog):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.describe(
-        member=T("member_param_desc"),
+        member=T("member_parm_desc"),
         reason=T("timeout_remove_reason_desc"),
     )
     @Jeanne.rename(
-        member=T("member_param_name"),
-        reason=T("reason_param_name"),
+        member=T("member_parm_name"),
+        reason=T("reason_parm_name"),
     )
     @Jeanne.checks.has_permissions(moderate_members=True)
     @Jeanne.checks.bot_has_permissions(moderate_members=True)
@@ -1047,11 +1046,11 @@ class moderation(Cog):
     @Jeanne.check(is_suspended)
     @Jeanne.describe(
         user_ids=T("user_ids_param_desc"),
-        reason=T("reason_param_desc"),
+        reason=T("massban_reason_desc"),
     )
     @Jeanne.rename(
         user_ids=T("user_ids_param_name"),
-        reason=T("reason_param_name"),
+        reason=T("reason_parm_name"),
     )
     @Jeanne.checks.cooldown(1, 1800, key=lambda i: (i.guild.id))
     @Jeanne.checks.has_permissions(administrator=True)
@@ -1138,12 +1137,11 @@ class moderation(Cog):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.describe(
-        user_ids=T("user_ids_param_desc"),
-        reason=T("reason_param_desc"),
+        user_ids=T("user_ids_parm_desc"),
+        reason=T("unban_reason_desc"),
     )
     @Jeanne.rename(
-        user_ids=T("user_ids_param_name"),
-        reason=T("reason_param_name"),
+        reason=T("reason_parm_name"),
     )
     @Jeanne.checks.cooldown(1, 1800, key=lambda i: (i.guild.id))
     @Jeanne.checks.bot_has_permissions(ban_members=True)

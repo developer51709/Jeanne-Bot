@@ -1894,6 +1894,37 @@ class MyTranslator(Jeanne.Translator):
                 "fr": "massban",
                 "de": "massenbann",
             },
+            "massban_desc": {
+                "en-GB": "Ban multiple users from or outside the server",
+                "en-US": "Ban multiple users from or outside the server",
+                "fr": "Bannir plusieurs utilisateurs du serveur ou de l'extérieur",
+                "de": "Mehrere Benutzer vom oder außerhalb des Servers bannen",
+            },
+            
+            "user_ids_param_desc": {
+                "en-GB": "Provide a list of user IDs separated by spaces",
+                "en-US": "Provide a list of user IDs separated by spaces",
+                "fr": "Fournissez une liste d'ID utilisateur séparés par des espaces",
+                "de": "Geben Sie eine Liste von Benutzer-IDs an, die durch Leerzeichen getrennt sind",
+            },
+            "massban_reason_desc": {
+                "en-GB": "Reason for the ban",
+                "en-US": "Reason for the ban",
+                "fr": "Raison du bannissement",
+                "de": "Grund für das Bannen",
+            },
+            "massunban_desc": {
+                "en-GB": "Unban multiple users",
+                "en-US": "Unban multiple users",
+                "fr": "Débannir plusieurs utilisateurs",
+                "de": "Mehrere Benutzer entsperren",
+            },
+            "unban_reason_desc": {
+                "en-GB": "Reason for the unban",
+                "en-US": "Reason for the unban",
+                "fr": "Raison du débannissement",
+                "de": "Grund für das Entsperren",
+            },
             "massunban_name": {
                 "en-GB": "massunban",
                 "en-US": "massunban",
@@ -2158,6 +2189,43 @@ class MyTranslator(Jeanne.Translator):
                 "fr": "Ajouter un rappel",
                 "de": "Einen Reminder hinzufügen",
             },
+            "limit_parm_name": {
+                "en-GB": "limit",
+                "en-US": "limit",
+                "fr": "limite",
+                "de": "limit",
+            },
+            "prune_limit_parm_desc": {
+                "en-GB": "How many messages to delete?",
+                "en-US": "How many messages to delete?",
+                "fr": "Combien de messages supprimer ?",
+                "de": "Wie viele Nachrichten löschen?",
+            },
+            "nickname_parm_desc": {
+                "en-GB": "What is the new nickname?",
+                "en-US": "What is the new nickname?",
+                "fr": "Quel est le nouveau surnom ?",
+                "de": "Wie lautet der neue Spitzname?",
+            },
+            "nickname_parm_name": {
+                "en-GB": "nickname",
+                "en-US": "nickname",
+                "fr": "surnom",
+                "de": "spitzname",
+            },
+            "user_id_parm_desc": {
+                "en-GB": "User ID of the person to unban",
+                "en-US": "User ID of the person to unban",
+                "fr": "ID utilisateur de la personne à débannir",
+                "de": "Benutzer-ID der Person, die entsperrt werden soll",
+            },
+            
+            "reason_parm_name": {
+                "en-GB": "reason",
+                "en-US": "reason",
+                "fr": "raison",
+                "de": "grund",
+            },
             "reminder_add_reason_parm_name": {
                 "en-GB": "reason",
                 "en-US": "reason",
@@ -2175,6 +2243,12 @@ class MyTranslator(Jeanne.Translator):
                 "en-US": "time",
                 "fr": "temps",
                 "de": "zeit",
+            },
+            "timeout_reason_parm_desc": {
+                "en-GB": "Why are they being put on timeout?",
+                "en-US": "Why are they being put on timeout?",
+                "fr": "Pourquoi sont-ils mis en délai d'attente?",
+                "de": "Warum werden sie in den Timeout versetzt?",
             },
             "reminder_cancel_rmd_id_parm_name": {
                 "en-GB": "reminder_id",
@@ -2241,6 +2315,12 @@ class MyTranslator(Jeanne.Translator):
                 "en-US": "Add a city",
                 "fr": "Ajouter une ville",
                 "de": "Eine Stadt hinzufügen",
+            },
+            "ban_reason_parm_desc": {
+                "en-GB": "Why are they being banned?",
+                "en-US": "Why are they being banned?",
+                "fr": "Pourquoi sont-ils bannis?",
+                "de": "Warum werden sie gebannt?",
             },
             "weather_units_parm_name": {
                 "en-GB": "units",
