@@ -57,7 +57,7 @@ class SlashReactions(Cog, name="ReactionsSlash"):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("hug_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def hug(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -109,7 +109,7 @@ class SlashReactions(Cog, name="ReactionsSlash"):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("slap_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def slap(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -191,7 +191,7 @@ class SlashReactions(Cog, name="ReactionsSlash"):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("poke_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def poke(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -243,7 +243,7 @@ class SlashReactions(Cog, name="ReactionsSlash"):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("pat_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def pat(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -295,7 +295,7 @@ class SlashReactions(Cog, name="ReactionsSlash"):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("kiss_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def kiss(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -347,7 +347,7 @@ class SlashReactions(Cog, name="ReactionsSlash"):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("tickle_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def tickle(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -359,7 +359,6 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await de.Reactions(self.bot).tickle(ctx, member)
 
     @Jeanne.command(
-        name=T("baka_name"),
         description=T("baka_desc"),
         extras={
             "en": {
@@ -399,7 +398,7 @@ class SlashReactions(Cog, name="ReactionsSlash"):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("baka_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def baka(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -451,7 +450,7 @@ class SlashReactions(Cog, name="ReactionsSlash"):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("feed_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def feed(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -459,6 +458,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).feed(ctx, member)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).feed(ctx, member)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).feed(ctx, member)
 
     @Jeanne.command(
         name=T("cry_name"),
@@ -466,11 +467,15 @@ class SlashReactions(Cog, name="ReactionsSlash"):
         extras={
             "en": {
                 "name": "cry",
-                "description": "Show a crying expression",
+                "description": "Make yourself cry",
             },
             "fr": {
                 "name": "pleurer",
                 "description": "Affichez une expression de pleurs",
+            },
+            "de": {
+                "name": "weinen",
+                "description": "Lassen Sie sich weinen",
             },
         },
     )
@@ -526,7 +531,7 @@ class SlashReactions(Cog, name="ReactionsSlash"):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("bite_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def bite(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -607,7 +612,7 @@ class SlashReactions(Cog, name="ReactionsSlash"):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("cuddle_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def cuddle(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -659,7 +664,7 @@ class SlashReactions(Cog, name="ReactionsSlash"):
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("dance_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def dance(self, ctx: Interaction, member: Optional[Member] = None) -> None:
