@@ -79,7 +79,7 @@ class MyTranslator(Jeanne.Translator):
                 "en-GB": "background list",
                 "en-US": "background list",
                 "fr": "background liste",
-                "de": "Hintergrundliste",
+                "de": "hintergrund liste",
             },
             "guess_group_name free_name": {
                 "en-GB": "guess free",
@@ -103,7 +103,7 @@ class MyTranslator(Jeanne.Translator):
                 "en-GB": "dice bet",
                 "en-US": "dice bet",
                 "fr": "dé pari",
-                "de": "würfeln Einsatz",
+                "de": "würfeln einsatz",
             },
             "flip_group_name free_name": {
                 "en-GB": "flip free",
@@ -115,7 +115,7 @@ class MyTranslator(Jeanne.Translator):
                 "en-GB": "flip bet",
                 "en-US": "flip bet",
                 "fr": "lancer pari",
-                "de": "flip Einsatz",
+                "de": "flip einsatz",
             },
             "blackjack_group_name free_name": {
                 "en-GB": "blackjack free",
@@ -127,7 +127,7 @@ class MyTranslator(Jeanne.Translator):
                 "en-GB": "blackjack bet",
                 "en-US": "blackjack bet",
                 "fr": "blackjack pari",
-                "de": "blackjack Einsatz",
+                "de": "blackjack einsatz",
             },
             "guess_group_name": {
                 "en-GB": "guess",
@@ -365,7 +365,7 @@ class MyTranslator(Jeanne.Translator):
                 "en-GB": "choices",
                 "en-US": "choices",
                 "fr": "choix",
-                "de": "Wahlmöglichkeiten",
+                "de": "auswahl",
             },
             "choices_parm_desc": {
                 "en-GB": "Add your choices here. Separate them with ','",
@@ -730,19 +730,19 @@ class MyTranslator(Jeanne.Translator):
             "create textchannel_name": {
                 "en-GB": "create textchannel",
                 "en-US": "create textchannel",
-                "fr": "créer canal texte",
+                "fr": "créer canaltexte",
                 "de": "erstellen textkanal",
             },
             "create voicechannel_name": {
                 "en-GB": "create voicechannel",
                 "en-US": "create voicechannel",
-                "fr": "créer canal vocal",
+                "fr": "créer canalvocal",
                 "de": "erstellen sprachkanal",
             },
             "create category_name": {
                 "en-GB": "create category",
                 "en-US": "create category",
-                "fr": "créer une catégorie",
+                "fr": "créer catégorie",
                 "de": "erstellen kategorie",
             },
             "create stagechannel_name": {
@@ -984,7 +984,7 @@ class MyTranslator(Jeanne.Translator):
                 "en-GB": "welcomer",
                 "en-US": "welcomer",
                 "fr": "accueil",
-                "de": "willkommensnachricht",
+                "de": "begrüßer",
             },
             "set_modlog_name": {
                 "en-GB": "modlog",
@@ -1062,49 +1062,49 @@ class MyTranslator(Jeanne.Translator):
                 "en-GB": "edit textchannel",
                 "en-US": "edit textchannel",
                 "fr": "modifier canaltexte",
-                "de": "textkanal-bearbeiten",
+                "de": "textkanal bearbeiten",
             },
             "edit edit_voicechannel_name": {
                 "en-GB": "edit voicechannel",
                 "en-US": "edit voicechannel",
                 "fr": "modifier canalvocal",
-                "de": "stimmenkanal-bearbeiten",
+                "de": "stimmenkanal bearbeiten",
             },
             "edit edit_role_name": {
                 "en-GB": "edit role",
                 "en-US": "edit role",
                 "fr": "modifier rôle",
-                "de": "rolle-bearbeiten",
+                "de": "rolle bearbeiten",
             },
             "edit edit_server_name": {
                 "en-GB": "edit server",
                 "en-US": "edit server",
                 "fr": "modifier serveur",
-                "de": "server-bearbeiten",
+                "de": "server bearbeiten",
             },
             "delete delete_channel_name": {
                 "en-GB": "delete channel",
                 "en-US": "delete channel",
                 "fr": "supprimer canal",
-                "de": "kanal-löschen",
+                "de": "kanal löschen",
             },
             "delete delete_role_name": {
                 "en-GB": "delete role",
                 "en-US": "delete role",
                 "fr": "supprimer rôle",
-                "de": "rolle-löschen",
+                "de": "rolle löschen",
             },
             "delete delete_emoji_name": {
                 "en-GB": "delete emoji",
                 "en-US": "delete emoji",
                 "fr": "supprimer emoji",
-                "de": "emoji-löschen",
+                "de": "emoji löschen",
             },
             "delete delete_sticker_name": {
                 "en-GB": "delete sticker",
                 "en-US": "delete sticker",
                 "fr": "supprimer sticker",
-                "de": "sticker-löschen",
+                "de": "sticker löschen",
             },
             "set": {"en-GB": "set", "en-US": "set", "fr": "définir", "de": "festlegen"},
             "set set_welcomer_name": {
@@ -1221,23 +1221,24 @@ class MyTranslator(Jeanne.Translator):
                 "fr": "lister commandes désactivées",
                 "de": "liste deaktivierten befehle",
             },
+            #must be 3 words
             "level role_reward_group_name add_role_reward_name": {
                 "en-GB": "add role reward",
                 "en-US": "add role reward",
                 "fr": "ajouter role reward",
-                "de": "rollenbelohnung hinzufügen",
+                "de": "rolle belohnung hinzufügen",
             },
             "level role_reward_group_name remove_role_reward_name": {
                 "en-GB": "remove role reward",
                 "en-US": "remove role reward",
                 "fr": "supprimer role reward",
-                "de": "rollenbelohnung entfernen",
+                "de": "rolle belohnung entfernen",
             },
             "level role_reward_group_name list_role_rewards_name": {
                 "en-GB": "list role rewards",
                 "en-US": "list role rewards",
                 "fr": "lister role rewards",
-                "de": "liste rollenbelohnungen",
+                "de": "liste rolle belohnungen",
             },
             "level blacklist_channel_group_name add_blacklist_channel_name": {
                 "en-GB": "add blacklist channel",
@@ -1900,7 +1901,6 @@ class MyTranslator(Jeanne.Translator):
                 "fr": "Bannir plusieurs utilisateurs du serveur ou de l'extérieur",
                 "de": "Mehrere Benutzer vom oder außerhalb des Servers bannen",
             },
-            
             "user_ids_param_desc": {
                 "en-GB": "Provide a list of user IDs separated by spaces",
                 "en-US": "Provide a list of user IDs separated by spaces",
@@ -2219,7 +2219,6 @@ class MyTranslator(Jeanne.Translator):
                 "fr": "ID utilisateur de la personne à débannir",
                 "de": "Benutzer-ID der Person, die entsperrt werden soll",
             },
-            
             "reason_parm_name": {
                 "en-GB": "reason",
                 "en-US": "reason",
@@ -2634,7 +2633,12 @@ class MyTranslator(Jeanne.Translator):
                 "fr": "pleurer",
                 "de": "weinen",
             },
-            "cry_desc": {"en-GB": "Make yourself cry", "en-US": "Make yourself cry", "fr": "Faites-vous pleurer", "de": "Bring dich zum Weinen"},
+            "cry_desc": {
+                "en-GB": "Make yourself cry",
+                "en-US": "Make yourself cry",
+                "fr": "Faites-vous pleurer",
+                "de": "Bring dich zum Weinen",
+            },
             "bite_name": {
                 "en-GB": "bite",
                 "en-US": "bite",
