@@ -212,7 +212,8 @@ class nsfw(Cog):
             return
         image = Hentai().get_images_yandere(tag)
         if plus:
-            images = [image[randint(1, len(image)) - 1] for _ in range(4)]
+            selected_images = [image[randint(1, len(image)) - 1] for _ in range(4)]
+            images=[img["file_url"] for img in selected_images]
             shortened_urls = [shorten_url(img["file_url"]) for img in images]
             view = ReportContentPlus(ctx, *shortened_urls)
             color = Color.random()
@@ -222,7 +223,7 @@ class nsfw(Cog):
                 .set_footer(
                     text="Récupéré depuis Yande.re • Les crédits doivent revenir à l'artiste"
                 )
-                for url in shortened_urls
+                for url in images
             ]
             footer_text = "Récupéré depuis Yande.re • Les crédits doivent revenir à l'artiste"
             try:
@@ -244,7 +245,7 @@ class nsfw(Cog):
         image = choice(image)["file_url"]
         shortened_url = shorten_url(str(image))
         embed = Embed(color=color, url="https://yande.re")
-        embed.set_image(url=shortened_url)
+        embed.set_image(url=image)
         footer_text = "Récupéré depuis Yande.re • Les crédits doivent revenir à l'artiste"
         try:
             view = ReportContent(ctx, shortened_url)
@@ -271,7 +272,9 @@ class nsfw(Cog):
         await ctx.response.defer()
         image = Hentai().get_images_konachan(tag)
         if plus:
-            images = [image[randint(1, len(image)) - 1] for _ in range(4)]
+            selected_images = [image[randint(1, len(image)) - 1] for _ in range(4)]
+            images=[img["file_url"] for img in selected_images]
+            shortened_urls = [shorten_url(img["file_url"]) for img in images]
             try:
                 shortened_urls = [shorten_url(img["file_url"]) for img in images]
                 view = ReportContentPlus(ctx, *shortened_urls)
@@ -282,7 +285,7 @@ class nsfw(Cog):
                     .set_footer(
                         text="Récupéré depuis Konachan • Les crédits doivent revenir à l'artiste"
                     )
-                    for url in shortened_urls
+                    for url in images
                 ]
                 footer_text = "Récupéré depuis Konachan • Les crédits doivent revenir à l'artiste"
                 await ctx.followup.send(embeds=embeds, view=view)
@@ -297,7 +300,7 @@ class nsfw(Cog):
                 color = Color.random()
                 embeds = [
                     Embed(color=color, url="https://konachan.com")
-                    .set_image(url=str(url["image_url"]))
+                    .set_image(url=str(url))
                     .set_footer(
                         text="Récupéré depuis Konachan • Les crédits doivent revenir à l'artiste"
                     )
@@ -311,7 +314,7 @@ class nsfw(Cog):
         color = Color.random()
         image= choice(image)["file_url"]
         embed = Embed(color=color, url="https://konachan.com")
-        embed.set_image(url=shorten_url(str(image)))
+        embed.set_image(url=image)
         footer_text = "Récupéré depuis Konachan • Les crédits doivent revenir à l'artiste"
         try:
             view = ReportContent(ctx, shorten_url(str(image)))

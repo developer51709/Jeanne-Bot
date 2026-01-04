@@ -177,6 +177,7 @@ class nsfw(Cog):
                     return
             return
         except Exception:
+            image = choice(image)["file_url"]
             if str(image).endswith(("mp4", "webm")):
                 await ctx.followup.send(image)
                 return
@@ -203,7 +204,8 @@ class nsfw(Cog):
             return
         image = Hentai().get_images_yandere(tag)
         if plus:
-            images = [image[randint(1, len(image)) - 1] for _ in range(4)]
+            selected_images = [image[randint(1, len(image)) - 1] for _ in range(4)]
+            images=[img["file_url"] for img in selected_images]
             shortened_urls = [shorten_url(img["file_url"]) for img in images]
             view = ReportContentPlus(ctx, *shortened_urls)
             color = Color.random()
@@ -211,7 +213,7 @@ class nsfw(Cog):
                 Embed(color=color, url="https://yande.re")
                 .set_image(url=(str(url)))
                 .set_footer(text="Gehaald van Yande.re • Credits gaan naar de artiest")
-                for url in shortened_urls
+                for url in images
             ]
             footer_text = "Gehaald van Yande.re • Credits gaan naar de artiest"
             try:
@@ -230,9 +232,10 @@ class nsfw(Cog):
                 await ctx.followup.send(embeds=embeds)
             return
         color = Color.random()
-        shortened_url = shorten_url(choice(image)["file_url"])
+        img = choice(image)["file_url"]
+        shortened_url = shorten_url(img)
         embed = Embed(color=color, url="https://yande.re")
-        embed.set_image(url=shortened_url)
+        embed.set_image(url=img)
         footer_text = "Gehaald van Yande.re • Credits gaan naar de artiest"
         try:
             view = ReportContent(ctx, shortened_url)
@@ -261,6 +264,8 @@ class nsfw(Cog):
         if plus:
             images = [image[randint(1, len(image)) - 1] for _ in range(4)]
             try:
+                selected_images = [image[randint(1, len(image)) - 1] for _ in range(4)]
+                images=[img["file_url"] for img in selected_images]
                 shortened_urls = [shorten_url(img["file_url"]) for img in images]
                 view = ReportContentPlus(ctx, *shortened_urls)
                 color = Color.random()
@@ -270,7 +275,7 @@ class nsfw(Cog):
                     .set_footer(
                         text="Gehaald van Konachan • Credits gaan naar de artiest"
                     )
-                    for url in shortened_urls
+                    for url in images
                 ]
                 footer_text = "Gehaald van Konachan • Credits gaan naar de artiest"
                 await ctx.followup.send(embeds=embeds, view=view)
@@ -297,11 +302,13 @@ class nsfw(Cog):
                 await ctx.followup.send(embeds=embeds)
             return
         color = Color.random()
+        img = choice(image)["file_url"]
+        url=shorten_url(img)
         embed = Embed(color=color, url="https://konachan.com")
-        embed.set_image(url=shorten_url(choice(image)["file_url"]))
+        embed.set_image(url=img)
         footer_text = "Gehaald van Konachan • Credits gaan naar de artiest"
         try:
-            view = ReportContent(ctx, shorten_url(choice(image)["file_url"]))
+            view = ReportContent(ctx, url)
             embed.set_footer(text=footer_text)
             await ctx.followup.send(embed=embed, view=view)
             await view.wait()
