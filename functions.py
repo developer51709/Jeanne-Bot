@@ -1365,8 +1365,11 @@ class Hentai:
             "pee",
             "pee_in_container",
             "piss_bottle",
-            "onlyfans"
-            "real_life"
+            "onlyfans",
+            "real_life",
+            "cocomelon", #for very very obvious reasons
+            "bebefinn", #for very very obvious reasons
+            "baby_shark", #for very very obvious reasons
         }
 
     def format_tags(self, tags: Optional[str] = None) -> str:
