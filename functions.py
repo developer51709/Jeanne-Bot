@@ -1321,7 +1321,7 @@ def get_richest(member: Member) -> int:
 class NsfwApis(Enum):
     GelbooruApi = f"https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&api_key={GELBOORU_API}&user_id={GELBOORU_USER}&limit=100&tags=rating:explicit+"
     KonachanApi = "https://konachan.com/post.json?s=post&q=index&limit=100&tags=score:>10+rating:explicit+"
-    YandereApi = "https://yande.re/post.json?limit=100&tags=score:>10+rating:explicit+"
+    YandereApi = "https://yande.re/post.json?api_version=2&limit=100&tags=score:>10+rating:explicit+"
     DanbooruApi = "https://danbooru.donmai.us/posts.json?limit=100&tags=rating:explicit+"
     Rule34Api = f"https://api.rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&api_key={RULE34_API}&user_id={RULE34_USER}&limit=100&tags=rating:explicit+"
 
@@ -1365,6 +1365,8 @@ class Hentai:
             "pee",
             "pee_in_container",
             "piss_bottle",
+            "onlyfans"
+            "real_life"
         }
 
     def format_tags(self, tags: Optional[str] = None) -> str:
@@ -1399,6 +1401,7 @@ class Hentai:
                 "SELECT source, tags, file_url FROM hentaiCache WHERE lower(tags) LIKE lower(?)",
                 (pattern,),
             )
+            
         elif tags == "" or tags is None:
             cur.execute("SELECT source, tags, file_url FROM hentaiCache")
 
@@ -1590,7 +1593,7 @@ class Hentai:
             resp = get(url, timeout=10)
             data = resp.json()
 
-            posts = data
+            posts = data["posts"]
             filtered = []
             for p in posts:
                 if len(cache) < 100:
@@ -1603,7 +1606,7 @@ class Hentai:
                     continue
 
                 if len(cache) < 100:
-                    file_url = str(p.get("file_url"))
+                    file_url = str(p.get("sample_url"))
                     self.save_cache("yandere", tags_field, file_url)
 
                 if not file_url:
