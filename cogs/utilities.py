@@ -11,6 +11,7 @@ from assets.dictionary import dictionary
 from functions import (
     check_botbanned_app_command,
     check_disabled_app_command,
+   # is_beta_app_command,
     is_suspended,
     AutoCompleteChoices,
 )
@@ -21,6 +22,7 @@ from discord.app_commands import locale_str as T
 import languages.en.utilities as en
 import languages.fr.utilities as fr
 import languages.de.utilities as de
+from assets.AI.openai import open_ai
 
 
 class EmbedGroup(GroupCog, name="embed"):
@@ -809,6 +811,70 @@ class SlashUtilities(Cog):
         elif ctx.locale.value == "de":
             await de.Utilities(self.bot).reportconfession(ctx, confession_id, reason)
 
+
+    @Jeanne.command(
+        name=T("chat_name"),
+        description=T("chat_desc"),
+        extras={
+            "en": {
+                "name": "chat",
+                "description": "Chat with the me (with Mistral AI)",
+                "parameters": [
+                    {
+                        "name": "prompt",
+                        "description": "What do you want to say to me?",
+                        "required": True,
+                    },
+                ],
+            },
+            "fr": {
+                "name": "chat",
+                "description": "Discutez avec moi (avec Mistral AI)",
+                "parameters": [
+                    {
+                        "name": "prompt",
+                        "description": "Que voulez-vous me dire?",
+                        "required": True,
+                    },
+                ],
+            },
+            "de": {
+                "name": "chat",
+                "description": "Chatte mit mir (mit Mistral AI)",
+                "parameters": [
+                    {
+                        "name": "prompt",
+                        "description": "Was möchtest du mir sagen?",
+                        "required": True,
+                    },
+                ],
+            },
+        },
+    )
+    @Jeanne.describe(
+        prompt=T("prompt_parm_desc"),
+    )
+    @Jeanne.rename(
+        prompt=T("prompt_parm_name")
+    )
+    @Jeanne.check(is_suspended)
+    @Jeanne.check(check_botbanned_app_command)
+    @Jeanne.check(check_disabled_app_command)
+    @Jeanne.checks.cooldown(5, 20, key=lambda i: (i.user.id))
+   # @Jeanne.check(is_beta_app_command)
+    async def chat(self, ctx: Interaction, prompt: str):
+        await ctx.response.defer()
+        await open_ai(ctx, prompt)
+
+    @chat.error
+    async def chat_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
+        if isinstance(error, Jeanne.CommandOnCooldown):
+            if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
+                await en.Utilities(self.bot).chat_error(ctx, error, "cooldown")
+            elif ctx.locale.value == "fr":
+                await fr.Utilities(self.bot).chat_error(ctx, error, "cooldown")
+            elif ctx.locale.value == "de":
+                await de.Utilities(self.bot).chat_error(ctx, error, "cooldown")
 
 async def setup(bot: Bot):
     await bot.add_cog(EmbedGroup(bot))

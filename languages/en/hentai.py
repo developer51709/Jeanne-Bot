@@ -302,7 +302,7 @@ class nsfw(Cog):
                 color = Color.random()
                 embeds = [
                     Embed(color=color, url="https://konachan.com")
-                    .set_image(url=str(url[""]))
+                    .set_image(url=url)
                     .set_footer(
                         text="Fetched from Konachan • Credits must go to the artist"
                     )
