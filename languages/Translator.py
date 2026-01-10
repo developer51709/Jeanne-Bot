@@ -31,7 +31,7 @@ class MyTranslator(Jeanne.Translator):
                 "en-GB": "member",
                 "en-US": "member",
                 "fr": "membre",
-                "de": "Mitglied",
+                "de": "mitglied",
             },
             "member_parm_desc": {
                 "en-GB": "Which member?",
@@ -55,7 +55,7 @@ class MyTranslator(Jeanne.Translator):
                 "en-GB": "level",
                 "en-US": "level",
                 "fr": "niveau",
-                "de": "Niveau",
+                "de": "niveau",
             },
             "add_blacklist_ch_channel_desc": {
                 "en-GB": "Which channel do you want to blacklist?",
@@ -91,7 +91,7 @@ class MyTranslator(Jeanne.Translator):
                 "en-GB": "guess bet",
                 "en-US": "guess bet",
                 "fr": "deviner pari",
-                "de": "raten Einsatz",
+                "de": "raten einsatz",
             },
             "dice_group_name free_name": {
                 "en-GB": "dice free",
@@ -437,7 +437,7 @@ class MyTranslator(Jeanne.Translator):
                 "en-GB": "Need help? Visit the website or join the server for further assistance.",
                 "en-US": "Need help? Visit the website or join the server for further assistance.",
                 "fr": "Besoin d'aide? Visitez le site web ou rejoignez le serveur pour plus d'assistance.",
-                "de": "Brauchen Sie Hilfe? Besuchen Sie die Website oder treten Sie dem Server bei, um weitere Unterstützung zu erhalten.",
+                "de": "Support gesucht? Besuchen Sie unsere Website oder treten Sie dem Server bei.",
             },
             # hentai commands
             "hentai_desc": {
@@ -2712,7 +2712,25 @@ class MyTranslator(Jeanne.Translator):
                 "fr": "Que voulez-vous me dire?",
                 "de": "Was möchtest du mir sagen?",
             },
+            "roast_name": {
+                "en-GB": "roast",
+                "en-US": "roast",
+                "fr": "griller",
+                "de": "verbraten",
+            },
+            "roast_desc": {
+                "en-GB": "Roast a member or yourself",
+                "en-US": "Roast a member or yourself",
+                "fr": "Griller un membre ou vous-même",
+                "de": "Brate ein Mitglied oder dich selbst",
+            },
+            "slots_desc": {
+                "en-GB": "Play the slots game",
+                "en-US": "Play the slots game",
+                "fr": "Jouer au jeu de machines à sous",
+                "de": "Spiele das Spielautomaten-Spiel",
+            },
         }
         return translations.get(string.message, {}).get(
-            (locale.value if locale.value in ["en-GB", "en-US", "fr"] else "en-US")
+            (locale.value if locale.value in ["en-GB", "en-US", "fr", "de"] else "en-US")
         )
