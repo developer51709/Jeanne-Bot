@@ -373,6 +373,56 @@ class fun(Cog, name="FunSlash"):
             return
         await en.fun(self.bot).gayrate(ctx, member)
 
+    @Jeanne.command(
+        description=T("roast_desc"),
+        extras={
+            "en": {
+                "name": "roast",
+                "description": "Roast a member or yourself",
+                "parameters": [
+                    {
+                        "name": "member",
+                        "description": "Which member?",
+                        "required": False,
+                    }
+                ],
+            },
+            "fr": {
+                "name": "griller",
+                "description": "Griller un membre ou vous-même",
+                "parameters": [
+                    {
+                        "name": "membre",
+                        "description": "Quel membre?",
+                        "required": False,
+                    }
+                ],
+            },
+            "de": {
+                "name": "verbraten",
+                "description": "Brate ein Mitglied oder dich selbst",
+                "parameters": [
+                    {
+                        "name": "mitglied",
+                        "description": "Welches Mitglied?",
+                        "required": False,
+                    }
+                ],
+            },
+        },
+    )
+    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.rename(member=T("member_parm_name"))
+    async def roast(self, ctx: Interaction, member: Optional[Member] = None):
+        if ctx.locale.value == "fr":
+            await fr.fun(self.bot).roast(ctx, member)
+            return
+        if ctx.locale.value == "de":
+            await de.fun(self.bot).roast(ctx, member)
+            return
+        await en.fun(self.bot).roast(ctx, member)
+
+
 
 async def setup(bot: Bot):
     await bot.add_cog(fun(bot))

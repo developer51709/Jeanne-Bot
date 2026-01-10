@@ -121,3 +121,73 @@ class fun():
             embed.set_image(url="https://i.imgur.com/tYAbWCl.jpg")
         await ctx.followup.send(embed=embed)
 
+    async def roast(self, ctx: Interaction, member: Optional[Member] = None):
+        await ctx.response.defer()
+        member=member if member else ctx.user
+        ROASTS = [
+            "has the confidence of someone who has never been wrong — despite overwhelming evidence",
+            "types 'lol' with a completely straight face",
+            "could trip over a cordless phone",
+            "is the human equivalent of a loading screen",
+            "brings a spoon to a knife fight",
+            "would get lost in a one-way hallway",
+            "has main character energy but NPC dialogue",
+            "radiates 'I didn’t read the instructions' vibes",
+            "is proof that autopilot mode exists in humans",
+            "has the reaction time of Internet Explorer",
+            "would argue with a stop sign and still lose",
+            "has the personality of unseasoned chicken",
+            "thinks 'gaslight' is a brand of stove",
+            "couldn’t pour water out of a boot with instructions on the heel",
+            "looks like they clap when the plane lands",
+            "has WiFi thoughts but dial-up execution",
+            "is the reason group projects are stressful",
+            "runs on vibes and zero critical thinking",
+            "has the emotional range of a teaspoon",
+            "would press the elevator button twice like it helps",
+            "has big 'trust me bro' energy",
+            "is the final boss of bad decisions",
+            "types paragraphs just to say nothing",
+            "has the situational awareness of a potato",
+            "would forget their own birthday",
+            "is built like a placeholder character",
+            "thinks cereal is a soup and defends it",
+            "has the ambition but not the skillset",
+            "is allergic to common sense",
+            "would get ratioed in real life",
+            "has the vibe of a muted microphone",
+            "could mess up a one-button task",
+            "is running on 2% battery and bad choices",
+            "has the confidence of a man who cannot be humbled",
+            "is proof that evolution takes breaks",
+            "brings nothing to the table and still eats",
+            "has the energy of a forgotten side quest",
+            "would lose a staring contest with a wall",
+            "has the brain buffering icon permanently on",
+            "thinks 'BRB' is a long-term commitment",
+            "is the human version of a typo",
+            "couldn’t find water in the ocean",
+            "has the charisma of a damp sock",
+            "is on speaking terms with bad decisions",
+            "has the attention span of a goldfish on TikTok",
+            "would get banned from single-player mode",
+            "is somehow always wrong with confidence",
+            "has the vibes of a cracked screen protector",
+            "looks like they say 'you too' when the waiter says enjoy your meal",
+            "is built like a patch note nobody asked for",
+            "would misspell their own name",
+            "has big 'I peaked in the tutorial' energy",
+            "exists purely to lower the average",
+            "has the emotional intelligence of a toaster",
+            "would argue with Google Maps",
+            "is a walking plot hole",
+            "has the energy of a dead group chat",
+            "is the reason 'are you sure?' buttons exist",
+        ]
+        embed = Embed(color=Color.random())
+        if member:
+            roast = f"{member} is the type of person who {choice(ROASTS)}"
+        else:
+            roast = f"You are the type of person who {choice(ROASTS)}"
+        embed.description = roast
+        await ctx.followup.send(embed=embed)

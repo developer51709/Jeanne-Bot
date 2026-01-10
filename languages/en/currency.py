@@ -1,3 +1,4 @@
+import asyncio
 from random import choice, randint, shuffle
 from discord import (
     ButtonStyle,
@@ -541,3 +542,73 @@ class currency:
             embed=embed,
             view=vote_button(),
         )
+
+    async def slots(self, ctx: Interaction, bet: int):
+        await ctx.response.defer()
+        embed = Embed(color=Color.random())
+
+        emojis = (
+            ["🍒"] * 60 
+            + ["🍋"] * 25
+            + ["🍉"] * 10 
+            + ["🔔"] * 4 
+            + ["⭐"] * 1 
+            + ["💎"] * 0 
+        )
+
+        def spin_symbol():
+            if randint(1, 2000) == 1: 
+                return "💎"
+            return choice(emojis)
+
+        def spin_grid():
+            return [spin_symbol() for _ in range(9)]
+
+        def format_grid(grid):
+            return (
+                f"{grid[0]} {grid[1]} {grid[2]}\n"
+                f"{grid[3]} {grid[4]} {grid[5]}  ⬅️\n"
+                f"{grid[6]} {grid[7]} {grid[8]}"
+            )
+
+        grid = spin_grid()
+        embed.description = f"🎰 **SLOTS**\n{format_grid(grid)}\n\nSpinning..."
+        await ctx.edit_original_response(embed=embed)
+
+        for _ in range(8):
+            await asyncio.sleep(0.45)
+            grid = spin_grid()
+            embed.color = Color.random()
+            embed.description = f"🎰 **SLOTS**\n{format_grid(grid)}\n\nSpinning..."
+            await ctx.edit_original_response(embed=embed)
+
+        await asyncio.sleep(0.6)
+        final_grid = spin_grid()
+        middle = final_grid[3:6]  
+
+        payout = bet
+        result_text = f"💀 You lost **{bet}** <:quantumpiece:1161010445205905418>."
+        await Currency(ctx.user).remove_qp(bet)
+
+        if middle == ["💎", "💎", "💎"]:
+            payout = bet * 10
+            result_text = f"💎💎💎 **LEGENDARY JACKPOT!**\nYou won **{payout}** <:quantumpiece:1161010445205905418>!"
+        elif middle == ["⭐", "⭐", "⭐"]:
+            payout = bet * 5
+            result_text = f"⭐ **Triple Stars!**\nYou won **{payout}** <:quantumpiece:1161010445205905418>!"
+        elif middle == ["🔔", "🔔", "🔔"]:
+            payout = bet * 3
+            result_text = f"🔔 **Triple Bells!**\nYou won **{payout}** <:quantumpiece:1161010445205905418>!"
+        elif middle.count("🍉") == 3:
+            payout = bet * 2
+            result_text = f"🍉 **Triple Melons!**\nYou won **{payout}** <:quantumpiece:1161010445205905418>!"
+        elif middle.count("🍒") == 3:
+            payout = bet
+            result_text = "🍒 **Barely a win.**\nYou got your bet back."
+        await Currency(ctx.user).add_qp(payout)
+
+        embed.description = (
+            f"🎰 **RESULT**\n" f"{format_grid(final_grid)}\n\n" f"{result_text}"
+        )
+
+        await ctx.edit_original_response(embed=embed)

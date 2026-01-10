@@ -12,11 +12,11 @@ from discord.ext.commands import Bot
 class help_button(ui.View):
     def __init__(self):
         super().__init__()
-        wiki_url = "https://jeannebot.gitbook.io/jeannebot/help"
+        wiki_url = "https://jeannebot.vercel.app/help"
         orleans_url = "https://discord.gg/jh7jkuk2pp"
-        tos_and_policy_url = "https://jeannebot.gitbook.io/jeannebot/tos-and-privacy"
+        tos_and_policy_url = "https://jeannebot.vercel.app/tos"
         self.add_item(
-            ui.Button(style=ButtonStyle.link, label="Jeanne Webiste", url=wiki_url)
+            ui.Button(style=ButtonStyle.link, label="Jeanne Website", url=wiki_url)
         )
         self.add_item(
             ui.Button(style=ButtonStyle.link, label="Support Server", url=orleans_url)

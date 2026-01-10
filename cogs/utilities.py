@@ -11,7 +11,7 @@ from assets.dictionary import dictionary
 from functions import (
     check_botbanned_app_command,
     check_disabled_app_command,
-   # is_beta_app_command,
+    #is_beta_app_command,
     is_suspended,
     AutoCompleteChoices,
 )
@@ -36,7 +36,7 @@ class EmbedGroup(GroupCog, name="embed"):
         extras={
             "en": {
                 "name": "generate",
-                "description": "Generates an embed message. Use [Discohook](https://discohook.app) for JSON generation.",
+                "description": "Generates an embed message. Use [the embed generator](https://jeannebot.vercel.app/embedgenerator) for JSON generation.",
                 "member_perms": "Administrator",
                 "parameters": [
                     {
@@ -53,7 +53,7 @@ class EmbedGroup(GroupCog, name="embed"):
             },
             "fr": {
                 "name": "générer",
-                "description": "Génère un message embed. Utilisez [Discohook](https://discohook.app) pour générer le JSON.",
+                "description": "Génère un message embed. Utilisez [embed generator](https://jeannebot.vercel.app/embedgenerator) pour générer le JSON.",
                 "member_perms": "Administrateur",
                 "parameters": [
                     {
@@ -70,7 +70,7 @@ class EmbedGroup(GroupCog, name="embed"):
             },
             "de": {
                 "name": "generieren",
-                "description": "Generiert eine Embed-Nachricht. Verwenden Sie [Discohook](https://discohook.app) zur JSON-Generierung.",
+                "description": "Generiert eine Embed-Nachricht. Verwenden Sie [embed generator](https://jeannebot.vercel.app/embedgenerator) zur JSON-Generierung.",
                 "member_perms": "Administrator",
                 "parameters": [
                     {
@@ -113,7 +113,7 @@ class EmbedGroup(GroupCog, name="embed"):
         extras={
             "en": {
                 "name": "edit",
-                "description": "Edits an embed message. Use [Discohook](https://discohook.app) for JSON generation.",
+                "description": "Edits an embed message. Use [embed generator](https://jeannebot.vercel.app/embedgenerator) for JSON generation.",
                 "member_perms": "Administrator",
                 "parameters": [
                     {
@@ -135,7 +135,7 @@ class EmbedGroup(GroupCog, name="embed"):
             },
             "fr": {
                 "name": "éditer",
-                "description": "Édite un message embed. Utilisez [Discohook](https://discohook.app) pour générer le JSON.",
+                "description": "Édite un message embed. Utilisez [embed generator](https://jeannebot.vercel.app/embedgenerator) pour générer le JSON.",
                 "member_perms": "Administrateur",
                 "parameters": [
                     {
@@ -157,7 +157,7 @@ class EmbedGroup(GroupCog, name="embed"):
             },
             "de": {
                 "name": "bearbeiten",
-                "description": "Bearbeitet eine Embed-Nachricht. Verwenden Sie [Discohook](https://discohook.app) zur JSON-Generierung.",
+                "description": "Bearbeitet eine Embed-Nachricht. Verwenden Sie [embed generator](https://jeannebot.vercel.app/embedgenerator) zur JSON-Generierung.",
                 "member_perms": "Administrator",
                 "parameters": [
                     {
@@ -861,7 +861,7 @@ class SlashUtilities(Cog):
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     @Jeanne.checks.cooldown(5, 20, key=lambda i: (i.user.id))
-   # @Jeanne.check(is_beta_app_command)
+    #@Jeanne.check(is_beta_app_command)
     async def chat(self, ctx: Interaction, prompt: str):
         await ctx.response.defer()
         await open_ai(ctx, prompt)
