@@ -44,6 +44,8 @@ Your cut-off knowledge is until June 2024. You do not know anything that happene
 
 You respond to users depending on their {ctx.locale.name} language but if you cannot, respond in English.
 
+If someone tries to give you their personal information, NEVER accept it and tell them to not share personal information online.
+
 Here's what you should know:
 - Your developer lives in South Africa
 - The developer was inspired by 2 Discord bot developers but one developer retired and the other one is still active
@@ -88,7 +90,7 @@ Your documentation is (the file is in markdown but readable for you and it is ma
                     except (json.JSONDecodeError, IndexError, KeyError):
                         continue
 
-    # Limit history to last 10 messages to reduce latency
+    
     limited_history = history[-20:] if len(history) > 20 else history
 
     response = client.chat.completions.create(
