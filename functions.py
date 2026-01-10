@@ -1365,11 +1365,13 @@ class Hentai:
             "pee",
             "pee_in_container",
             "piss_bottle",
-            "onlyfans",
-            "real_life",
+            "onlyfans", #copyright reasons
+            "real_life", #no real life porn allowed
             "cocomelon", #for very very obvious reasons
             "bebefinn", #for very very obvious reasons
             "baby_shark", #for very very obvious reasons
+            "child_model", #for very very obvious reasons
+            "commission", #copyright reasons
         }
 
     def format_tags(self, tags: Optional[str] = None) -> str:
@@ -1418,11 +1420,19 @@ class Hentai:
 
     def save_cache(self, source: str, tags: str, file_url: str) -> None:
         cur = db.cursor()
-        cur.execute(
-            "INSERT OR IGNORE INTO hentaiCache (source, tags, file_url) VALUES (?, ?, ?)",
-            (source, tags, file_url),
+        data=cur.execute(
+            "INSERT OR IGNORE INTO hentaiCache (date, source, tags, file_url) VALUES (?, ?, ?, ?)",
+            (datetime.now().strftime("%Y%m%d"), source, tags, file_url),
         )
         db.commit()
+
+        if data.rowcount == 0:
+            date = datetime.now().strftime("%Y%m%d")
+            if int(date) == int(db.execute(
+                "SELECT date FROM hentaiCache WHERE source=? AND file_url = ?", (source, file_url)
+            ).fetchone()[0]):
+                pass
+            db.commit()
 
     def _filter_blacklisted(self, tag_string: str) -> bool:
         tags = {t.lower() for t in tag_string.split() if t}
