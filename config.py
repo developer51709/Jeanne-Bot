@@ -32,7 +32,7 @@ RULE34_API=environ["RULE34_API_KEY"]
 RULE34_USER=environ["RULE34_USER_ID"]
 OPENAI_API=environ["OPENAI_API_KEY"]
 
-db = connect("database.db")
+db = connect("database.db", autocommit=True)
 
 hug = f"https://tenor.googleapis.com/v2/search?q=hug%20anime&key={TENOR}&client_key={CLIENTKEY}&limit=50"
 slap = f"https://tenor.googleapis.com/v2/search?q=slap%20anime&key={TENOR}&client_key={CLIENTKEY}&limit=50"

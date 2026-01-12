@@ -601,3 +601,10 @@ class currency:
 
             await ctx.edit_original_response(embed=embed)
 
+    async def slots_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
+        cooldown = Embed(
+            description=f"WOAH! Calmez-vous!\nEssayez à nouveau après `{round(error.retry_after, 2)} secondes`",
+            color=Color.red(),
+        )
+        await ctx.response.send_message(embed=cooldown)
+

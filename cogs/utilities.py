@@ -11,7 +11,7 @@ from assets.dictionary import dictionary
 from functions import (
     check_botbanned_app_command,
     check_disabled_app_command,
-    #is_beta_app_command,
+    is_beta_app_command,
     is_suspended,
     AutoCompleteChoices,
 )
@@ -861,8 +861,8 @@ class SlashUtilities(Cog):
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     @Jeanne.checks.cooldown(5, 20, key=lambda i: (i.user.id))
-    #@Jeanne.check(is_beta_app_command)
-    async def chat(self, ctx: Interaction, prompt: str):
+    @Jeanne.check(is_beta_app_command)
+    async def chat(self, ctx: Interaction, prompt: Jeanne.Range[str, 2, 2000]):
         await ctx.response.defer()
         await open_ai(ctx, prompt)
 

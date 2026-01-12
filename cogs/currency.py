@@ -683,7 +683,11 @@ class currency(Cog, name="CurrencySlash"):
             },
         },
     )
-    async def slots(self, ctx: Interaction, bet: int):
+    @Jeanne.checks.cooldown(1, 60, key=lambda i: (i.user.id))
+    @Jeanne.check(check_botbanned_app_command)
+    @Jeanne.check(check_disabled_app_command)
+    @Jeanne.check(is_suspended)
+    async def slots(self, ctx: Interaction, bet: Jeanne.Range[int, 5]):
         if ctx.locale.value == "fr":
             await fr.currency(self.bot).slots(ctx, bet)
             return
@@ -691,6 +695,17 @@ class currency(Cog, name="CurrencySlash"):
             await de.currency(self.bot).slots(ctx, bet)
             return
         await en.currency(self.bot).slots(ctx, bet)
+
+    @slots.error
+    async def slots_error(self, ctx: Interaction, error: Jeanne.errors.AppCommandError):
+        if isinstance(error, Jeanne.errors.CommandOnCooldown):
+            if ctx.locale.value == "fr":
+                await fr.Currency(self.bot).slots_error(ctx, error)
+                return
+            if ctx.locale.value == "de":
+                await de.Currency(self.bot).slots_error(ctx, error)
+                return
+            await en.Currency(self.bot).slots_error(ctx, error)
 
 
 async def setup(bot: Bot):

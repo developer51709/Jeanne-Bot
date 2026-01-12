@@ -1,0 +1,85 @@
+import aiohttp
+from functions import BetaTest, Currency, Levelling, DevPunishment
+from config import DB_AUTH, TOPGG, TOPGG_AUTH
+from topgg import DBLClient, WebhookManager, WebhookType, WebhookEndpoint, BotVoteData
+from discord.ext import tasks
+from discord.ext.commands import Cog, Bot
+from datetime import datetime
+
+
+class DBL(Cog, name="DBL"):
+    def __init__(self, bot: Bot):
+        self.bot = bot
+        self.topggpy = DBLClient(
+            token=TOPGG)
+        self.autopost=(
+            self.topggpy.set_data(bot).autopost()
+            .on_success(lambda: print(f"Posted server and shard count ({len(self.bot.guilds)}, {self.bot.shard_count}) at {datetime.now().strftime('%H:%M')}"))
+        )
+        #self.autopost_error = self.topggpy.autopost().on_error(
+       #     lambda exc: print(f"Failed to post stats\n{exc.__class__.__name__}: {exc}")
+       # )
+       
+
+    webhook_manager = WebhookManager()
+    endpoint = (
+    WebhookEndpoint()
+    .type(WebhookType.BOT)
+    .route("/dblwebhook")
+    .auth(TOPGG_AUTH)
+    )
+
+
+    @tasks.loop(minutes=60, reconnect=True)
+    async def update_stats(self):
+        servers = len(self.bot.guilds)
+        dbheaders = {
+            "Content-Type": "application/json",
+            "Authorization": DB_AUTH,
+        }
+        try:
+            async with aiohttp.ClientSession(headers=dbheaders) as session:
+                await session.post(
+                    "https://discord.bots.gg/api/v1/bots/831993597166747679/stats",
+                    json={"guildCount": servers, "shardCount": self.bot.shard_count},
+                )
+            await self.topggpy.post_guild_count(
+                guild_count=servers, shard_count=self.bot.shard_count
+            )
+            print(
+                f"Posted server and shard count ({servers}, {self.bot.shard_count}) at {datetime.now().strftime('%H:%M')}"
+            )
+        except Exception as e:
+            print(f"Failed to post stats\n{e.__class__.__name__}: {e}")
+
+    @update_stats.before_loop
+    async def before_update_stats(self):
+        await self.bot.wait_until_ready()
+
+    @endpoint.callback()
+    async def on_vote(self, data: BotVoteData):
+        if data["type"] != "upvote":
+            return
+
+        voter_id = int(data["user"])
+        voter = await self.bot.fetch_user(voter_id)
+        if DevPunishment(voter).check_botbanned_user:
+            return
+
+        weekend_bonus = await self.topggpy.get_weekend_status()
+        credits = 100 if weekend_bonus else 50
+        xp_multiplier = 10 if weekend_bonus else 5
+        xp = xp_multiplier * Levelling(voter).get_user_level
+
+        if await BetaTest(self.bot).check(voter):
+            credits = round(credits * 1.25)
+            xp = 5 * round(xp / 5) 
+
+        await Currency(voter).add_qp(credits)
+        await Levelling(voter).add_xp(xp)
+
+    webhook_manager.endpoint(endpoint)
+
+
+async def setup(bot: Bot):
+    await bot.add_cog(DBL(bot))
