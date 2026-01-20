@@ -818,7 +818,7 @@ class SlashUtilities(Cog):
         extras={
             "en": {
                 "name": "chat",
-                "description": "Chat with the me (with Mistral AI)",
+                "description": "Chat with me (with Mistral AI)",
                 "parameters": [
                     {
                         "name": "prompt",
