@@ -150,7 +150,7 @@ class moderation(Cog):
     @Jeanne.autocomplete(reason=AutoCompleteChoices.default_ban_options)
     @Jeanne.describe(
         member=T("member_parm_desc"),
-        reason=T("reason_param_desc"),
+        reason=T("ban_reason_parm_desc"),
         delete_message_history=T("delete_msg_history_param_desc"),
         time=T("temp_time_param_desc"),
     )
@@ -861,7 +861,7 @@ class moderation(Cog):
     @Jeanne.check(is_suspended)
     @Jeanne.describe(
         member=T("member_parm_desc"),
-        time=T("timeout_time_desc"),
+        time=T("timeout_reason_parm_desc"),
         reason=T("timeout_reason_parm_desc"),
     )
     @Jeanne.rename(
