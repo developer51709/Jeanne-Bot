@@ -78,16 +78,21 @@ class OwnerCog(Cog, name="Owner"):
         )
         await ctx.send(embed=embed)
 
-    @beta.command(description="Add a user to the Beta Programme (Developer Only)")
+    @beta.command(
+        name="add", description="Add a user to the Beta Programme (Developer Only)"
+    )
     @is_owner()
-    async def add(self, ctx: Context, *, user: User):
+    async def _add(self, ctx: Context, *, user: User):
         if DevPunishment(ctx.author).check_botbanned_user:
             return
         await BetaTest(self.bot).add(ctx, user)
 
-    @beta.command(description="Removes a user from the Beta Programme (Developer Only)")
+    @beta.command(
+        name="remove",
+        description="Removes a user from the Beta Programme (Developer Only)",
+    )
     @is_owner()
-    async def remove(self, ctx: Context, *, user: User):
+    async def _remove(self, ctx: Context, *, user: User):
         if DevPunishment(ctx.author).check_botbanned_user:
             return
         await BetaTest(self.bot).remove(ctx, user)
@@ -190,9 +195,8 @@ class OwnerCog(Cog, name="Owner"):
         await DevPunishment(user).add_botbanned_user(reason)
         await ctx.send("User botbanned", ephemeral=True)
         orleans = await self.bot.fetch_guild(740584420645535775)
-        ha = await self.bot.fetch_guild(925790259160166460)
         vhf = await self.bot.fetch_guild(974028573893595146)
-        for server in [orleans, ha, vhf]:
+        for server in [orleans, vhf]:
             await server.ban(user, reason=f"DevPunishmentned - {reason}")
 
     @command(
@@ -203,7 +207,7 @@ class OwnerCog(Cog, name="Owner"):
     async def hentaiblacklist(self, ctx: Context, link: str):
         if DevPunishment(ctx.author).check_botbanned_user:
             return
-        await Hentai().add_blacklisted_link(link)
+        Hentai().add_blacklisted_link(link)
         await ctx.send("Link blacklisted")
         await ctx.message.delete()
 
@@ -216,7 +220,7 @@ class OwnerCog(Cog, name="Owner"):
         with open("database.db", "rb") as file:
             try:
                 await ctx.author.send(file=File(file))
-            except:
+            except Exception:
                 content = """
 # ERROR!
 ## Failed to send database! 
@@ -272,15 +276,13 @@ Make sure private messages between **me and you are opened** or check the host i
     @command(description="Suspend a user from a certain module/s")
     @guild_only()
     @is_owner()
-    async def suspend(self, ctx: Context, user: User, duration:str, *, reason: str):
+    async def suspend(self, ctx: Context, user: User, duration: str, *, reason: str):
         if DevPunishment(ctx.author).check_botbanned_user:
             return
-        seconds=parse_timespan(duration)
+        seconds = parse_timespan(duration)
         timestamp = round((datetime.now() + timedelta(seconds=seconds)).timestamp())
-        view=ModuleSelect(user, reason, duration=timestamp)
+        view = ModuleSelect(user, reason, duration=timestamp)
         await ctx.send(view=view)
-        
-
 
 
 async def setup(bot: Bot):

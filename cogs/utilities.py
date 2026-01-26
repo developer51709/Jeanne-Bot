@@ -1,11 +1,19 @@
 from discord import (
-    Forbidden, HTTPException, Interaction,
-    NotFound, TextChannel, app_commands as Jeanne
+    Forbidden,
+    HTTPException,
+    Interaction,
+    NotFound,
+    TextChannel,
+    app_commands as Jeanne,
 )
 from discord.ext.commands import Cog, Bot, GroupCog
 from assets.dictionary import dictionary
 from functions import (
-    check_botbanned_app_command, check_disabled_app_command, is_suspended, AutoCompleteChoices
+    check_botbanned_app_command,
+    check_disabled_app_command,
+    is_beta_app_command,
+    is_suspended,
+    AutoCompleteChoices,
 )
 from py_expression_eval import Parser
 from typing import Literal, Optional
@@ -13,6 +21,9 @@ from humanfriendly import InvalidTimespan
 from discord.app_commands import locale_str as T
 import languages.en.utilities as en
 import languages.fr.utilities as fr
+import languages.de.utilities as de
+from assets.AI.openai import open_ai
+
 
 class EmbedGroup(GroupCog, name="embed"):
     def __init__(self, bot: Bot) -> None:
@@ -25,7 +36,7 @@ class EmbedGroup(GroupCog, name="embed"):
         extras={
             "en": {
                 "name": "generate",
-                "description": "Generates an embed message. Use [Discohook](https://discohook.app) for JSON generation.",
+                "description": "Generates an embed message. Use [the embed generator](https://jeannebot.vercel.app/embedgenerator) for JSON generation.",
                 "member_perms": "Administrator",
                 "parameters": [
                     {
@@ -42,7 +53,7 @@ class EmbedGroup(GroupCog, name="embed"):
             },
             "fr": {
                 "name": "générer",
-                "description": "Génère un message embed. Utilisez [Discohook](https://discohook.app) pour générer le JSON.",
+                "description": "Génère un message embed. Utilisez [embed generator](https://jeannebot.vercel.app/embedgenerator) pour générer le JSON.",
                 "member_perms": "Administrateur",
                 "parameters": [
                     {
@@ -53,6 +64,23 @@ class EmbedGroup(GroupCog, name="embed"):
                     {
                         "name": "jsonscript",
                         "description": "Insérer un script JSON",
+                        "required": True,
+                    },
+                ],
+            },
+            "de": {
+                "name": "generieren",
+                "description": "Generiert eine Embed-Nachricht. Verwenden Sie [embed generator](https://jeannebot.vercel.app/embedgenerator) zur JSON-Generierung.",
+                "member_perms": "Administrator",
+                "parameters": [
+                    {
+                        "name": "kanal",
+                        "description": "Welcher Kanal?",
+                        "required": True,
+                    },
+                    {
+                        "name": "jsonscript",
+                        "description": "JSON-Skript einfügen",
                         "required": True,
                     },
                 ],
@@ -71,12 +99,13 @@ class EmbedGroup(GroupCog, name="embed"):
         channel=T("generate_channel_parm_name"),
         jsonscript=T("generate_jsonscript_parm_name"),
     )
-    async def generate(
-        self, ctx: Interaction, channel: TextChannel, jsonscript: str):
-        if ctx.locale.value=="en-GB" or ctx.locale.value=="en-US":
+    async def generate(self, ctx: Interaction, channel: TextChannel, jsonscript: str):
+        if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
             await en.EmbedGroup(self.bot).generate(ctx, channel, jsonscript)
-        elif ctx.locale.value=="fr":
+        elif ctx.locale.value == "fr":
             await fr.EmbedGroup(self.bot).generate(ctx, channel, jsonscript)
+        elif ctx.locale.value == "de":
+            await de.EmbedGroup(self.bot).generate(ctx, channel, jsonscript)
 
     @Jeanne.command(
         name=T("edit_name"),
@@ -84,7 +113,7 @@ class EmbedGroup(GroupCog, name="embed"):
         extras={
             "en": {
                 "name": "edit",
-                "description": "Edits an embed message. Use [Discohook](https://discohook.app) for JSON generation.",
+                "description": "Edits an embed message. Use [embed generator](https://jeannebot.vercel.app/embedgenerator) for JSON generation.",
                 "member_perms": "Administrator",
                 "parameters": [
                     {
@@ -106,7 +135,7 @@ class EmbedGroup(GroupCog, name="embed"):
             },
             "fr": {
                 "name": "éditer",
-                "description": "Édite un message embed. Utilisez [Discohook](https://discohook.app) pour générer le JSON.",
+                "description": "Édite un message embed. Utilisez [embed generator](https://jeannebot.vercel.app/embedgenerator) pour générer le JSON.",
                 "member_perms": "Administrateur",
                 "parameters": [
                     {
@@ -122,6 +151,28 @@ class EmbedGroup(GroupCog, name="embed"):
                     {
                         "name": "jsonscript",
                         "description": "Insérer un script JSON",
+                        "required": True,
+                    },
+                ],
+            },
+            "de": {
+                "name": "bearbeiten",
+                "description": "Bearbeitet eine Embed-Nachricht. Verwenden Sie [embed generator](https://jeannebot.vercel.app/embedgenerator) zur JSON-Generierung.",
+                "member_perms": "Administrator",
+                "parameters": [
+                    {
+                        "name": "kanal",
+                        "description": "Welcher Kanal?",
+                        "required": True,
+                    },
+                    {
+                        "name": "idmessage",
+                        "description": "ID der Embed-Nachricht",
+                        "required": True,
+                    },
+                    {
+                        "name": "jsonscript",
+                        "description": "Fügen Sie ein JSON-Skript ein",
                         "required": True,
                     },
                 ],
@@ -143,20 +194,27 @@ class EmbedGroup(GroupCog, name="embed"):
         jsonscript=T("jsonscript_parm_name"),
     )
     async def edit(
-        self, ctx: Interaction, channel: TextChannel, messageid: str, jsonscript: str):
+        self, ctx: Interaction, channel: TextChannel, messageid: str, jsonscript: str
+    ):
         await ctx.response.defer()
-        if ctx.locale.value=="en-GB" or ctx.locale.value=="en-US":
+        if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
             await en.EmbedGroup(self.bot).edit(ctx, channel, messageid, jsonscript)
-        elif ctx.locale.value=="fr":
+        elif ctx.locale.value == "fr":
             await fr.EmbedGroup(self.bot).edit(ctx, channel, messageid, jsonscript)
+        elif ctx.locale.value == "de":
+            await de.EmbedGroup(self.bot).edit(ctx, channel, messageid, jsonscript)
 
     @edit.error
     async def edit_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
-        if isinstance(error, Jeanne.CommandInvokeError) and isinstance(error.original, (Forbidden, NotFound, HTTPException)):
-            if ctx.locale.value=="en-GB" or ctx.locale.value=="en-US":
+        if isinstance(error, Jeanne.CommandInvokeError) and isinstance(
+            error.original, (Forbidden, NotFound, HTTPException)
+        ):
+            if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
                 await en.EmbedGroup(self.bot).edit_error(ctx, error)
-            elif ctx.locale.value=="fr":
+            elif ctx.locale.value == "fr":
                 await fr.EmbedGroup(self.bot).edit_error(ctx, error)
+            elif ctx.locale.value == "de":
+                await de.EmbedGroup(self.bot).edit_error(ctx, error)
 
 
 class ReminderCog(GroupCog, name=T("reminder")):
@@ -200,6 +258,22 @@ class ReminderCog(GroupCog, name=T("reminder")):
                     },
                 ],
             },
+            "de": {
+                "name": "hinzufügen",
+                "description": "Einen Reminder hinzufügen",
+                "parameters": [
+                    {
+                        "name": "grund",
+                        "description": "Grund für den Reminder",
+                        "required": True,
+                    },
+                    {
+                        "name": "zeit",
+                        "description": "Zeit (z.B. 1h, 30m)",
+                        "required": True,
+                    },
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
@@ -218,14 +292,20 @@ class ReminderCog(GroupCog, name=T("reminder")):
             await en.ReminderCog(self.bot).add(ctx, reason, time)
         elif ctx.locale.value == "fr":
             await fr.ReminderCog(self.bot).add(ctx, reason, time)
+        elif ctx.locale.value == "de":
+            await de.ReminderCog(self.bot).add(ctx, reason, time)
 
     @add.error
     async def add_error(self, ctx: Interaction, error: Jeanne.errors.AppCommandError):
-        if isinstance(error, Jeanne.errors.CommandInvokeError) and isinstance(error.original, InvalidTimespan):
+        if isinstance(error, Jeanne.errors.CommandInvokeError) and isinstance(
+            error.original, InvalidTimespan
+        ):
             if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
                 await en.ReminderCog(self.bot).add_error(ctx, error)
             elif ctx.locale.value == "fr":
                 await fr.ReminderCog(self.bot).add_error(ctx, error)
+            elif ctx.locale.value == "de":
+                await de.ReminderCog(self.bot).add_error(ctx, error)
 
     @Jeanne.command(
         name=T("reminder_list_name"),
@@ -239,6 +319,10 @@ class ReminderCog(GroupCog, name=T("reminder")):
                 "name": "liste",
                 "description": "Liste tous les rappels que vous avez",
             },
+            "de": {
+                "name": "liste",
+                "description": "Liste aller Erinnerungen, die Sie haben",
+            },
         },
     )
     @Jeanne.check(is_suspended)
@@ -249,6 +333,8 @@ class ReminderCog(GroupCog, name=T("reminder")):
             await en.ReminderCog(self.bot)._list(ctx)
         elif ctx.locale.value == "fr":
             await fr.ReminderCog(self.bot)._list(ctx)
+        elif ctx.locale.value == "de":
+            await de.ReminderCog(self.bot)._list(ctx)
 
     @Jeanne.command(
         name=T("reminder_cancel_name"),
@@ -276,6 +362,17 @@ class ReminderCog(GroupCog, name=T("reminder")):
                     }
                 ],
             },
+            "de": {
+                "name": "abbrechen",
+                "description": "Einen Reminder abbrechen",
+                "parameters": [
+                    {
+                        "name": "reminderid",
+                        "description": "ID des Reminders",
+                        "required": True,
+                    }
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
@@ -288,6 +385,9 @@ class ReminderCog(GroupCog, name=T("reminder")):
             await en.ReminderCog(self.bot).cancel(ctx, reminder_id)
         elif ctx.locale.value == "fr":
             await fr.ReminderCog(self.bot).cancel(ctx, reminder_id)
+        elif ctx.locale.value == "de":
+            await de.ReminderCog(self.bot).cancel(ctx, reminder_id)
+
 
 class SlashUtilities(Cog):
     def __init__(self, bot: Bot):
@@ -339,7 +439,28 @@ class SlashUtilities(Cog):
                         "required": False,
                     },
                 ],
-            }
+            },
+            "de": {
+                "name": "wetter",
+                "description": "Holen Sie sich Wetterinformationen zu einer Stadt",
+                "parameters": [
+                    {
+                        "name": "stadt",
+                        "description": "Fügen Sie eine Stadt hinzu",
+                        "required": True,
+                    },
+                    {
+                        "name": "einheiten",
+                        "description": "Metrisch oder imperial? (Standard ist metrisch)",
+                        "required": False,
+                    },
+                    {
+                        "name": "drei_tage",
+                        "description": "3-Tage-Vorhersage anzeigen?",
+                        "required": False,
+                    },
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
@@ -367,14 +488,18 @@ class SlashUtilities(Cog):
             await en.Utilities(self.bot).weather(ctx, city, units, three_day)
         elif ctx.locale.value == "fr":
             await fr.Utilities(self.bot).weather(ctx, city, units, three_day)
+        elif ctx.locale.value == "de":
+            await de.Utilities(self.bot).weather(ctx, city, units, three_day)
 
     @weather.error
     async def weather_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
         if isinstance(error, Jeanne.CommandOnCooldown):
-            if ctx.locale.value=="en-GB" or ctx.locale.value=="en-US":
+            if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
                 await en.Utilities(self.bot).weather_error(ctx, error, "cooldown")
-            elif ctx.locale.value=="fr":
+            elif ctx.locale.value == "fr":
                 await fr.Utilities(self.bot).weather_error(ctx, error, "cooldown")
+            elif ctx.locale.value == "de":
+                await de.Utilities(self.bot).weather_error(ctx, error, "cooldown")
         if isinstance(error, Jeanne.CommandInvokeError) and isinstance(
             error.original, (KeyError, TypeError)
         ):
@@ -382,6 +507,8 @@ class SlashUtilities(Cog):
                 await en.Utilities(self.bot).weather_error(ctx, error, "failed")
             elif ctx.locale.value == "fr":
                 await fr.Utilities(self.bot).weather_error(ctx, error, "failed")
+            elif ctx.locale.value == "de":
+                await de.Utilities(self.bot).weather_error(ctx, error, "failed")
 
     @Jeanne.command(
         name=T("calculator_name"),
@@ -409,6 +536,17 @@ class SlashUtilities(Cog):
                     },
                 ],
             },
+            "de": {
+                "name": "rechner",
+                "description": "Führen Sie eine Berechnung durch",
+                "parameters": [
+                    {
+                        "name": "berechnung",
+                        "description": "Fügen Sie eine Berechnung hinzu",
+                        "required": True,
+                    },
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
@@ -421,6 +559,8 @@ class SlashUtilities(Cog):
             await en.Utilities(self.bot).calculator(ctx, calculate)
         elif ctx.locale.value == "fr":
             await fr.Utilities(self.bot).calculator(ctx, calculate)
+        elif ctx.locale.value == "de":
+            await de.Utilities(self.bot).calculator(ctx, calculate)
 
     @calculator.error
     async def calculator_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
@@ -431,6 +571,8 @@ class SlashUtilities(Cog):
                 await en.Utilities(self.bot).calculator_error(ctx, error, "overflow")
             elif ctx.locale.value == "fr":
                 await fr.Utilities(self.bot).calculator_error(ctx, error, "overflow")
+            elif ctx.locale.value == "de":
+                await de.Utilities(self.bot).calculator_error(ctx, error, "overflow")
         elif isinstance(error, Jeanne.CommandInvokeError) and isinstance(
             error.original, Exception
         ):
@@ -438,6 +580,8 @@ class SlashUtilities(Cog):
                 await en.Utilities(self.bot).weather_error(ctx, error, "failed")
             elif ctx.locale.value == "fr":
                 await fr.Utilities(self.bot).weather_error(ctx, error, "failed")
+            elif ctx.locale.value == "de":
+                await de.Utilities(self.bot).weather_error(ctx, error, "failed")
 
     @Jeanne.command(
         name=T("invite_name"),
@@ -451,6 +595,10 @@ class SlashUtilities(Cog):
                 "name": "inviter",
                 "description": "Invitez-moi sur votre serveur ou rejoignez le serveur de support",
             },
+            "de": {
+                "name": "einladen",
+                "description": "Lade mich auf deinen Server ein oder tritt dem Support-Server bei",
+            },
         },
     )
     @Jeanne.check(is_suspended)
@@ -461,6 +609,8 @@ class SlashUtilities(Cog):
             await en.Utilities(self.bot).invite(ctx)
         elif ctx.locale.value == "fr":
             await fr.Utilities(self.bot).invite(ctx)
+        elif ctx.locale.value == "de":
+            await de.Utilities(self.bot).invite(ctx)
 
     @Jeanne.command(
         name=T("botreport_name"),
@@ -474,6 +624,10 @@ class SlashUtilities(Cog):
                 "name": "rapportbot",
                 "description": "Soumettez un rapport sur le bot si vous avez trouvé un problème",
             },
+            "de": {
+                "name": "botreport",
+                "description": "Reichen Sie einen Bot-Bericht ein, wenn Sie ein Problem gefunden haben",
+            },
         },
     )
     @Jeanne.checks.cooldown(1, 3600, key=lambda i: (i.user.id))
@@ -483,11 +637,13 @@ class SlashUtilities(Cog):
     @Jeanne.check(is_suspended)
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
-    async def botreport(self, ctx: Interaction, report_type:str):
+    async def botreport(self, ctx: Interaction, report_type: str):
         if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
             await en.Utilities(self.bot).botreport(ctx, report_type)
         elif ctx.locale.value == "fr":
             await fr.Utilities(self.bot).botreport(ctx, report_type)
+        elif ctx.locale.value == "de":
+            await de.Utilities(self.bot).botreport(ctx, report_type)
 
     @Jeanne.command(
         description=T("dictionary_desc"),
@@ -540,18 +696,45 @@ class SlashUtilities(Cog):
                     },
                 ],
             },
+            "de": {
+                "name": "geständnis",
+                "description": "Geständnis anonym oder nicht",
+                "parameters": [
+                    {
+                        "name": "geständnis",
+                        "description": "Was möchten Sie gestehen?",
+                        "required": True,
+                    },
+                    {
+                        "name": "anonym",
+                        "description": "Möchten Sie anonym gestehen?",
+                        "required": False,
+                    },
+                ],
+            },
         },
     )
-    @Jeanne.describe(confession=T("confession_parm_desc"), anonymous=T("anonymous_parm_desc"))
-    @Jeanne.rename(confession=T("confession_parm_name"), anonymous=T("anonymous_parm_name"))
+    @Jeanne.describe(
+        confession=T("confession_parm_desc"), anonymous=T("anonymous_parm_desc")
+    )
+    @Jeanne.rename(
+        confession=T("confession_parm_name"), anonymous=T("anonymous_parm_name")
+    )
     @Jeanne.check(is_suspended)
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
-    async def confess(self, ctx:Interaction, confession: Jeanne.Range[str, 1, 4096], anonymous: Optional[bool] = False):
+    async def confess(
+        self,
+        ctx: Interaction,
+        confession: Jeanne.Range[str, 1, 4096],
+        anonymous: Optional[bool] = False,
+    ):
         if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
             await en.Utilities(self.bot).confession(ctx, confession, anonymous)
         elif ctx.locale.value == "fr":
             await fr.Utilities(self.bot).confession(ctx, confession, anonymous)
+        elif ctx.locale.value == "de":
+            await de.Utilities(self.bot).confession(ctx, confession, anonymous)
 
     @Jeanne.command(
         name=T("reportconfession_name"),
@@ -589,6 +772,22 @@ class SlashUtilities(Cog):
                     },
                 ],
             },
+            "de": {
+                "name": "bericht-geständnis",
+                "description": "Ein Geständnis melden",
+                "parameters": [
+                    {
+                        "name": "id_geständnis",
+                        "description": "ID des zu meldenden Geständnisses",
+                        "required": True,
+                    },
+                    {
+                        "name": "grund",
+                        "description": "Grund für die Meldung des Geständnisses",
+                        "required": True,
+                    },
+                ],
+            },
         },
     )
     @Jeanne.describe(
@@ -602,13 +801,80 @@ class SlashUtilities(Cog):
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     @Jeanne.autocomplete(confession_id=AutoCompleteChoices.confessions)
-    async def reportconfession(self, ctx: Interaction, confession_id: int, reason: Jeanne.Range[str, 1, 512]):
+    async def reportconfession(
+        self, ctx: Interaction, confession_id: int, reason: Jeanne.Range[str, 1, 512]
+    ):
         if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
             await en.Utilities(self.bot).reportconfession(ctx, confession_id, reason)
         elif ctx.locale.value == "fr":
-            await fr.Utilities(self.bot).reportconfession(
-                ctx, confession_id, reason
-            )
+            await fr.Utilities(self.bot).reportconfession(ctx, confession_id, reason)
+        elif ctx.locale.value == "de":
+            await de.Utilities(self.bot).reportconfession(ctx, confession_id, reason)
+
+
+    @Jeanne.command(
+        name=T("chat_name"),
+        description=T("chat_desc"),
+        extras={
+            "en": {
+                "name": "chat",
+                "description": "Chat with me (with Mistral AI)",
+                "parameters": [
+                    {
+                        "name": "prompt",
+                        "description": "What do you want to say to me?",
+                        "required": True,
+                    },
+                ],
+            },
+            "fr": {
+                "name": "chat",
+                "description": "Discutez avec moi (avec Mistral AI)",
+                "parameters": [
+                    {
+                        "name": "prompt",
+                        "description": "Que voulez-vous me dire?",
+                        "required": True,
+                    },
+                ],
+            },
+            "de": {
+                "name": "chat",
+                "description": "Chatte mit mir (mit Mistral AI)",
+                "parameters": [
+                    {
+                        "name": "prompt",
+                        "description": "Was möchtest du mir sagen?",
+                        "required": True,
+                    },
+                ],
+            },
+        },
+    )
+    @Jeanne.describe(
+        prompt=T("prompt_parm_desc"),
+    )
+    @Jeanne.rename(
+        prompt=T("prompt_parm_name")
+    )
+    @Jeanne.check(is_suspended)
+    @Jeanne.check(check_botbanned_app_command)
+    @Jeanne.check(check_disabled_app_command)
+    @Jeanne.checks.cooldown(5, 20, key=lambda i: (i.user.id))
+    @Jeanne.check(is_beta_app_command)
+    async def chat(self, ctx: Interaction, prompt: Jeanne.Range[str, 2, 2000]):
+        await ctx.response.defer()
+        await open_ai(ctx, prompt)
+
+    @chat.error
+    async def chat_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
+        if isinstance(error, Jeanne.CommandOnCooldown):
+            if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
+                await en.Utilities(self.bot).chat_error(ctx, error, "cooldown")
+            elif ctx.locale.value == "fr":
+                await fr.Utilities(self.bot).chat_error(ctx, error, "cooldown")
+            elif ctx.locale.value == "de":
+                await de.Utilities(self.bot).chat_error(ctx, error, "cooldown")
 
 async def setup(bot: Bot):
     await bot.add_cog(EmbedGroup(bot))

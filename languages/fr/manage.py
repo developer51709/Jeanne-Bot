@@ -196,21 +196,21 @@ class Create_Group():
                 await role.edit(color=int(color, 16))
                 embed.add_field(name="Couleur", value=color, inline=True)
                 embed.color = role.color
-            except:
+            except Exception:
                 embed.add_field(name="Couleur", value="Invalid color code", inline=True)
         else:
             embed.color = Color.random()
         if hoisted:
-            if hoisted == True:
+            if hoisted:
                 await role.edit(hoist=True)
                 embed.add_field(name="Mis en avant", value="Oui", inline=True)
-            elif hoisted == False:
+            elif not hoisted:
                 embed.add_field(name="Mis en avant", value="No", inline=True)
         if mentionable:
-            if mentionable == True:
+            if mentionable:
                 await role.edit(mentionable=True)
                 embed.add_field(name="Mentionnable", value="Oui", inline=True)
-            elif mentionable == False:
+            elif not mentionable:
                 embed.add_field(name="Mentionnable", value="No", inline=True)
         await ctx.followup.send(embed=embed)
 
@@ -284,7 +284,6 @@ class Create_Group():
             embed.add_field(name="Mode lent", value=added_slowmode, inline=True)
         await ctx.followup.send(embed=embed)
 
-    @private.error
     async def private_thread_error(
         self, ctx: Interaction):
             embed = Embed()
@@ -320,10 +319,10 @@ class Create_Group():
 
     async def emoji_error(self, ctx: Interaction, error: Jeanne.errors.AppCommandError):
             a_emojis = len(
-                [emote for emote in ctx.guild.emojis if emote.animated == True]
+                [emote for emote in ctx.guild.emojis if emote.animated]
             )
             emojis = len(
-                [emote for emote in ctx.guild.emojis if emote.animated == False]
+                [emote for emote in ctx.guild.emojis if not emote.animated]
             )
             limit = 50 + (50 * ctx.guild.premium_tier)
             if HTTPException:
@@ -394,7 +393,7 @@ class Delete_Group():
         try:
             e = emoji.strip().split(":")[-1].rstrip(">")
             emote = await ctx.guild.fetch_emoji(int(e))
-        except:
+        except Exception:
             emote = utils.get(ctx.guild.emojis, name=emoji.replace(" ", "_"))
         embed = Embed(
             description="{} a été supprimé".format(str(emote)), color=0x00FF68
@@ -465,10 +464,10 @@ class Edit_Group():
                 added_slowmode = e
             embed.add_field(name="Mode lent", value=added_slowmode, inline=True)
         if nsfw_enabled:
-            if nsfw_enabled == True:
+            if nsfw_enabled:
                 await channel.edit(nsfw=True)
                 embed.add_field(name="NSFW activé", value="Oui", inline=True)
-            elif nsfw_enabled == False:
+            elif not nsfw_enabled:
                 await channel.edit(nsfw=False)
                 embed.add_field(name="NSFW activé", value="Non", inline=True)
         await ctx.followup.send(embed=embed)
@@ -520,22 +519,22 @@ class Edit_Group():
                 await role.edit(color=int(color, 16))
                 embed.add_field(name="Couleur", value=color, inline=True)
                 embed.color = role.color
-            except:
+            except Exception:
                 embed.add_field(name="Couleur", value="Code couleur invalide", inline=True)
         else:
             embed.color = Color.random()
         if hoisted:
-            if hoisted == True:
+            if hoisted:
                 await role.edit(hoist=True)
                 embed.add_field(name="Mis en avant", value="Oui", inline=True)
-            elif hoisted == False:
+            elif not hoisted:
                 await role.edit(hoist=False)
                 embed.add_field(name="Mis en avant", value="Non", inline=True)
         if mentionable:
-            if mentionable == True:
+            if mentionable:
                 await role.edit(mentionable=True)
                 embed.add_field(name="Mentionnable", value="Oui", inline=True)
-            elif mentionable == False:
+            elif not mentionable:
                 await role.edit(mentionable=False)
                 embed.add_field(name="Mentionnable", value="Non", inline=True)
         await ctx.followup.send(embed=embed)
@@ -573,7 +572,7 @@ class Edit_Group():
                 embed.set_thumbnail(url=avatar_url)
                 avatarbytes = get(avatar_url).content
                 await ctx.guild.edit(icon=avatarbytes)
-            except:
+            except Exception:
                 embed.add_field(
                     name="Icône non ajoutée",
                     value="Un problème est survenu lors de l'ajout de l'avatar",
@@ -596,7 +595,7 @@ class Edit_Group():
                         value=ctx.guild.splash.url,
                         inline=True,
                     )
-                except:
+                except Exception:
                     pass
         if banner:
             if ctx.guild.premium_tier <= 1:
@@ -614,7 +613,7 @@ class Edit_Group():
                         value=ctx.guild.banner.url,
                         inline=True,
                     )
-                except:
+                except Exception:
                     pass
         if verification_level:
             if verification_level.name == "none":
@@ -714,12 +713,12 @@ class Set_Group:
         await ctx.followup.send(embed=embed)
 
     async def welcomingmsg(
-        self, ctx: Interaction, jsonfile: Optional[Attachment] = None
+        self, ctx: Interaction, jsonscript: Optional[str] = None
     ) -> None:
-        if jsonfile is None:
+        if jsonscript is None:
             await ctx.response.send_modal(Welcomingmsg(ctx))
             return
-        if jsonfile is not None:
+        if jsonscript is not None:
             await ctx.response.defer()
             humans = str(
                 len([member for member in ctx.guild.members if not member.bot])
@@ -736,19 +735,19 @@ class Set_Group:
                     ("%icon%", str(ctx.guild.icon)),
                 ]
             )
-            json_request = str(get(jsonfile.url).content)
-            json_content = self.replace_all(json_request, parameters)
+
+            json_content = self.replace_all(jsonscript, parameters)
             json = loads(json_content)
             try:
                 content = json["content"]
                 embed = Embed.from_dict(json["embeds"][0])
-            except:
+            except Exception:
                 content = json_content
             confirm = Embed(
                 description="Voici un aperçu du message de bienvenue.\nÊtes-vous satisfait ?"
             )
             embed = Embed.from_dict(json["embeds"][0])
-            view = Confirmation(ctx.user)
+            view = Confirmation(ctx, ctx.user)
             await ctx.followup.send(
                 content=content,
                 embeds=[embed, confirm],
@@ -759,13 +758,13 @@ class Set_Group:
                 ephemeral=True,
             )
             await view.wait()
-            if view.value == True:
-                await Manage(ctx.guild).set_welcomer_msg(str(json_request))
+            if view.value:
+                await Manage(ctx.guild).set_welcomer_msg(str(jsonscript))
                 embed = Embed(description="Message de bienvenue défini")
                 await ctx.edit_original_response(
                     content=None, embeds=[embed], view=None
                 )
-            elif view.value == False:
+            elif not view.value:
                 embed = Embed(description="Action annulée")
                 await ctx.edit_original_response(
                     content=None, embeds=[embed], view=None
@@ -777,12 +776,12 @@ class Set_Group:
                 )
 
     async def leavingmsg(
-        self, ctx: Interaction, jsonfile: Optional[Attachment] = None
+        self, ctx: Interaction, jsonscript: Optional[str] = None
     ) -> None:
-        if jsonfile is None:
+        if jsonscript is None:
             await ctx.response.send_modal(Leavingmsg(ctx))
             return
-        if jsonfile is not None:
+        if jsonscript is not None:
             await ctx.response.defer()
             humans = str(
                 len([member for member in ctx.guild.members if not member.bot])
@@ -799,19 +798,18 @@ class Set_Group:
                     ("%icon%", str(ctx.guild.icon)),
                 ]
             )
-            json_request = str(get(jsonfile.url).content)
-            json_content = self.replace_all(json_request, parameters)
+            json_content = self.replace_all(jsonscript, parameters)
             json = loads(json_content)
             try:
                 content = json["content"]
                 embed = Embed.from_dict(json["embeds"][0])
-            except:
+            except Exception:
                 content = json_content
             confirm = Embed(
                 description="Voici un aperçu du message de départ.\nÊtes-vous satisfait ?"
             )
             embed = Embed.from_dict(json["embeds"][0])
-            view = Confirmation(ctx.user)
+            view = Confirmation(ctx, ctx.user)
             await ctx.followup.send(
                 content=content,
                 embeds=[embed, confirm],
@@ -822,13 +820,13 @@ class Set_Group:
                 ephemeral=True,
             )
             await view.wait()
-            if view.value == True:
-                await Manage(ctx.guild).set_leaving_msg(str(json_request))
+            if view.value:
+                await Manage(ctx.guild).set_leaving_msg(str(jsonscript))
                 embed = Embed(description="Message de départ défini")
                 await ctx.edit_original_response(
                     content=None, embeds=[embed], view=None
                 )
-            elif view.value == False:
+            elif not view.value:
                 embed = Embed(description="Action annulée")
                 await ctx.edit_original_response(
                     content=None, embeds=[embed], view=None
@@ -842,7 +840,7 @@ class Set_Group:
     async def rolereward_message(
         self, ctx: Interaction, message: Optional[bool] = None
     ) -> None:
-        if message == True:
+        if message :
             await ctx.response.send_modal(RankUpmsg(ctx))
             return
         await ctx.response.defer()
@@ -855,7 +853,7 @@ class Set_Group:
     async def levelupdate(
         self, ctx: Interaction, channel: TextChannel, levelmsg: Optional[bool] = None
     ) -> None:
-        if levelmsg == True:
+        if levelmsg :
             await ctx.response.send_modal(Levelmsg(ctx, channel))
             return
         await ctx.response.defer()
@@ -881,7 +879,7 @@ class Set_Group:
     ):
         await ctx.response.defer()
         embed = Embed()
-        if Inventory(ctx.user).set_brightness(brightness) == False:
+        if not Inventory(ctx.user).set_brightness(brightness):
             embed.description = "Vous n'avez pas de fond d'écran"
             embed.color = Color.red()
             await ctx.followup.send(embed=embed)
@@ -910,7 +908,7 @@ class Set_Group:
                 color
             )
             embed.color = int("{:02X}{:02X}{:02X}".format(*c), 16)
-        except:
+        except Exception:
             embed.description = "Couleur invalide"
             embed.color = Color.red()
         await ctx.followup.send(embed=embed)
@@ -1002,7 +1000,7 @@ class Rename_Group:
         try:
             e: int = emoji.strip().split(":")[-1].rstrip(">")
             emote = await ctx.guild.fetch_emoji(e)
-        except:
+        except Exception:
             emote = utils.get(ctx.guild.emojis, name=emoji.replace(" ", "_"))
         embed = Embed(
             description="{} a été renommé en {}".format(str(emote), name),
@@ -1111,12 +1109,12 @@ class Command_Group:
         await ctx.response.defer()
         cmd = Command(ctx.guild)
         embed = Embed()
-        if cmd.list_all_disabled() is None:
+        if cmd.list_all_disabled is None:
             embed.description = "Aucune commande n'est désactivée actuellement"
             embed.color = Color.red()
         else:
             embed.title = "Commandes désactivées :"
-            embed.description = "\n".join(cmd.list_all_disabled())
+            embed.description = "\n".join(cmd.list_all_disabled)
             embed.color = Color.random()
         await ctx.followup.send(embed=embed)
 
@@ -1166,7 +1164,7 @@ class Level_Group:
 
     async def add(self, ctx: Interaction, channel: TextChannel) -> None:
         await ctx.response.defer()
-        if Levelling(server=ctx.guild).check_xpblacklist_channel(channel) == False:
+        if not Levelling(server=ctx.guild).check_xpblacklist_channel(channel):
             await Manage(server=ctx.guild).add_xpblacklist(channel)
             embed = Embed(color=Color.random())
             embed.add_field(
@@ -1182,7 +1180,7 @@ class Level_Group:
 
     async def remove(self, ctx: Interaction, channel: TextChannel) -> None:
         await ctx.response.defer()
-        if Levelling(server=ctx.guild).check_xpblacklist_channel(channel) == False:
+        if not Levelling(server=ctx.guild).check_xpblacklist_channel(channel):
             embed = Embed(color=Color.red())
             embed.description = f"{channel.jump_url} n'est pas blacklisté pour l'XP"
             embed.color = Color.red()

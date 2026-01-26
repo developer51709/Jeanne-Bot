@@ -30,21 +30,17 @@ class stat_buttons(ui.View):
         votetopgg = "https://top.gg/bot/831993597166747679"
         orleans_url = "https://discord.gg/jh7jkuk2pp"
         website = "https://jeannebot.gitbook.io/jeannebot/"
+        self.add_item(ui.Button(style=ButtonStyle.link, label="Invite me", url=invite))
         self.add_item(
-            ui.Button(style=ButtonStyle.link, label="Invitez-moi", url=invite)
+            ui.Button(style=ButtonStyle.link, label="Vote for me", url=votetopgg)
         )
         self.add_item(
-            ui.Button(style=ButtonStyle.link, label="Votez pour moi", url=votetopgg)
-        )
-        self.add_item(
-            ui.Button(
-                style=ButtonStyle.link, label="Serveur de support", url=orleans_url
-            )
+            ui.Button(style=ButtonStyle.link, label="Support Server", url=orleans_url)
         )
         self.add_item(
             ui.Button(
                 style=ButtonStyle.link,
-                label="Site Web de Jeanne",
+                label="Jeanne Website",
                 url=website,
             )
         )
@@ -58,23 +54,23 @@ class Info:
         await ctx.response.defer()
         user = await self.bot.fetch_user(member.id)
         has_roles = [role.mention for role in member.roles][1:][::-1]
-        bot_check = "Oui" if member.bot else "Non"
+        bot_check = "Yes" if member.bot else "No"
         joined_date = round(member.joined_at.timestamp())
         create_date = round(member.created_at.timestamp())
-        userinfo = Embed(title=f"Informations de {member.name}", color=member.color)
-        userinfo.add_field(name="Nom", value=member, inline=True)
-        userinfo.add_field(name="Nom Global", value=member.global_name, inline=True)
+        userinfo = Embed(title=f"{member.name}'s Info", color=member.color)
+        userinfo.add_field(name="Naam", value=member, inline=True)
+        userinfo.add_field(name="Globale Naam", value=member.global_name, inline=True)
         if member.nick != member.global_name:
-            userinfo.add_field(name="Surnom", value=member.nick, inline=True)
+            userinfo.add_field(name="Bijnaam", value=member.nick, inline=True)
         userinfo.add_field(name="ID", value=member.id, inline=True)
-        userinfo.add_field(name="Est un bot ?", value=bot_check, inline=True)
+        userinfo.add_field(name="Is Bot?", value=bot_check, inline=True)
         userinfo.add_field(
-            name="Compte créé", value=f"<t:{create_date}:F>", inline=True
+            name="Account Aangemaakt", value=f"<t:{create_date}:F>", inline=True
         )
         userinfo.add_field(
-            name="Rejoint le serveur", value=f"<t:{joined_date}:F>", inline=True
+            name="Server Toegetreden", value=f"<t:{joined_date}:F>", inline=True
         )
-        userinfo.add_field(name="Nombre de rôles", value=len(member.roles), inline=True)
+        userinfo.add_field(name="Aantal Rollen", value=len(member.roles), inline=True)
         userinfo.set_thumbnail(url=member.display_avatar)
         if user.banner:
             userinfo.set_image(url=user.banner)
@@ -86,34 +82,32 @@ class Info:
 
     async def stats(self, ctx: Interaction, bot_version: str):
         await ctx.response.defer()
-        embed = Embed(title="Statistiques du bot", color=Color.random())
+        embed = Embed(title="Bot statistieken", color=Color.random())
         embed.add_field(
-            name="Développeur",
-            value=f"• **Nom :** {self.bot.application.owner}\n• **ID :** {self.bot.application.owner.id}",
+            name="Ontwikkelaar",
+            value=f"• **Naam:** {self.bot.application.owner}\n• **ID:** {self.bot.application.owner.id}",
             inline=True,
         )
-        embed.add_field(name="ID du bot", value=self.bot.user.id, inline=True)
+        embed.add_field(name="Bot ID", value=self.bot.user.id, inline=True)
         embed.add_field(
-            name="Date de création",
+            name="Aanmaakdatum",
             value="<t:{}:F>".format(round(self.bot.user.created_at.timestamp())),
             inline=True,
         )
         embed.add_field(
-            name="Version",
-            value=f"• **Python :** {py_version.major}.{py_version.minor}.{py_version.micro}\n• **discord.py:** {discord_version}\n• **Bot :** {bot_version}",
+            name="Versie",
+            value=f"• **Python:** {py_version.major}.{py_version.minor}.{py_version.micro}\n• **discord.py:** {discord_version}\n• **Bot:** {bot_version}",
             inline=True,
         )
         embed.add_field(
-            name="Comptes",
-            value=f"• **Nombre de serveurs :** {len(self.bot.guilds)} serveurs\n• **Shards :** {self.bot.shard_count}\n• **Nombre d'utilisateurs :** {len(self.bot.users)}\n• **Membres en cache :** {len(set(self.bot.get_all_members()))}",
+            name="Aantal",
+            value=f"• **Aantal servers:** {len(self.bot.guilds)} servers\n• **Shards:** {self.bot.shard_count}\n• **Aantal gebruikers:** {len(self.bot.users)}\n• **Gecachte leden:** {len(set(self.bot.get_all_members()))}",
             inline=True,
         )
         current_time = time()
         difference = int(round(current_time - start_time))
         uptime = timedelta(seconds=difference).total_seconds()
-        embed.add_field(
-            name="Temps de fonctionnement", value=format_timespan(uptime), inline=True
-        )
+        embed.add_field(name="Uptime", value=format_timespan(uptime), inline=True)
         embed.set_thumbnail(url=self.bot.user.avatar.url)
         await ctx.followup.send(embed=embed, view=stat_buttons())
 
@@ -121,26 +115,24 @@ class Info:
         await ctx.response.defer()
         emojis = [str(x) for x in ctx.guild.emojis]
         humans = len([member for member in ctx.guild.members if not member.bot])
-        bots = len([bot for bot in ctx.guild.members if bot.bot == True])
+        bots = len([bot for bot in ctx.guild.members if bot.bot])
         date = round(ctx.guild.created_at.timestamp())
         serverinfo = Embed(color=Color.random())
         serverinfo.add_field(name="ID", value=ctx.guild.id, inline=True)
         serverinfo.add_field(
-            name="Propriétaire",
-            value=f"• **Nom :** {ctx.guild.owner}\n• **ID :** {ctx.guild.owner_id}",
+            name="Eigenaar",
+            value=f"• **Naam: ** {ctx.guild.owner}\n• ** ID: ** {ctx.guild.owner_id}",
+            inline=True,
+        )
+        serverinfo.add_field(name="Aanmaakdatum", value=f"<t:{date}:F>", inline=True)
+        serverinfo.add_field(
+            name="Leden",
+            value=f"• **Mensen:** {humans}\n• **Bots:** {bots}\n• **Totaal aantal leden:** {ctx.guild.member_count}",
             inline=True,
         )
         serverinfo.add_field(
-            name="Date de création", value=f"<t:{date}:F>", inline=True
-        )
-        serverinfo.add_field(
-            name="Membres",
-            value=f"• **Humains :** {humans}\n• **Bots :** {bots}\n• **Total :** {ctx.guild.member_count}",
-            inline=True,
-        )
-        serverinfo.add_field(
-            name="Statut des boosts",
-            value=f"• **Boosters :** {len(ctx.guild.premium_subscribers)}\n• **Boosts :** {ctx.guild.premium_subscription_count}\n• **Niveau :** {ctx.guild.premium_tier}",
+            name="Boost Status",
+            value=f"• **Boosters:** {len(ctx.guild.premium_subscribers)}\n• **Boosts:** {ctx.guild.premium_subscription_count}\n• **Tier:** {ctx.guild.premium_tier}",
             inline=True,
         )
         verification_level = (
@@ -149,33 +141,33 @@ class Info:
             else None
         )
         serverinfo.add_field(
-            name="Niveau de vérification",
+            name="Verificatieniveau",
             value=verification_level,
             inline=True,
         )
         serverinfo.add_field(
-            name="Comptes",
-            value=f"**Tous les canaux :** {len(ctx.guild.channels)} | **Canaux textuels :** {len(ctx.guild.text_channels)} |  **Canaux vocaux :** {len(ctx.guild.voice_channels)} |  **Canaux de scène :** {len(ctx.guild.stage_channels)} |  **Catégories :** {len(ctx.guild.categories)} |  **Forums :** {len(ctx.guild.forums)} |  **Rôles :** {len(ctx.guild.roles)} | **Émojis :** {len(emojis)} | **Stickers :** {len(ctx.guild.stickers)}",
+            name="Aantal",
+            value=f"**Alle kanalen:** {len(ctx.guild.channels)} | **Tekstkanalen:** {len(ctx.guild.text_channels)} |  **Spraakkanalen:** {len(ctx.guild.voice_channels)} |  **Stage kanalen:** {len(ctx.guild.stage_channels)} |  **Categorieën:** {len(ctx.guild.categories)} |  **Forums:** {len(ctx.guild.forums)} |  **Rollen:** {len(ctx.guild.roles)} | **Emoji's:** {len(emojis)} | **Stickers:** {len(ctx.guild.stickers)}",
             inline=False,
         )
         f = []
         for i in ctx.guild.features:
             f.append(i.replace("_", " ").title())
-        serverinfo.add_field(name="Features", value=" | ".join(f), inline=False)
-        icon = ctx.guild.icon.url if ctx.guild.icon != None else None
+        serverinfo.add_field(name="Functies", value=" | ".join(f), inline=False)
+        icon = ctx.guild.icon.url if ctx.guild.icon is not None else None
         splash = (
             ctx.guild.splash.url
-            if ctx.guild.splash != None and ctx.guild.premium_tier == 1
+            if ctx.guild.splash is not None and ctx.guild.premium_tier == 1
             else None
         )
         serverinfo.set_thumbnail(url=icon)
         serverinfo.set_image(url=splash)
-        serverinfo.set_footer(text=f"ID du shard : {ctx.guild.shard_id}")
+        serverinfo.set_footer(text=f"Shard ID: {ctx.guild.shard_id}")
         if len(emojis) == 0:
             await ctx.followup.send(embed=serverinfo)
             return
         emojie = Embed(
-            title="Émojis", description="".join(emojis[:80]), color=Color.random()
+            title="Emoji's", description="".join(emojis[:80]), color=Color.random()
         )
         e = [serverinfo, emojie]
         await ctx.followup.send(embeds=e)
@@ -183,17 +175,17 @@ class Info:
     async def ping(self, ctx: Interaction):
         await ctx.response.defer()
         start_time = time()
-        test = Embed(description="Test de ping", color=Color.random())
+        test = Embed(description="Ping testen", color=Color.random())
         await ctx.followup.send(embed=test)
         ping = Embed(color=Color.random())
         ping.add_field(
-            name="Latence du bot",
+            name="Bot Latentie",
             value=f"{round(self.bot.latency * 1000)}ms",
             inline=False,
         )
         end_time = time()
         ping.add_field(
-            name="Latence de l'API",
+            name="API Latentie",
             value=f"{round((end_time - start_time) * 1000)}ms",
             inline=False,
         )
@@ -203,18 +195,16 @@ class Info:
         await ctx.response.defer()
         if ctx.guild.premium_subscription_count < 2:
             nobanner = Embed(
-                description="Le serveur n'est pas boosté au niveau 2", color=Color.red()
+                description="Server is niet geboost naar tier 2", color=Color.red()
             )
             await ctx.followup.send(embed=nobanner)
             return
-        if ctx.guild.banner == None:
-            embed = Embed(
-                description="Le serveur n'a pas de bannière", color=Color.red()
-            )
+        if ctx.guild.banner is None:
+            embed = Embed(description="Server heeft geen banner", color=Color.red())
             await ctx.followup.send(embed=embed)
             return
         embed = Embed(colour=Color.random())
-        embed.set_footer(text=f"Bannière de {ctx.guild.name}")
+        embed.set_footer(text=f"{ctx.guild.name}'s banner")
         embed.set_image(url=ctx.guild.banner.url)
         await ctx.followup.send(embed=embed)
 
@@ -226,7 +216,7 @@ class Info:
         embeds = []
 
         normav = Embed(
-            description=f"**Avatar de {member}**",
+            description=f"**Avatar van {member}**",
             color=color,
         )
         normav.set_image(url=member.display_avatar)
@@ -234,7 +224,7 @@ class Info:
 
         if serverav:
             guildav = Embed(
-                description=f"**Avatar serveur de {member}**",
+                description=f"**Server avatar van {member}**",
                 color=color,
             )
             guildav.set_image(url=serverav)
@@ -251,7 +241,7 @@ class Info:
             s: StickerItem = utils.get(ctx.guild.stickers, name=sticker)
             if not s:
                 embed = Embed(
-                    description="Cet autocollant n'existe pas sur le serveur",
+                    description="Deze sticker bestaat niet op de server",
                     color=Color.red(),
                 )
                 await ctx.followup.send(embed=embed)
@@ -259,13 +249,11 @@ class Info:
 
         q = await self.bot.fetch_sticker(s.id)
         embed = Embed(color=Color.random())
-        embed.add_field(name="Nom de l'autocollant", value=q.name, inline=False)
-        embed.add_field(name="ID de l'autocollant", value=q.id, inline=False)
+        embed.add_field(name="Stickernaam", value=q.name, inline=False)
+        embed.add_field(name="Sticker ID", value=q.id, inline=False)
         embed.set_image(url=q.url)
         if "apng" in q.format:
-            embed.add_field(
-                name="URL de l'autocollant animé", value=q.url, inline=False
-            )
+            embed.add_field(name="Geanimeerde sticker URL", value=q.url, inline=False)
         await ctx.followup.send(embed=embed)
 
     async def sticker_error(
@@ -273,14 +261,14 @@ class Info:
     ):
         if type == "NoSticker":
             embed = Embed(
-                description="Aucun autocollant dans ce message",
+                description="Geen sticker in dat bericht",
                 color=Color.red(),
             )
             await ctx.followup.send(embed=embed)
             return
         if type == "StickerNotFound":
             embed = Embed(
-                description="Cet autocollant n'existe pas sur le serveur",
+                description="Deze sticker bestaat niet op de server",
                 color=Color.red(),
             )
             await ctx.followup.send(embed=embed)
@@ -292,20 +280,20 @@ class Info:
             if not emote.id:
                 raise ValueError("Invalid emoji format")
             embed = Embed(color=Color.random())
-            embed.add_field(name="Nom", value=emote.name, inline=False)
+            embed.add_field(name="Naam", value=emote.name, inline=False)
             embed.add_field(name="ID", value=emote.id, inline=False)
             embed.set_image(url=emote.url)
             await ctx.followup.send(embed=embed)
         except ValueError:
             embed = Embed(
-                description="Échec de récupération de l'émoji. Assurez-vous que l'émoji est valide.",
+                description="Emoji ophalen mislukt. Zorg ervoor dat de emoji geldig is.",
                 color=Color.red(),
             )
             await ctx.followup.send(embed=embed)
 
     async def emoji_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
         embed = Embed(
-            description="Échec de récupération de l'émoji",
+            description="Emoji ophalen mislukt",
             color=Color.red(),
         )
         await ctx.followup.send(embed=embed)

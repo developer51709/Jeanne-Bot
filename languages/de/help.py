@@ -16,19 +16,15 @@ class help_button(ui.View):
         orleans_url = "https://discord.gg/jh7jkuk2pp"
         tos_and_policy_url = "https://jeannebot.vercel.app/tos"
         self.add_item(
-            ui.Button(
-                style=ButtonStyle.link, label=("Site Web de Jeanne"), url=wiki_url
-            )
+            ui.Button(style=ButtonStyle.link, label="Jeanne Website", url=wiki_url)
         )
         self.add_item(
-            ui.Button(
-                style=ButtonStyle.link, label=("Serveur de Support"), url=orleans_url
-            )
+            ui.Button(style=ButtonStyle.link, label="Support Server", url=orleans_url)
         )
         self.add_item(
             ui.Button(
                 style=ButtonStyle.link,
-                label=("Conditions d'utilisation et Politique de Confidentialité"),
+                label="ToS en Privacybeleid",
                 url=tos_and_policy_url,
             )
         )
@@ -47,7 +43,7 @@ class HelpGroup:
                 if not isinstance(cmd, Jeanne.Group) and cmd.qualified_name == command
             ),
         )
-        command = cmd["fr"]
+        command = cmd["en"]
         try:
             bot_perms = command["bot_perms"]
         except Exception:
@@ -62,56 +58,44 @@ class HelpGroup:
             nsfw = None
         name = command["name"]
         description = command["description"]
-
-        embed = Embed(
-            title=(f"Aide pour {name}"),
-            description=description,
-            color=Color.random(),
-        )
-
+        embed = Embed(title=f"{name.title()} Help", color=Color.random())
+        embed.description = description
         try:
-
             parms = [
-                f"[{i["name"]}]" if bool(i["required"]) else f"<{i["name"]}>"
+                f"[{i['name']}]" if bool(i["required"]) else f"<{i['name']}>"
                 for i in command["parameters"]
             ]
             descs = [
-                f"`{parm}` - {i["description"]}"
+                f"`{parm}` - {i['description']}"
                 for i, parm in zip(command["parameters"], parms)
             ]
-            embed.add_field(name="Paramètres", value="\n".join(descs), inline=False)
+            embed.add_field(name="Parameters", value="\n".join(descs), inline=False)
         except Exception:
             parms = []
-
         if bot_perms:
-            embed.add_field(name="Permissions de Jeanne", value=bot_perms, inline=True)
+            embed.add_field(name="Jeanne Machtigingen", value=bot_perms, inline=True)
         if member_perms:
             embed.add_field(
-                name="Permissions du Membre", value=member_perms, inline=True
+                name="Gebruiker Machtigingen", value=member_perms, inline=True
             )
         if nsfw:
-            embed.add_field(name="Nécessite un Canal NSFW", value=nsfw, inline=True)
+            embed.add_field(name="Vereist NSFW-kanaal", value=nsfw, inline=True)
 
         cmd_usage = "/" + name + " " + " ".join(parms)
-        embed.add_field(
-            name="Utilisation de la Commande", value=f"`{cmd_usage}`", inline=False
-        )
+        embed.add_field(name="Commando Gebruik", value=f"`{cmd_usage}`", inline=False)
         embed.set_footer(
-            text="Légende:\n[] - Requis\n<> - Optionnel\n\nIl est préférable de visiter les sites web pour des explications et utilisations détaillées"
+            text="Legenda:\n[] - Verplicht\n<> - Optioneel\n\nHet is het beste om naar de websites te gaan voor gedetailleerde uitleg en gebruik"
         )
-
         await ctx.followup.send(embed=embed)
 
     async def command_error(self, ctx: Interaction):
-        embed = Embed(description=("Je n'ai pas cette commande"), color=Color.red())
+        embed = Embed(description="Ik heb dit commando niet", color=Color.red())
         await ctx.followup.send(embed=embed)
 
     async def support(self, ctx: Interaction):
         view = help_button()
         help = Embed(
-            description=(
-                "Cliquez sur l'un des boutons pour ouvrir la documentation ou obtenir de l'aide sur le serveur de support"
-            ),
+            description="Klik op een van de knoppen om de documentatie te openen of hulp te krijgen in de support server",
             color=Color.random(),
         )
         await ctx.response.send_message(embed=help, view=view)

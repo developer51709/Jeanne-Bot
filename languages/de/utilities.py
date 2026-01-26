@@ -52,25 +52,22 @@ class EmbedGroup:
         if not jsonscript:
             await ctx.followup.send(
                 embed=Embed(
-                    description="Fournissez un script ou un fichier JSON. Utilisez [Discohook](https://discohook.app/)"
+                    description="Geef een JSON-script of bestand op. Gebruik [Discohook](https://discohook.app/)"
                 )
             )
             return
-
         json_data = loads(jsonscript)
         content = json_data.get("content", None)
         embeds = [Embed.from_dict(i) for i in json_data.get("embeds", [])]
 
         if len(embeds) > 10:
             await ctx.followup.send(
-                content="Trop d'embeds ! Le maximum est 10.", ephemeral=True
+                content="Te veel embeds! Maximum is 10.", ephemeral=True
             )
             return
 
         message = await channel.send(content=content, embeds=embeds or None)
-        await ctx.followup.send(
-            content=f"{message.jump_url} envoyé dans {channel.mention}"
-        )
+        await ctx.followup.send(content=f"{message.jump_url} verzonden in {channel.mention}")
 
     async def edit(
         self, ctx: Interaction, channel: TextChannel, messageid: str, jsonscript: str
@@ -84,13 +81,13 @@ class EmbedGroup:
 
         if len(embeds) > 10:
             await ctx.followup.send(
-                content="Trop d'embeds ! Le maximum est 10.", ephemeral=True
+                content="Te veel embeds! Maximum is 10.", ephemeral=True
             )
             return
 
         await message.edit(content=content, embeds=embeds or None)
         await ctx.followup.send(
-            content=f"{message.jump_url} modifié dans {channel.mention}"
+            content=f"{message.jump_url} bewerkt in {channel.mention}"
         )
 
     async def edit_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
@@ -108,7 +105,7 @@ class ReminderCog:
         if user_reminders and len(user_reminders) >= 10:
             await ctx.followup.send(
                 embed=Embed(
-                    description="Trop de rappels ! Annulez-en un ou attendez qu'un expire.",
+                    description="Te veel herinneringen! Annuleer er een of wacht tot er een verloopt.",
                     color=Color.red(),
                 ),
                 ephemeral=True,
@@ -122,7 +119,7 @@ class ReminderCog:
         except InvalidTimespan:
             await ctx.followup.send(
                 embed=Embed(
-                    description="Temps invalide ! Utilisez une durée supérieure à 1 minute.",
+                    description="Ongeldige tijd! Gebruik een duur van meer dan 1 minuut.",
                     color=Color.red(),
                 ),
                 ephemeral=True,
@@ -132,14 +129,12 @@ class ReminderCog:
         date = datetime.now() + timedelta(seconds=reminder_time)
         await Reminder(ctx.user).add(reason, round(date.timestamp()))
         embed = Embed(
-            title="Rappel ajouté",
-            description=f"Le <t:{round(date.timestamp())}:F>, je vous rappellerai.",
+            title="Herinnering toegevoegd",
+            description=f"Op <t:{round(date.timestamp())}:F> zal ik je eraan herinneren.",
             color=Color.random(),
         )
-        embed.add_field(name="Raison", value=reason, inline=False)
-        embed.set_footer(
-            text="Assurez-vous que vos MP sont ouverts pour recevoir les alertes."
-        )
+        embed.add_field(name="Reden", value=reason, inline=False)
+        embed.set_footer(text="Zorg dat je DM's open staan om meldingen te ontvangen.")
         await ctx.followup.send(embed=embed, ephemeral=True)
 
     async def add_error(self, ctx: Interaction, error: Jeanne.errors.AppCommandError):
@@ -147,8 +142,8 @@ class ReminderCog:
             error.original, InvalidTimespan
         ):
             embed = Embed(
-                title="Temps invalide",
-                description="Unités de temps supportées : ms, s, m, h, d, w, y.",
+                title="Ongeldige tijd",
+                description="Ondersteunde tijdseenheden: ms, s, m, h, d, w, j.",
                 color=Color.red(),
             )
             await ctx.followup.send(embed=embed, ephemeral=True)
@@ -158,7 +153,7 @@ class ReminderCog:
         embed = Embed()
         reminders = Reminder(ctx.user).get_all_user_reminders
         if reminders is None:
-            embed.description = "Aucun rappel"
+            embed.description = "Geen herinneringen"
         else:
             for i in reminders:
                 ids = i[1]
@@ -166,8 +161,8 @@ class ReminderCog:
                 time = f"<t:{i[2]}:F>"
 
                 embed.add_field(
-                    name=f"ID : {ids}",
-                    value=f"*Rappel :* {reminder}\n*Heure :* {time}",
+                    name=f"ID: {ids}",
+                    value=f"*Herinnering:* {reminder}\n*Tijd:* {time}",
                     inline=True,
                 )
         embed.color = Color.random()
@@ -179,11 +174,11 @@ class ReminderCog:
         embed = Embed()
         if not await reminder.remove(reminder_id):
             embed.color = Color.red()
-            embed.description = "Vous n'avez pas de rappel avec cet ID"
+            embed.description = "Je hebt geen herinnering met dat ID"
             await ctx.followup.send(embed=embed, ephemeral=True)
             return
         embed.color = Color.random()
-        embed.description = "Le rappel `{}` a été supprimé".format(reminder_id)
+        embed.description = "Herinnering `{}` is verwijderd".format(reminder_id)
         await reminder.remove(reminder_id)
         await ctx.followup.send(embed=embed, ephemeral=True)
 
@@ -234,53 +229,53 @@ class Utilities:
             gust = f"{current['gust_kph']}km/h"
             visibility = f"{current['vis_km']}km"
         day1 = Embed(
-            title=f"{emoji_map['globe']} Détails météo de {location['name']}, {location['region']}/{location['country']}",
+            title=f"{emoji_map['globe']} Weerbericht van {location['name']}, {location['region']}/{location['country']}",
             color=Color.random(),
         )
         day1.description = (
-            f"{emoji_map['newspaper']} Condition : {forecast['condition']['text']}"
+            f"{emoji_map['newspaper']} Conditie: {forecast['condition']['text']}"
         )
         day1.add_field(
-            name=f"{emoji_map['min_tempe']} Température minimale",
+            name=f"{emoji_map['min_tempe']} Minimumtemperatuur",
             value=min_temp,
             inline=True,
         )
         day1.add_field(
-            name=f"{emoji_map['max_tempe']} Température maximale",
+            name=f"{emoji_map['max_tempe']} Maximumtemperatuur",
             value=max_temp,
             inline=True,
         )
         day1.add_field(
-            name=f"{emoji_map['clouds']} Nuages",
+            name=f"{emoji_map['clouds']} Wolken",
             value=f"{current['cloud']}%",
             inline=True,
         )
         day1.add_field(
-            name=f"{emoji_map['humidity']} Humidité",
+            name=f"{emoji_map['humidity']} Vochtigheid",
             value=f"{current['humidity']}%",
             inline=True,
         )
         day1.add_field(
-            name=f"{emoji_map['wind_dir']} Direction du vent",
+            name=f"{emoji_map['wind_dir']} Windrichting",
             value=f"{current['wind_degree']}°/{current['wind_dir']}",
             inline=True,
         )
         day1.add_field(
-            name=f"{emoji_map['guste']} Rafale de vent",
+            name=f"{emoji_map['guste']} Windstoot",
             value=gust,
             inline=True,
         )
         day1.add_field(
-            name=f"{emoji_map['visibility']} Visibilité",
+            name=f"{emoji_map['visibility']} Zicht",
             value=visibility,
             inline=True,
         )
         day1.add_field(
-            name=f"{emoji_map['rain_chance']} Risque de pluie",
+            name=f"{emoji_map['rain_chance']} Kans op regen",
             value=f"{forecast['daily_chance_of_rain']}%",
             inline=True,
         )
-        day1.set_footer(text="Données récupérées depuis weatherapi.com")
+        day1.set_footer(text="Opgehaald van weatherapi.com")
         if three_day:
             menu = ViewMenu(
                 ctx,
@@ -291,11 +286,11 @@ class Utilities:
             forecastday2 = weather_data["forecast"]["forecastday"][1]
             forecastday3 = weather_data["forecast"]["forecastday"][2]
             day2 = Embed(
-                title=f"{emoji_map['globe']} Détails météo de {location['name']}, {location['region']}/{location['country']} pour le {forecastday2['date']}",
+                title=f"{emoji_map['globe']} Weerbericht van {location['name']}, {location['region']}/{location['country']} voor {forecastday2['date']}",
                 color=Color.random(),
             )
             day3 = Embed(
-                title=f"{emoji_map['globe']} Détails météo de {location['name']}, {location['region']}/{location['country']} pour le {forecastday3['date']}",
+                title=f"{emoji_map['globe']} Weerbericht van {location['name']}, {location['region']}/{location['country']} voor {forecastday3['date']}",
                 color=Color.random(),
             )
 
@@ -314,51 +309,51 @@ class Utilities:
                 max_temp3 = f"{forecastday3['day']['maxtemp_c']}°C"
                 maxwind3 = f"{forecastday3['day']['maxwind_kph']}km/h"
 
-            day2.description = f"{emoji_map['newspaper']} Condition : {forecastday2['day']['condition']['text']}"
+            day2.description = f"{emoji_map['newspaper']} Conditie: {forecastday2['day']['condition']['text']}"
             day2.add_field(
-                name=f"{emoji_map['min_tempe']} Température minimale",
+                name=f"{emoji_map['min_tempe']} Minimumtemperatuur",
                 value=min_temp2,
                 inline=False,
             )
             day2.add_field(
-                name=f"{emoji_map['max_tempe']} Température maximale",
+                name=f"{emoji_map['max_tempe']} Maximumtemperatuur",
                 value=max_temp2,
                 inline=False,
             )
             day2.add_field(
-                name=f"{emoji_map['guste']} Vent maximum",
+                name=f"{emoji_map['guste']} Maximale wind",
                 value=maxwind2,
                 inline=False,
             )
             day2.add_field(
-                name=f"{emoji_map['rain_chance']} Risque de pluie",
+                name=f"{emoji_map['rain_chance']} Kans op regen",
                 value=f"{forecastday2['day']['daily_chance_of_rain']}%",
                 inline=False,
             )
-            day2.set_footer(text="Données récupérées depuis weatherapi.com")
+            day2.set_footer(text="Opgehaald van weatherapi.com")
 
-            day3.description = f"{emoji_map['newspaper']} Condition : {forecastday3['day']['condition']['text']}"
+            day3.description = f"{emoji_map['newspaper']} Conditie: {forecastday3['day']['condition']['text']}"
             day3.add_field(
-                name=f"{emoji_map['min_tempe']} Température minimale",
+                name=f"{emoji_map['min_tempe']} Minimumtemperatuur",
                 value=min_temp3,
                 inline=False,
             )
             day3.add_field(
-                name=f"{emoji_map['max_tempe']} Température maximale",
+                name=f"{emoji_map['max_tempe']} Maximumtemperatuur",
                 value=max_temp3,
                 inline=False,
             )
             day3.add_field(
-                name=f"{emoji_map['guste']} Vent maximum",
+                name=f"{emoji_map['guste']} Maximale wind",
                 value=maxwind3,
                 inline=False,
             )
             day3.add_field(
-                name=f"{emoji_map['rain_chance']} Risque de pluie",
+                name=f"{emoji_map['rain_chance']} Kans op regen",
                 value=f"{forecastday3['day']['daily_chance_of_rain']}%",
                 inline=False,
             )
-            day3.set_footer(text="Données récupérées depuis weatherapi.com")
+            day3.set_footer(text="Opgehaald van weatherapi.com")
 
             menu.add_page(day1)
             menu.add_page(day2)
@@ -381,14 +376,14 @@ class Utilities:
             reset_hour_time = datetime.now() + timedelta(seconds=error.retry_after)
             reset_hour = round(reset_hour_time.timestamp())
             cooldown = Embed(
-                description=f"WOAH ! Vous avez déjà consulté la météo.\nRéessayez après <t:{reset_hour}:R>",
+                description=f"WOAH! Je hebt het weer al gecontroleerd.\nProbeer het opnieuw na <t:{reset_hour}:R>",
                 color=0xFF0000,
             )
             await ctx.response.send_message(embed=cooldown)
             return
         if error_type == "failed":
             no_city = Embed(
-                description="Impossible d'obtenir les informations météo pour cette ville\nVeuillez noter que les codes postaux ne sont pris en charge que pour le Canada, les États-Unis et le Royaume-Uni pour cette commande.",
+                description="Kon geen weerinformatie ophalen voor deze stad\nLet op: Postcodes worden alleen ondersteund voor Canada, de VS en het VK voor dit commando.",
                 color=Color.red(),
             )
             await ctx.followup.send(embed=no_city)
@@ -403,7 +398,7 @@ class Utilities:
         )
         self.parser.parse(check).evaluate({})
         answer = self.parser.parse(calculate).evaluate({})
-        calculation = Embed(title="Résultat", color=Color.random())
+        calculation = Embed(title="Resultaat", color=Color.random())
         calculation.add_field(name=f"`{calculate}`", value=answer)
         await ctx.followup.send(embed=calculation)
 
@@ -419,15 +414,15 @@ class Utilities:
             return
         if error_type == "failed":
             failed = Embed(
-                description=f"{error}\nVeuillez consulter [Opérateurs Python](https://www.geeksforgeeks.org/python-operators/?ref=lbp) si vous ne savez pas comment utiliser la commande"
+                description=f"{error}\nRaadpleeg [Python Operators](https://www.geeksforgeeks.org/python-operators/?ref=lbp) als je niet weet hoe je het commando moet gebruiken"
             )
             await ctx.followup.send(embed=failed)
 
     async def invite(self, ctx: Interaction):
         await ctx.response.defer()
         invite = Embed(
-            title="Invite-moi !",
-            description="Cliquez sur un de ces boutons pour m'inviter sur votre serveur ou rejoindre le serveur de mon créateur",
+            title="Nodig mij uit!",
+            description="Klik op een van deze knoppen om mij uit te nodigen voor jouw server of om de server van mijn maker te joinen",
             color=Color.random(),
         )
         await ctx.followup.send(embed=invite, view=InviteButton())
@@ -445,7 +440,7 @@ class Utilities:
         if not channel:
             await ctx.response.send_message(
                 embed=Embed(
-                    description="Le salon de confessions n'est pas configuré. Veuillez contacter l'administrateur du serveur.",
+                    description="Bekenteniskanaal is niet ingesteld. Neem contact op met de serverbeheerder.",
                     color=Color.red(),
                 ),
                 ephemeral=True,
@@ -455,20 +450,20 @@ class Utilities:
         confession_id = randint(1, 999999)
         embed = Embed(color=Color.random())
 
-        if anonymous :
-            embed.title = "Confession anonyme"
+        if anonymous:
+            embed.title = "Anonieme Bekentenis"
         else:
-            embed.title = f"Confession de {ctx.user.name}"
+            embed.title = f"Bekentenis van {ctx.user.name}"
 
         embed.description = confession
         embed.set_footer(
-            text=f"ID de confession : {confession_id}\nSi cette confession est inappropriée, veuillez la signaler aux modérateurs avec l'ID de confession via `/reportconfession`. Si la confession est très grave, veuillez la signaler au développeur avec `/botreport` et joindre l'ID de confession."
+            text=f"Bekentenis ID: {confession_id}\nAls deze bekentenis ongepast is, meld dit dan bij de moderators met het Bekentenis ID via `/reportconfession`. Als de bekentenis zeer ernstig is, meld het dan bij de ontwikkelaar met `/botreport` en voeg het Bekentenis ID toe."
         )
         await Confess(ctx.guild).add_confession(ctx.user, confession_id, confession)
         await channel.send(embed=embed)
         await ctx.response.send_message(
             embed=Embed(
-                description=f"Votre confession a été envoyée dans {channel.mention} avec l'ID : {confession_id}",
+                description=f"Je bekentenis is verzonden naar {channel.mention} met ID: {confession_id}",
                 color=Color.green(),
             ),
             ephemeral=True,
@@ -479,35 +474,41 @@ class Utilities:
     ):
         confession = Confess(ctx.guild).get_confession(confession_id)
         modlog = Moderation(ctx.guild).get_modlog_channel
-        if confession is None:
+        if modlog is None:
             await ctx.response.send_message(
                 embed=Embed(
-                    description="Aucune confession trouvée avec cet ID.",
+                    description="Moderatie logkanaal is niet ingesteld. Neem contact op met de serverbeheerders.",
                     color=Color.red(),
                 ),
                 ephemeral=True,
             )
             return
+        if confession is None:
+            await ctx.response.send_message(
+                embed=Embed(
+                    description="Geen bekentenis gevonden met dat ID.", color=Color.red()
+                ),
+                ephemeral=True,
+            )
+            return
         embed = Embed()
-        embed.title = "Signaler une confession"
-        embed.add_field(name="ID de confession", value=confession_id, inline=False)
-        embed.add_field(name="Raison", value=reason, inline=False)
+        embed.title = "Bekentenis rapporteren"
+        embed.add_field(name="Bekentenis ID", value=confession_id, inline=False)
+        embed.add_field(name="Reden", value=reason, inline=False)
+
         await modlog.send(embed=embed)
         await ctx.response.send_message(
             embed=Embed(
-                description=f"La confession avec l'ID : {confession_id} a été signalée aux modérateurs.",
+                description=f"Bekentenis met ID: {confession_id} is gerapporteerd aan de moderators.",
                 color=Color.green(),
             ),
             ephemeral=True,
         )
+    
+    async def chat_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
+        cooldown = Embed(
+            description=f"WOAH! Beruhige dich! Gönn mir eine Pause!\nVersuche es erneut nach `{round(error.retry_after, 2)} Sekunden`",
+            color=Color.red(),
+        )
+        await ctx.followup.send(embed=cooldown)
 
-    async def chat_error(
-        self,
-        ctx: Interaction,
-        error: Jeanne.AppCommandError,
-    ):
-            cooldown = Embed(
-                description=f"WOAH ! Calmez-vous ! Laissez-moi un peu de répit !\nRéessayez après `{round(error.retry_after, 2)} secondes`",
-                color=Color.red(),
-            )
-            await ctx.followup.send(embed=cooldown)

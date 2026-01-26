@@ -63,12 +63,12 @@ class BlackjackView(ui.View):
         hit_button = ui.Button(
             label="Hit" if ctx.locale.value in ["en-GB", "en-US"] else "Tirer",
             style=ButtonStyle.primary,
-            custom_id="blackjack_hit"
+            custom_id="blackjack_hit",
         )
         stand_button = ui.Button(
             label="Stand" if ctx.locale.value in ["en-GB", "en-US"] else "Rester",
             style=ButtonStyle.danger,
-            custom_id="blackjack_stand"
+            custom_id="blackjack_stand",
         )
 
         async def hit_callback(ctx: Interaction):
@@ -82,7 +82,6 @@ class BlackjackView(ui.View):
 
         self.add_item(hit_button)
         self.add_item(stand_button)
-        
 
     def create_embed(self, ctx: Interaction):
         if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
@@ -111,6 +110,19 @@ class BlackjackView(ui.View):
                 inline=False,
             )
             return embed
+        elif ctx.locale.value == "de":
+            embed = Embed(title="Blackjack", color=Color.green())
+            embed.add_field(
+                name="Deine Hand",
+                value=self.hand_value_string(self.player_hand, self.player_value),
+                inline=False,
+            )
+            embed.add_field(
+                name="Hand des Dealers",
+                value=f"**?** (Versteckt, {self.dealer_hand[1][0]}{emoji_map[self.dealer_hand[1][1]]})",
+                inline=False,
+            )
+            return embed
 
     def hand_to_string(self, hand):
         return ", ".join([f"{rank}{emoji_map[suit]}" for rank, suit in hand])
@@ -118,7 +130,6 @@ class BlackjackView(ui.View):
     def hand_value_string(self, hand, value):
         return f"**{value}** ({self.hand_to_string(hand)})"
 
-    
     async def hit(
         self,
         ctx: Interaction,
@@ -128,6 +139,8 @@ class BlackjackView(ui.View):
             self.value = "Hit"
         elif ctx.locale.value == "fr":
             self.value = "Tirer"
+        elif ctx.locale.value == "de":
+            self.value = "Hit"
 
         self.player_hand.append(deal_card(self.deck))
         self.player_value = calculate_hand(self.player_hand)
@@ -141,9 +154,13 @@ class BlackjackView(ui.View):
                 if self.bet:
                     self.embed.description = f"Unfortunately, I have to take away {self.bet} <:quantumpiece:1161010445205905418>"
             elif ctx.locale.value == "fr":
-                self.embed.title = "Vous avez dépassé 21 ! Vous perdez."
+                self.embed.title = "Vous avez dépassé 21! Vous perdez."
                 if self.bet:
                     self.embed.description = f"Malheureusement, je dois retirer {self.bet} <:quantumpiece:1161010445205905418>"
+            elif ctx.locale.value == "de":
+                self.embed.title = "Du hast 21 überschritten! Du verlierst."
+                if self.bet:
+                    self.embed.description = f"Leider muss ich {self.bet} <:quantumpiece:1161010445205905418> abziehen."
             if self.bet:
                 await Currency(ctx.user).remove_qp(self.bet)
             for item in self.children:
@@ -161,7 +178,9 @@ class BlackjackView(ui.View):
         if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
             self.value = "Stand"
         elif ctx.locale.value == "fr":
-            self.value="Rester"
+            self.value = "Rester"
+        elif ctx.locale.value == "de":
+            self.value = "Stehen"
         for item in self.children:
             item.disabled = True
         await ctx.response.edit_message(view=self)
@@ -190,13 +209,7 @@ class BlackjackView(ui.View):
                         f"You have won {self.bet} <:quantumpiece:1161010445205905418>"
                     )
                     await Currency(ctx.user).add_qp(self.bet)
-                    if await self.topggpy.get_user_vote(ctx.user.id) == True:
-                        await Currency(ctx.user).add_qp(round((self.bet * 1.25)))
-                        result_embed.add_field(
-                            name="DiscordBotList Bonus",
-                            value=f"{round((self.bet * 1.25),2)} <:quantumpiece:1161010445205905418>",
-                        )
-                    if await BetaTest(self.bot).check(ctx.user) == True:
+                    if await BetaTest(self.bot).check(ctx.user):
                         await Currency(ctx.user).add_qp(round((self.bet * 1.25)))
                         result_embed.add_field(
                             name="Beta User Bonus",
@@ -207,13 +220,7 @@ class BlackjackView(ui.View):
                         "You have won 20 <:quantumpiece:1161010445205905418>"
                     )
                     await Currency(ctx.user).add_qp(20)
-                    if await self.topggpy.get_user_vote(ctx.user.id) == True:
-                        await Currency(ctx.user).add_qp(round((20 * 1.25)))
-                        result_embed.add_field(
-                            name="DiscordBotList Bonus",
-                            value=f"{round((20 * 1.25),2)} <:quantumpiece:1161010445205905418>",
-                        )
-                    if await BetaTest(self.bot).check(ctx.user) == True:
+                    if await BetaTest(self.bot).check(ctx.user):
                         await Currency(ctx.user).add_qp(round((20 * 1.25)))
                         result_embed.add_field(
                             name="Beta User Bonus",
@@ -240,17 +247,11 @@ class BlackjackView(ui.View):
                 inline=False,
             )
             if self.dealer_value > 21 or self.player_value > self.dealer_value:
-                result_embed.title = "Vous gagnez !"
+                result_embed.title = "Vous gagnez!"
                 if self.bet:
                     result_embed.description = f"Vous avez gagné {self.bet} <:quantumpiece:1161010445205905418>"
                     await Currency(ctx.user).add_qp(self.bet)
-                    if await self.topggpy.get_user_vote(ctx.user.id) == True:
-                        await Currency(ctx.user).add_qp(round((self.bet * 1.25)))
-                        result_embed.add_field(
-                            name="Bonus DiscordBotList",
-                            value=f"{round((self.bet * 1.25),2)} <:quantumpiece:1161010445205905418>",
-                        )
-                    if await BetaTest(self.bot).check(ctx.user) == True:
+                    if await BetaTest(self.bot).check(ctx.user):
                         await Currency(ctx.user).add_qp(round((self.bet * 1.25)))
                         result_embed.add_field(
                             name="Bonus utilisateur bêta",
@@ -261,13 +262,7 @@ class BlackjackView(ui.View):
                         "Vous avez gagné 20 <:quantumpiece:1161010445205905418>"
                     )
                     await Currency(ctx.user).add_qp(20)
-                    if await self.topggpy.get_user_vote(ctx.user.id) == True:
-                        await Currency(ctx.user).add_qp(round((20 * 1.25)))
-                        result_embed.add_field(
-                            name="Bonus DiscordBotList",
-                            value=f"{round((20 * 1.25),2)} <:quantumpiece:1161010445205905418>",
-                        )
-                    if await BetaTest(self.bot).check(ctx.user) == True:
+                    if await BetaTest(self.bot).check(ctx.user):
                         await Currency(ctx.user).add_qp(round((20 * 1.25)))
                         result_embed.add_field(
                             name="Bonus utilisateur bêta",
@@ -275,11 +270,52 @@ class BlackjackView(ui.View):
                         )
                 result_embed.color = Color.green()
             elif self.player_value < self.dealer_value:
-                result_embed.title = "Vous perdez !"
+                result_embed.title = "Vous perdez!"
                 if self.bet:
                     result_embed.description = f"Malheureusement, je dois retirer {self.bet} <:quantumpiece:1161010445205905418>"
                     await Currency(ctx.user).remove_qp(self.bet)
             else:
-                result_embed.title = "Égalité !"
-
+                result_embed.title = "Égalité!"
+        elif ctx.locale.value == "de":
+            result_embed = Embed(title="Blackjack-Ergebnis", color=Color.red())
+            result_embed.add_field(
+                name="Deine Hand",
+                value=self.hand_value_string(self.player_hand, self.player_value),
+                inline=False,
+            )
+            result_embed.add_field(
+                name="Hand des Dealers",
+                value=self.hand_value_string(self.dealer_hand, self.dealer_value),
+                inline=False,
+            )
+            if self.dealer_value > 21 or self.player_value > self.dealer_value:
+                result_embed.title = "Du gewinnst!"
+                if self.bet:
+                    result_embed.description = f"Du hast {self.bet} <:quantumpiece:1161010445205905418> gewonnen."
+                    await Currency(ctx.user).add_qp(self.bet)
+                    if await BetaTest(self.bot).check(ctx.user):
+                        await Currency(ctx.user).add_qp(round((self.bet * 1.25)))
+                        result_embed.add_field(
+                            name="Beta-Benutzer-Bonus",
+                            value=f"{round((self.bet * 1.25))} <:quantumpiece:1161010445205905418>",
+                        )
+                else:
+                    result_embed.description = (
+                        "Du hast 20 <:quantumpiece:1161010445205905418> gewonnen."
+                    )
+                    await Currency(ctx.user).add_qp(20)
+                    if await BetaTest(self.bot).check(ctx.user):
+                        await Currency(ctx.user).add_qp(round((20 * 1.25)))
+                        result_embed.add_field(
+                            name="Beta-Benutzer-Bonus",
+                            value=f"{round((20 * 1.25))} <:quantumpiece:1161010445205905418>",
+                        )
+                result_embed.color = Color.green()
+            elif self.player_value < self.dealer_value:
+                result_embed.title = "Du verlierst!"
+                if self.bet:
+                    result_embed.description = f"Leider muss ich {self.bet} <:quantumpiece:1161010445205905418> abziehen."
+                    await Currency(ctx.user).remove_qp(self.bet)
+            else:
+                result_embed.title = "Unentschieden!"
         await ctx.edit_original_response(embed=result_embed)

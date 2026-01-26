@@ -43,26 +43,26 @@ class moderation():
             reason="{} | {}".format(reason, ctx.user),
             delete_message_seconds=dmh,
         )
-        ban = Embed(title="Utilisateur banni", color=0xFF0000)
-        ban.add_field(name="Nom", value=member, inline=True)
+        ban = Embed(title="Gebruiker verbannen", color=0xFF0000)
+        ban.add_field(name="Naam", value=member, inline=True)
         ban.add_field(name="ID", value=member.id, inline=True)
-        ban.add_field(name="Modérateur", value=ctx.user, inline=True)
-        ban.add_field(name="Raison", value=reason, inline=False)
+        ban.add_field(name="Moderator", value=ctx.user, inline=True)
+        ban.add_field(name="Reden", value=reason, inline=False)
         if time is not None:
             try:
                 a = round(parse_timespan(time))
                 await Moderation(ctx.guild).softban_member(member, a)
                 time = format_timespan(a)
             except Exception:
-                time = "Temps invalide ajouté. L'utilisateur est banni de façon permanente !"
-            ban.add_field(name="Durée", value=time, inline=True)
+                time = "Ongeldige tijd toegevoegd. Gebruiker is permanent verbannen!"
+            ban.add_field(name="Duur", value=time, inline=True)
         ban.set_thumbnail(url=member.display_avatar)
         modlog = Moderation(ctx.guild).get_modlog_channel
         if modlog is None:
             await ctx.edit_original_response(embed=ban, view=None)
             return
         banned = Embed(
-            description=f"{member} a été banni. Vérifiez {modlog.mention}",
+            description=f"{member} is verbannen. Zie {modlog.mention}",
             color=0xFF0000,
         )
         await ctx.edit_original_response(embed=banned, view=None)
@@ -73,7 +73,7 @@ class moderation():
             banned = await ctx.guild.fetch_ban(member)
             if banned:
                 already_banned = Embed(
-                    description=f"{member} est déjà banni ici",
+                    description=f"{member} is hier al verbannen",
                     color=Color.red(),
                 )
                 await ctx.followup.send(embed=already_banned)
@@ -85,20 +85,20 @@ class moderation():
         self,
         ctx: Interaction,
         member: User,
-        reason: Optional[str] = "Non spécifié",
+        reason: Optional[str] = "Ongespecificeerd",
         delete_message_history: Optional[bool] = None,
         time: Optional[str] = None,
     ) -> None:
         await ctx.response.defer()
         if member == ctx.guild.owner:
             failed = Embed(
-                description="Vous ne pouvez pas bannir le propriétaire du serveur...",
+                description="Je kunt de eigenaar van de server niet verbannen...",
                 color=Color.red(),
             )
             await ctx.followup.send(embed=failed)
             return
         if member == ctx.user:
-            failed = Embed(description="Vous ne pouvez pas vous bannir vous-même...", color=Color.red())
+            failed = Embed(description="Je kunt jezelf niet verbannen...", color=Color.red())
             await ctx.followup.send(embed=failed)
             return
 
@@ -106,7 +106,7 @@ class moderation():
             if not await self.check_banned(ctx, member):
                 view = Confirmation(ctx, ctx.user)
                 confirm = Embed(
-                    description="Est-ce que {} est la personne que vous voulez bannir de votre serveur ?".format(
+                    description="Is {} degene die je wilt verbannen van je server?".format(
                         member
                     ),
                     color=Color.dark_red(),
@@ -114,7 +114,7 @@ class moderation():
                 await ctx.followup.send(embed=confirm, view=view)
                 await view.wait()
                 if view.value is None:
-                    cancelled = Embed(description="Bannissement annulé", color=Color.red())
+                    cancelled = Embed(description="Ban geannuleerd", color=Color.red())
                     await ctx.edit_original_response(embed=cancelled, view=None)
                     return
                 if view.value :
@@ -124,12 +124,12 @@ class moderation():
                     return
 
                 if not view.value:
-                    cancelled = Embed(description="Bannissement annulé", color=Color.red())
+                    cancelled = Embed(description="Ban geannuleerd", color=Color.red())
                     await ctx.edit_original_response(embed=cancelled, view=None)
                     return
         if ctx.user.top_role.position < member.top_role.position:
             failed = Embed(
-                description="La position de {} est plus élevée que la vôtre...".format(member),
+                description="De positie van {} is hoger dan die van jou...".format(member),
                 color=Color.red(),
             )
             await ctx.followup.send(embed=failed)
@@ -138,7 +138,7 @@ class moderation():
 
     async def ban_user_error(self, ctx: Interaction):
         embed = Embed()
-        embed.description = "ID utilisateur invalide donné\nVeuillez réessayer"
+        embed.description = "Ongeldige gebruikers-ID opgegeven\nProbeer het opnieuw"
         embed.color = Color.red()
         await ctx.followup.send(embed=embed)
 
@@ -151,35 +151,35 @@ class moderation():
         await ctx.response.defer()
         if ctx.user.top_role.position < member.top_role.position:
             failed = Embed(
-                description="La position de {} est plus élevée que la vôtre...".format(member),
+                description="De positie van {} is hoger dan die van jou...".format(member),
                 color=Color.red(),
             )
             await ctx.followup.send(embed=failed)
             return
         if member == ctx.guild.owner:
             failed = Embed(
-                description="Vous ne pouvez pas avertir le propriétaire du serveur...",
+                description="Je kunt de eigenaar van de server niet waarschuwen...",
                 color=Color.red(),
             )
             await ctx.followup.send(embed=failed)
             return
         if member == ctx.user:
-            failed = Embed(description="Vous ne pouvez pas vous avertir vous-même")
+            failed = Embed(description="Je kunt jezelf niet waarschuwen")
             await ctx.followup.send(embed=failed)
             return
-        reason = reason if reason else "Non spécifié"
+        reason = reason if reason else "Niet gespecificeerd"
         warn_id = randint(0, 100000)
         date = round(datetime.now().timestamp())
         await Moderation(ctx.guild).warn_user(
             member, ctx.user.id, reason, warn_id, date
         )
-        warn = Embed(title="Membre averti", color=0xFF0000)
-        warn.add_field(name="Membre", value=member, inline=True)
+        warn = Embed(title="Lid gewaarschuwd", color=0xFF0000)
+        warn.add_field(name="Lid", value=member, inline=True)
         warn.add_field(name="ID", value=member.id, inline=True)
-        warn.add_field(name="Modérateur", value=ctx.user, inline=True)
-        warn.add_field(name="Raison", value=reason, inline=False)
-        warn.add_field(name="ID d'avertissement", value=warn_id, inline=True)
-        warn.add_field(name="Date", value="<t:{}:F>".format(date), inline=True)
+        warn.add_field(name="Moderator", value=ctx.user, inline=True)
+        warn.add_field(name="Reden", value=reason, inline=False)
+        warn.add_field(name="Waarschuwing ID", value=warn_id, inline=True)
+        warn.add_field(name="Datum", value="<t:{}:F>".format(date), inline=True)
         warn.set_thumbnail(url=member.display_avatar)
         modlog = Moderation(ctx.guild).get_modlog_channel
         if modlog is None:
@@ -187,7 +187,7 @@ class moderation():
             return
 
         warned = Embed(
-            description=f"{member} a été averti. Vérifiez {modlog.mention}",
+            description=f"{member} is gewaarschuwd. Zie {modlog.mention}",
             color=0xFF0000,
         )
         await ctx.followup.send(embed=warned)
@@ -203,7 +203,7 @@ class moderation():
             else Moderation(ctx.guild).fetch_warnings_server
         )
         if record is None:
-            await ctx.followup.send("Personne n'a d'ID d'avertissement")
+            await ctx.followup.send("Niemand heeft waarschuwing-ID's")
             return
 
         menu = ViewMenu(
@@ -215,9 +215,9 @@ class moderation():
         unique_names = set()
         for i in range(0, len(record), 5):
             embed_title = (
-                f"Avertissements de {mem}"
+                f"Waarschuwingen van {mem}"
                 if member is not None
-                else "Membres actuellement avertis"
+                else "Momenteel gewaarschuwde leden"
             )
             embed_color = 0xFF0000 if member else Color.red()
 
@@ -237,16 +237,16 @@ class moderation():
                         unique_names.add(user)
                         embed.add_field(
                             name=f"{user} | {user.id}",
-                            value=f"- **Points :** {points}",
+                            value=f"- **Punten:** {points}",
                             inline=False,
                         )
                 else:
                     embed.add_field(
-                        name=f"**ID d'avertissement :** {warn_id}",
-                        value=f"- **Modérateur :** {mod}\n- **Raison :** {reason}\n- **Date :** {date}",
+                        name=f"**Waarschuwing ID:** {warn_id}",
+                        value=f"- **Moderator:** {mod}\n- **Reden:** {reason}\n- **Datum:** {date}",
                         inline=False,
                     )
-                    embed.set_footer(text=f"Total des points d'avertissement : {points}")
+                    embed.set_footer(text=f"Totaal waarschuwingpunten: {points}")
 
             menu.add_page(embed=embed)
         if len(record) < 5:
@@ -261,7 +261,7 @@ class moderation():
 
     async def listwarns_error(self, ctx: Interaction):
         embed = Embed(
-                description="Ce membre n'a aucun avertissement ou n'existe pas dans ce serveur",
+                description="Dit lid heeft geen waarschuwingen of bestaat niet in deze server",
                 color=Color.red(),
             )
         await ctx.followup.send(embed=embed)
@@ -271,12 +271,12 @@ class moderation():
         mod = Moderation(ctx.guild)
         result = mod.check_warn_id(member, warn_id)
         if result is None:
-            await ctx.followup.send("ID d'avertissement invalide")
+            await ctx.followup.send("Ongeldige waarschuwing ID")
             return
         await mod.revoke_warn(member, warn_id)
         revoked_warn = Embed(
-            title="Avertissement retiré",
-            description=f"{ctx.user} a retiré l'avertissement ID ({warn_id})",
+            title="Waarschuwing verwijderd",
+            description=f"{ctx.user} heeft waarschuwing ID ({warn_id}) ingetrokken",
         )
         modlog = Moderation(ctx.guild).get_modlog_channel
         if modlog is None:
@@ -284,7 +284,7 @@ class moderation():
             return
 
         revoke = Embed(
-            description=f"Avertissement retiré. Vérifiez {modlog.mention}", color=0xFF0000
+            description=f"Waarschuwing ingetrokken. Zie {modlog.mention}", color=0xFF0000
         )
         await modlog.send(embed=revoke)
         await ctx.followup.send(embed=revoked_warn)
@@ -297,41 +297,41 @@ class moderation():
     ) -> None:
         await ctx.response.defer()
         if member == ctx.user:
-            failed = Embed(description="Vous ne pouvez pas vous expulser vous-même")
+            failed = Embed(description="Je kunt jezelf niet kicken")
             await ctx.followup.send(embed=failed)
             return
         if ctx.user.top_role.position < member.top_role.position:
             failed = Embed(
-                description="La position de {} est plus élevée que la vôtre...".format(member),
+                description="De positie van {} is hoger dan die van jou...".format(member),
                 color=Color.red(),
             )
             await ctx.followup.send(embed=failed)
             return
         if member == ctx.guild.owner:
             failed = Embed(
-                description="Vous ne pouvez pas expulser le propriétaire du serveur...",
+                description="Je kunt de eigenaar van de server niet kicken...",
                 color=Color.red(),
             )
             await ctx.followup.send(embed=failed)
             return
         if member == ctx.user:
-            failed = Embed(description="Vous ne pouvez pas vous expulser vous-même")
+            failed = Embed(description="Je kunt jezelf niet kicken")
             await ctx.followup.send(embed=failed)
             return
-        reason = reason if reason else "Non spécifié"
+        reason = reason if reason else "Niet gespecificeerd"
         try:
             kickmsg = Embed(
-                description=f"Vous êtes expulsé de **{ctx.guild.name}** pour **{reason}**"
+                description=f"Je bent gekickt uit **{ctx.guild.name}** voor **{reason}**"
             )
             await member.send(embed=kickmsg)
         except Exception:
             pass
         await ctx.guild.kick(member, reason="{} | {}".format(reason, ctx.user))
-        kick = Embed(title="Membre expulsé", color=0xFF0000)
-        kick.add_field(name="Membre", value=member, inline=True)
+        kick = Embed(title="Lid gekickt", color=0xFF0000)
+        kick.add_field(name="Lid", value=member, inline=True)
         kick.add_field(name="ID", value=member.id, inline=True)
-        kick.add_field(name="Modérateur", value=ctx.user, inline=True)
-        kick.add_field(name="Raison", value=reason, inline=True)
+        kick.add_field(name="Moderator", value=ctx.user, inline=True)
+        kick.add_field(name="Reden", value=reason, inline=True)
         kick.set_thumbnail(url=member.display_avatar)
         modlog = Moderation(ctx.guild).get_modlog_channel
         if modlog is None:
@@ -339,7 +339,7 @@ class moderation():
             return
 
         kicked = Embed(
-            description=f"{member} a été expulsé. Vérifiez {modlog.mention}",
+            description=f"{member} is gekickt. Zie {modlog.mention}",
             color=0xFF0000,
         )
         await modlog.send(embed=kick)
@@ -366,29 +366,29 @@ class moderation():
         self,
         ctx: Interaction,
         member: Member,
-        nickname: Optional[Jeanne.Range[str, 1, 32]],
+        nickname: Optional[str],
     ):
         await ctx.response.defer()
         if (not nickname) or (nickname is None):
             await member.edit(nick=None)
             setnick = Embed(color=0x00FF68)
             setnick.add_field(
-                name="Surnom changé",
-                value=f"Le surnom de {member} a été supprimé",
+                name="Bijnaam gewijzigd",
+                value=f"De bijnaam van {member} is verwijderd",
                 inline=False,
             )
             await ctx.followup.send(embed=setnick)
             return
         if member.nick is None:
             embed = Embed(color=Color.red())
-            embed.description = f"{member} n'a pas de surnom"
+            embed.description = f"{member} heeft geen bijnaam"
             await ctx.followup.send(embed=embed)
             return
         await member.edit(nick=nickname)
         setnick = Embed(color=0x00FF68)
         setnick.add_field(
-            name="Surnom changé",
-            value=f"Le surnom de {member} est maintenant `{nickname}`",
+            name="Bijnaam gewijzigd",
+            value=f"De bijnaam van {member} is nu `{nickname}`",
             inline=False,
         )
         await ctx.followup.send(embed=setnick)
@@ -397,17 +397,17 @@ class moderation():
         self,
         ctx: Interaction,
         user_id: str,
-        reason: Optional[Jeanne.Range[str, None, 470]] = None,
+        reason: Optional[str] = None,
     ) -> None:
         await ctx.response.defer()
-        reason = reason if reason else "Non spécifié"
+        reason = reason if reason else "Ongespecificeerd"
         user = await self.bot.fetch_user(int(user_id))
         await ctx.guild.unban(user, reason="{} | {}".format(reason, ctx.user))
-        unban = Embed(title="Utilisateur débanni", color=0xFF0000)
-        unban.add_field(name="Nom", value=user, inline=True)
+        unban = Embed(title="Gebruiker unbanned", color=0xFF0000)
+        unban.add_field(name="Naam", value=user, inline=True)
         unban.add_field(name="ID", value=user.id, inline=True)
-        unban.add_field(name="Modérateur", value=ctx.user, inline=True)
-        unban.add_field(name="Raison", value=reason, inline=False)
+        unban.add_field(name="Moderator", value=ctx.user, inline=True)
+        unban.add_field(name="Reden", value=reason, inline=False)
         unban.set_thumbnail(url=user.display_avatar)
         modlog = Moderation(ctx.guild).get_modlog_channel
         if modlog is None:
@@ -415,7 +415,7 @@ class moderation():
             return
 
         unbanned = Embed(
-            description=f"{user} a été débanni. Vérifiez {modlog.mention}",
+            description=f"{user} is unbanned. Zie {modlog.mention}",
             color=0xFF0000,
         )
         await ctx.followup.send(embed=unbanned)
@@ -436,14 +436,14 @@ class moderation():
     ) -> None:
         await ctx.response.defer()
         if member == ctx.user:
-            failed = Embed(description="Vous ne pouvez pas vous mettre en timeout")
+            failed = Embed(description="Je kunt jezelf geen timeout geven")
             await ctx.followup.send(embed=failed)
             return
         if member not in ctx.guild.members:
-            failed = Embed(description="Cette personne n'est pas dans ce serveur")
+            failed = Embed(description="Deze persoon is niet in deze server")
             await ctx.followup.send(embed=failed)
             return
-        reason = reason if reason else "Non spécifié"
+        reason = reason if reason else "Niet gespecificeerd"
         if not time or (parse_timespan(time) > 2332800.0):
             time = 2332800.0
         timed = parse_timespan(str(time))
@@ -451,12 +451,12 @@ class moderation():
             timed_out_until=(datetime.now().astimezone() + timedelta(seconds=timed)),
             reason="{} | {}".format(reason, ctx.user),
         )
-        mute = Embed(title="Membre en timeout", color=0xFF0000)
-        mute.add_field(name="Membre", value=member, inline=True)
+        mute = Embed(title="Lid Timeout", color=0xFF0000)
+        mute.add_field(name="Lid", value=member, inline=True)
         mute.add_field(name="ID", value=member.id, inline=True)
-        mute.add_field(name="Modérateur", value=ctx.user, inline=True)
-        mute.add_field(name="Durée", value=format_timespan(timed), inline=True)
-        mute.add_field(name="Raison", value=reason, inline=False)
+        mute.add_field(name="Moderator", value=ctx.user, inline=True)
+        mute.add_field(name="Duur", value=format_timespan(timed), inline=True)
+        mute.add_field(name="Reden", value=reason, inline=False)
         mute.set_thumbnail(url=member.display_avatar)
         modlog = Moderation(ctx.guild).get_modlog_channel
         if modlog is None:
@@ -464,7 +464,7 @@ class moderation():
             return
 
         muted = Embed(
-            description=f"{member} a été mis en timeout. Vérifiez {modlog.mention}",
+            description=f"{member} heeft een timeout gekregen. Zie {modlog.mention}",
             color=0xFF0000,
         )
         await ctx.followup.send(embed=muted)
@@ -472,7 +472,7 @@ class moderation():
 
     async def timeout_error(self, ctx: Interaction):
         embed = Embed()
-        embed.description = "Temps invalide ajouté. Veuillez réessayer"
+        embed.description = "Ongeldige tijd toegevoegd. Probeer het opnieuw"
         embed.color = Color.red()
         await ctx.followup.send(embed=embed)
 
@@ -483,27 +483,27 @@ class moderation():
         reason: Optional[str] = None,
     ) -> None:
         await ctx.response.defer()
-        reason = reason if reason else "Non spécifié"
+        reason = reason if reason else "Ongespecificeerd"
         if member == ctx.user:
             failed = Embed(
-                description="Vous ne pouvez pas vous retirer du timeout", color=Color.red()
+                description="Je kunt jezelf geen timeout verwijderen", color=Color.red()
             )
             await ctx.followup.send(embed=failed)
             return
         if not member.is_timed_out():
             failed = Embed(
-                description="Ce membre n'est pas en timeout", color=Color.red()
+                description="Dit lid heeft geen timeout", color=Color.red()
             )
             await ctx.followup.send(embed=failed)
             return
         await member.edit(
             timed_out_until=None, reason="{} | {}".format(reason, ctx.user)
         )
-        unmute = Embed(title="Utilisateur retiré du timeout", color=0xFF0000)
-        unmute.add_field(name="Utilisateur", value=member, inline=True)
+        unmute = Embed(title="Gebruiker timeout verwijderd", color=0xFF0000)
+        unmute.add_field(name="Gebruiker", value=member, inline=True)
         unmute.add_field(name="ID", value=member.id, inline=True)
-        unmute.add_field(name="Modérateur", value=ctx.user, inline=True)
-        unmute.add_field(name="Raison", value=reason, inline=False)
+        unmute.add_field(name="Moderator", value=ctx.user, inline=True)
+        unmute.add_field(name="Reden", value=reason, inline=False)
         unmute.set_thumbnail(url=member.display_avatar)
         modlog = Moderation(ctx.guild).get_modlog_channel
         if modlog is None:
@@ -511,7 +511,7 @@ class moderation():
             return
 
         unmuted = Embed(
-            description=f"{member} a été retiré du timeout. Vérifiez {modlog.mention}",
+            description=f"{member} heeft geen timeout meer. Zie {modlog.mention}",
             color=0xFF0000,
         )
         await ctx.followup.send(embed=unmuted)
@@ -523,7 +523,7 @@ class moderation():
         ids = list(map(int, ids_str))
         if len(ids) < 5:
             embed = Embed(
-                description=f"Il y a trop peu d'IDs. Veuillez en ajouter plus et réessayer après <t:{round((datetime.now() + timedelta(minutes=30)).timestamp())}:R>"
+                description=f"Er zijn te weinig ID's. Voeg er meer toe en probeer het opnieuw na <t:{round((datetime.now() + timedelta(minutes=30)).timestamp())}:R>"
             )
             await ctx.followup.send(embed=embed)
             return
@@ -538,26 +538,26 @@ class moderation():
             and user_id != guild_owner_id
         ]
         if not to_ban_ids:
-            embed = Embed(description="Aucun utilisateur ne peut être banni.", color=Color.red())
+            embed = Embed(description="Geen gebruikers kunnen worden verbannen.", color=Color.red())
             await ctx.followup.send(embed=embed)
             return
         view = Confirmation(ctx, ctx.user)
         alert = Embed(
-            title="Utilisateurs trouvés :",
+            title="Gevonden gebruikers:",
             description="\n".join(
                 [f"{self.bot.get_user(i).global_name}" for i in to_ban_ids]
             ),
             color=Color.red(),
         )
         alert.set_footer(
-            text="ATTENTION : Le développeur n'est **PAS** responsable de quelque manière que ce soit si vous faites une erreur, même en cas de mauvaise utilisation.\n\nVoulez-vous continuer ?"
+            text="LET OP: De ontwikkelaar is **NIET** op welke manier dan ook verantwoordelijk als je een fout maakt, zelfs niet bij misbruik.\n\nWil je doorgaan?"
         )
         await ctx.followup.send(embed=alert, view=view)
         await view.wait()
         if view.value :
 
             em = Embed(
-                description="Bannissement des utilisateurs en cours <a:loading:1161038734620373062>",
+                description="Gebruikers worden nu verbannen <a:loading:1161038734620373062>",
                 color=Color.red(),
             )
             to_ban: list[User] = []
@@ -572,7 +572,7 @@ class moderation():
 
             if len(ban_results) > 0:
                 embed = Embed(
-                    title="Liste des utilisateurs bannis",
+                    title="Lijst van verbannen gebruikers",
                     color=Color.red(),
                 )
                 banned_users = []
@@ -580,19 +580,19 @@ class moderation():
                     u = await self.bot.fetch_user(i.id)
                     banned_users.append(f"{u.global_name} | `{i.id}`")
                 embed.description = "\n".join(banned_users)
-                embed.add_field(name="Raison", value=reason, inline=False)
+                embed.add_field(name="Reden", value=reason, inline=False)
                 if ban_results.failed:
                     failed_banned_users = []
                     for i in ban_results.failed:
                         u = await self.bot.fetch_user(i.id)
                         failed_banned_users.append(f"{u.global_name} | `{i.id}`")
                     embed.add_field(
-                        name="Échec du bannissement",
+                        name="Niet gelukt te verbannen",
                         value="\n".join(failed_banned_users),
                         inline=False,
                     )
             else:
-                embed = Embed(description="Aucun utilisateur n'a été banni.", color=Color.red())
+                embed = Embed(description="Geen gebruikers zijn verbannen.", color=Color.red())
             modlog = Moderation(ctx.guild).get_modlog_channel
             if modlog is None:
                 await ctx.edit_original_response(embed=embed)
@@ -600,20 +600,20 @@ class moderation():
 
             await ctx.edit_original_response(
                 embed=Embed(
-                    description=f"Successfully banned {len(ban_results.banned)} user(s). Check {modlog.mention}",
+                    description=f"Succesvol {len(ban_results.banned)} gebruiker(s) verbannen. Zie {modlog.mention}",
                     color=Color.red(),
                 )
             )
             await modlog.send(embed=embed)
         elif (not view.value) or (view.value is None):
-            cancelled = Embed(description="Massban annulé", color=Color.red())
+            cancelled = Embed(description="Massaban geannuleerd", color=Color.red())
             await ctx.edit_original_response(embed=cancelled, view=None)
 
     async def massban_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
         reset_hour_time = datetime.now() + timedelta(seconds=error.retry_after)
         reset_hour = round(reset_hour_time.timestamp())
         cooldown = Embed(
-                description=f"Une commande de bannissement massif a déjà été utilisée ici dans ce serveur.\nRéessayez après <t:{reset_hour}:R>",
+                description=f"Een massaban-commando is hier al gebruikt in deze server.\nProbeer het opnieuw na <t:{reset_hour}:R>",
                 color=0xFF0000,
             )
         await ctx.response.send_message(embed=cooldown)
@@ -623,7 +623,7 @@ class moderation():
         ids = user_ids.split()[:25]
         if len(ids) < 5:
             embed = Embed(
-                description=f"Il y a trop peu d'IDs. Veuillez en ajouter plus et réessayer après <t:{round((datetime.now() + timedelta(minutes=30)).timestamp())}:R>"
+                description=f"Er zijn te weinig ID's. Voeg er meer toe en probeer het opnieuw na <t:{round((datetime.now() + timedelta(minutes=30)).timestamp())}:R>"
             )
             await ctx.followup.send(embed=embed)
             return
@@ -638,20 +638,20 @@ class moderation():
             and user_id != str(guild_owner_id)
         ]
         if not to_ban_ids:
-            embed = Embed(description="Aucun utilisateur ne peut être débanni.", color=Color.red())
+            embed = Embed(description="Geen gebruikers kunnen worden unbanned.", color=Color.red())
             await ctx.followup.send(embed=embed)
             return
         view = Confirmation(ctx, ctx.user)
         alert = Embed(
-            title="ATTENTION",
-            description="Le développeur n'est **PAS** responsable de quelque manière que ce soit si vous faites une erreur, même en cas de mauvaise utilisation.\n\nVoulez-vous continuer ?",
+            title="LET OP",
+            description="De ontwikkelaar is **NIET** op welke manier dan ook verantwoordelijk als je een fout maakt, zelfs niet bij misbruik.\n\nWil je doorgaan?",
             color=Color.red(),
         )
         await ctx.followup.send(embed=alert, view=view)
         await view.wait()
         if view.value :
             em = Embed(
-                description="Débannissement des utilisateurs en cours <a:loading:1161038734620373062>",
+                description="Gebruikers worden nu unbanned <a:loading:1161038734620373062>",
                 color=Color.red(),
             )
             await ctx.edit_original_response(embed=em, view=None)
@@ -670,19 +670,19 @@ class moderation():
                     continue
             if unban_count > 0:
                 embed = Embed(
-                    title="Liste des utilisateurs débannis",
+                    title="Lijst van unbanned gebruikers",
                     color=Color.red(),
                 )
                 embed.description = "\n".join(unbanned)
-                embed.add_field(name="Raison", value=reason, inline=False)
+                embed.add_field(name="Reden", value=reason, inline=False)
                 if failed_ids:
                     embed.add_field(
-                        name="Échec du débannissement",
+                        name="Niet gelukt te unbannen",
                         value="\n".join(failed_ids),
                         inline=False,
                     )
             else:
-                embed = Embed(description="Aucun utilisateur n'a été débanni.", color=Color.red())
+                embed = Embed(description="Geen gebruikers zijn unbanned.", color=Color.red())
             modlog = Moderation(ctx.guild).get_modlog_channel
             if modlog is None:
                 await ctx.edit_original_response(embed=embed)
@@ -690,20 +690,20 @@ class moderation():
 
             await ctx.edit_original_response(
                 embed=Embed(
-                    description=f"Successfully unbanned {unban_count} user(s). Check {modlog.mention}",
+                    description=f"Succesvol {unban_count} gebruiker(s) unbanned. Zie {modlog.mention}",
                     color=Color.red(),
                 )
             )
             await modlog.send(embed=embed)
         elif (not view.value) or (view.value is None):
-            cancelled = Embed(description="Massunban annulé", color=Color.red())
+            cancelled = Embed(description="Massunban geannuleerd", color=Color.red())
             await ctx.edit_original_response(embed=cancelled, view=None)
 
     async def massunban_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
         reset_hour_time = datetime.now() + timedelta(seconds=error.retry_after)
         reset_hour = round(reset_hour_time.timestamp())
         cooldown = Embed(
-                description=f"Une commande de débannissement massif a déjà été utilisée ici dans ce serveur.\nRéessayez après <t:{reset_hour}:R>",
+                description=f"Een massunban-commando is hier al gebruikt in deze server.\nProbeer het opnieuw na <t:{reset_hour}:R>",
                 color=0xFF0000,
             )
         await ctx.response.send_message(embed=cooldown)

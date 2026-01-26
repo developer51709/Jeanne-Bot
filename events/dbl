@@ -1,7 +1,7 @@
 import aiohttp
 from functions import BetaTest, Currency, Levelling, DevPunishment
 from config import DB_AUTH, TOPGG, TOPGG_AUTH
-from topgg import DBLClient, WebhookManager
+from topgg import DBLClient, WebhookManager, WebhookType, WebhookEndpoint, BotVoteData
 from discord.ext import tasks
 from discord.ext.commands import Cog, Bot
 from datetime import datetime
@@ -11,13 +11,24 @@ class DBL(Cog, name="DBL"):
     def __init__(self, bot: Bot):
         self.bot = bot
         self.topggpy = DBLClient(
-            bot=self.bot, token=TOPGG, autopost=True, post_shard_count=True
+            token=TOPGG)
+        self.autopost=(
+            self.topggpy.set_data(bot).autopost()
+            .on_success(lambda: print(f"Posted server and shard count ({len(self.bot.guilds)}, {self.bot.shard_count}) at {datetime.now().strftime('%H:%M')}"))
         )
-        self.topgg_webhook = WebhookManager(self.bot).dbl_webhook(
-            route="/dblwebhook", auth_key=TOPGG_AUTH
-        )
-        self.topgg_webhook.run(5000)
-        self.update_stats.start()
+        #self.autopost_error = self.topggpy.autopost().on_error(
+       #     lambda exc: print(f"Failed to post stats\n{exc.__class__.__name__}: {exc}")
+       # )
+       
+
+    webhook_manager = WebhookManager()
+    endpoint = (
+    WebhookEndpoint()
+    .type(WebhookType.BOT)
+    .route("/dblwebhook")
+    .auth(TOPGG_AUTH)
+    )
+
 
     @tasks.loop(minutes=60, reconnect=True)
     async def update_stats(self):
@@ -45,8 +56,8 @@ class DBL(Cog, name="DBL"):
     async def before_update_stats(self):
         await self.bot.wait_until_ready()
 
-    @Cog.listener()
-    async def on_dbl_vote(self, data: dict):
+    @endpoint.callback()
+    async def on_vote(self, data: BotVoteData):
         if data["type"] != "upvote":
             return
 
@@ -66,6 +77,8 @@ class DBL(Cog, name="DBL"):
 
         await Currency(voter).add_qp(credits)
         await Levelling(voter).add_xp(xp)
+
+    webhook_manager.endpoint(endpoint)
 
 
 async def setup(bot: Bot):

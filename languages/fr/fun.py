@@ -121,3 +121,74 @@ class fun():
             embed.set_image(url="https://i.imgur.com/tYAbWCl.jpg")
         await ctx.followup.send(embed=embed)
 
+
+    async def roast(self, ctx: Interaction, member: Optional[Member] = None):
+        await ctx.response.defer()
+        member = member if member else ctx.user
+        ROASTS = [
+            "a la confiance de quelqu’un qui n’a jamais eu tort — malgré des preuves accablantes",
+            "écrit « lol » avec un visage totalement neutre",
+            "pourrait trébucher sur un téléphone sans fil",
+            "est l’équivalent humain d’un écran de chargement",
+            "apporte une cuillère à un combat au couteau",
+            "se perdrait dans un couloir à sens unique",
+            "a une énergie de personnage principal mais des dialogues de PNJ",
+            "dégage des vibes de « j’ai pas lu les instructions »",
+            "est la preuve que le mode pilote automatique existe chez les humains",
+            "a le temps de réaction d’Internet Explorer",
+            "se disputerait avec un panneau STOP et perdrait quand même",
+            "a la personnalité d’un poulet sans assaisonnement",
+            "pense que « gaslight » est une marque de cuisinière",
+            "ne pourrait pas verser de l’eau hors d’une botte même avec les instructions sur le talon",
+            "a l’air du genre à applaudir quand l’avion atterrit",
+            "a des pensées en Wi-Fi mais une exécution en modem 56k",
+            "est la raison pour laquelle les travaux de groupe sont stressants",
+            "fonctionne uniquement aux vibes, sans aucune pensée critique",
+            "a la palette émotionnelle d’une petite cuillère",
+            "appuierait deux fois sur le bouton de l’ascenseur comme si ça aidait",
+            "dégage une grosse énergie de « fais-moi confiance frérot »",
+            "est le boss final des mauvaises décisions",
+            "écrit des paragraphes entiers pour ne rien dire",
+            "a la conscience de son environnement d’une pomme de terre",
+            "oublierait son propre anniversaire",
+            "est littéralement construit comme un personnage placeholder",
+            "pense que les céréales sont une soupe et défend cette opinion",
+            "a l’ambition mais pas les compétences",
+            "est allergique au bon sens",
+            "se ferait ratio dans la vraie vie",
+            "a l’énergie d’un micro coupé",
+            "pourrait rater une tâche avec un seul bouton",
+            "fonctionne avec 2 % de batterie et de mauvais choix",
+            "a la confiance d’un homme qui ne peut pas être humilié",
+            "est la preuve que l’évolution prend parfois des pauses",
+            "n’apporte rien à la table mais mange quand même",
+            "a l’énergie d’une quête secondaire oubliée",
+            "perdrait un concours de regard contre un mur",
+            "a l’icône de chargement activée en permanence dans le cerveau",
+            "pense que « BRB » est un engagement à long terme",
+            "est la version humaine d’une faute de frappe",
+            "ne trouverait pas d’eau dans l’océan",
+            "a le charisme d’une chaussette humide",
+            "est en bons termes avec les mauvaises décisions",
+            "a la capacité d’attention d’un poisson rouge sur TikTok",
+            "se ferait bannir d’un mode solo",
+            "a toujours tort, mais avec confiance",
+            "a les vibes d’un protège-écran fissuré",
+            "a l’air du genre à dire « vous aussi » quand le serveur dit bon appétit",
+            "est construit comme une note de mise à jour que personne n’a demandée",
+            "mal orthographierait son propre nom",
+            "dégage une grosse énergie de « j’ai atteint mon pic dans le tutoriel »",
+            "existe uniquement pour faire baisser la moyenne",
+            "a l’intelligence émotionnelle d’un grille-pain",
+            "se disputerait avec Google Maps",
+            "est un trou scénaristique ambulant",
+            "a l’énergie d’un groupe de discussion mort",
+            "est la raison pour laquelle les boutons « êtes-vous sûr ? » existent",
+        ]
+        embed = Embed(color=Color.random())
+        if member:
+            roast = f"{member} est le genre de personne qui {choice(ROASTS)}"
+        else:
+            roast = f"Tu es le genre de personne qui {choice(ROASTS)}"
+        embed.description = roast
+        await ctx.followup.send(embed=embed)

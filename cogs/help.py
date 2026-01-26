@@ -6,6 +6,7 @@ from discord.ext.commands import GroupCog, Bot
 from functions import AutoCompleteChoices, check_botbanned_app_command, is_suspended
 import languages.en.help as en
 import languages.fr.help as fr
+import languages.de.help as de
 from discord.app_commands import locale_str as T
 
 
@@ -15,15 +16,15 @@ class HelpGroup(GroupCog, name=T("help_group_name")):
 
     @Jeanne.command(
         name=T("command_name"),
-        description=T("command_desc"),
+        description=T("help_command_desc"),
         extras={
             "en": {
                 "name": "help command",
-                "description": "Get help with a command",
+                "description": "Get help on a certain command",
                 "parameters": [
                     {
                         "name": "command",
-                        "description": "Get help on a certain command",
+                        "description": "Which command you need help with?",
                         "required": True,
                     }
                 ],
@@ -34,7 +35,18 @@ class HelpGroup(GroupCog, name=T("help_group_name")):
                 "parameters": [
                     {
                         "name": "commande",
-                        "description": "Obtenez de l'aide sur une certaine commande",
+                        "description": "Avec quelle commande avez-vous besoin d'aide?",
+                        "required": True,
+                    }
+                ],
+            },
+            "de": {
+                "name": "hilfe befehl",
+                "description": "Holen Sie sich Hilfe zu einem bestimmten Befehl",
+                "parameters": [
+                    {
+                        "name": "befehl",
+                        "description": "Mit welchem Befehl benötigen Sie Hilfe?",
                         "required": True,
                     }
                 ],
@@ -48,10 +60,12 @@ class HelpGroup(GroupCog, name=T("help_group_name")):
     @Jeanne.check(is_suspended)
     async def command(self, ctx: Interaction, command: Jeanne.Range[str, 3]):
         if ctx.locale.value == "fr":
-            await fr.HelpGroup(self.bot).command(ctx, command)        
-        else:
-            await en.HelpGroup(self.bot).command(ctx, command)
-
+            await fr.HelpGroup(self.bot).command(ctx, command)  
+            return
+        if ctx.locale.value == "de":
+            await de.HelpGroup(self.bot).command(ctx, command)
+            return
+        await en.HelpGroup(self.bot).command(ctx, command)
 
     @command.error
     async def command_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
@@ -59,10 +73,12 @@ class HelpGroup(GroupCog, name=T("help_group_name")):
             error.original, IndexError
         ):
             if ctx.locale.value == "fr":
-                await fr.HelpGroup(self.bot).command_error(ctx)            
-            else:
-                await en.HelpGroup(self.bot).command_error(ctx)
-
+                await fr.HelpGroup(self.bot).command_error(ctx)
+                return
+            if ctx.locale.value == "de":
+                await de.HelpGroup(self.bot).command_error(ctx)
+                return
+            await en.HelpGroup(self.bot).command_error(ctx)
 
     @Jeanne.command(
         name=T("support_name"),
@@ -76,16 +92,22 @@ class HelpGroup(GroupCog, name=T("help_group_name")):
                 "name": "aide",
                 "description": "Besoin d'aide? Visitez le site web ou rejoignez le serveur pour plus d'assistance.",
             },
+            "de": {
+                "name": "unterstützung",
+                "description": "Brauchen Sie Hilfe? Besuchen Sie die Website oder treten Sie dem Server bei, um weitere Unterstützung zu erhalten.",
+            },
         },
     )
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(is_suspended)
     async def support(self, ctx: Interaction):
         if ctx.locale.value == "fr":
-            await fr.HelpGroup(self.bot).support(ctx)        
-        else:
-            await en.HelpGroup(self.bot).support(ctx)
-
+            await fr.HelpGroup(self.bot).support(ctx)
+            return
+        if ctx.locale.value == "de":
+            await de.HelpGroup(self.bot).support(ctx)
+            return
+        await en.HelpGroup(self.bot).support(ctx)
 
 
 async def setup(bot: Bot):

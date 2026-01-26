@@ -9,6 +9,7 @@ from typing import Optional
 from discord.app_commands import locale_str as T
 import languages.en.reactions as en
 import languages.fr.reactions as fr
+import languages.de.reactions as de
 
 
 class SlashReactions(Cog, name="ReactionsSlash"):
@@ -41,11 +42,22 @@ class SlashReactions(Cog, name="ReactionsSlash"):
                     }
                 ],
             },
+            "de": {
+                "name": "umarmen",
+                "description": "Umarmen Sie jemanden oder sich selbst",
+                "parameters": [
+                    {
+                        "name": "mitglied",
+                        "description": "Wen umarmen Sie?",
+                        "required": False,
+                    }
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("hug_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def hug(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -53,6 +65,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).hug(ctx, member)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).hug(ctx, member)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).hug(ctx, member)
 
     @Jeanne.command(
         name=T("slap_name"),
@@ -80,11 +94,22 @@ class SlashReactions(Cog, name="ReactionsSlash"):
                     }
                 ],
             },
+            "de": {
+                "name": "schlagen",
+                "description": "Schlagen Sie jemanden oder sich selbst",
+                "parameters": [
+                    {
+                        "name": "mitglied",
+                        "description": "Wen schlagen Sie?",
+                        "required": False,
+                    }
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("slap_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def slap(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -92,6 +117,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).slap(ctx, member)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).slap(ctx, member)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).slap(ctx, member)
 
     @Jeanne.command(
         name=T("smug_name"),
@@ -106,6 +133,10 @@ class SlashReactions(Cog, name="ReactionsSlash"):
                 "description": "Affichez une expression suffisante",
                 
             },
+            "de": {
+                "name": "smug",
+                "description": "Zeigen Sie einen selbstzufriedenen Ausdruck",
+            },
         },
     )
     @Jeanne.check(is_suspended)
@@ -116,6 +147,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).smug(ctx)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).smug(ctx)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).smug(ctx)
 
     @Jeanne.command(
         name=T("poke_name"),
@@ -143,11 +176,22 @@ class SlashReactions(Cog, name="ReactionsSlash"):
                     }
                 ],
             },
+            "de": {
+                "name": "stoßen",
+                "description": "Stoßen Sie jemanden oder sich selbst",
+                "parameters": [
+                    {
+                        "name": "mitglied",
+                        "description": "Wen schubsen Sie?",
+                        "required": False,
+                    }
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("poke_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def poke(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -155,6 +199,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).poke(ctx, member)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).poke(ctx, member)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).poke(ctx, member)
 
     @Jeanne.command(
         name=T("pat_name"),
@@ -182,11 +228,22 @@ class SlashReactions(Cog, name="ReactionsSlash"):
                     }
                 ],
             },
+            "de": {
+                "name": "streicheln",
+                "description": "Streicheln Sie jemanden oder sich selbst",
+                "parameters": [
+                    {
+                        "name": "mitglied",
+                        "description": "Wen streicheln Sie?",
+                        "required": False,
+                    }
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("pat_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def pat(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -194,6 +251,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).pat(ctx, member)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).pat(ctx, member)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).pat(ctx, member)
 
     @Jeanne.command(
         name=T("kiss_name"),
@@ -221,11 +280,22 @@ class SlashReactions(Cog, name="ReactionsSlash"):
                     }
                 ],
             },
+            "de": {
+                "name": "küssen",
+                "description": "Küssen Sie jemanden oder sich selbst",
+                "parameters": [
+                    {
+                        "name": "mitglied",
+                        "description": "Wen küssen Sie?",
+                        "required": False,
+                    }
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("kiss_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def kiss(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -233,6 +303,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).kiss(ctx, member)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).kiss(ctx, member)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).kiss(ctx, member)
 
     @Jeanne.command(
         name=T("tickle_name"),
@@ -260,11 +332,22 @@ class SlashReactions(Cog, name="ReactionsSlash"):
                     }
                 ],
             },
+            "de": {
+                "name": "kitzeln",
+                "description": "Kitzeln Sie jemanden oder sich selbst",
+                "parameters": [
+                    {
+                        "name": "mitglied",
+                        "description": "Wen kitzeln Sie?",
+                        "required": False,
+                    }
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("tickle_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def tickle(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -272,9 +355,10 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).tickle(ctx, member)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).tickle(ctx, member)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).tickle(ctx, member)
 
     @Jeanne.command(
-        name=T("baka_name"),
         description=T("baka_desc"),
         extras={
             "en": {
@@ -299,11 +383,22 @@ class SlashReactions(Cog, name="ReactionsSlash"):
                     }
                 ],
             },
+            "de": {
+                "name": "baka",
+                "description": "Bezeichnen Sie jemanden oder sich selbst als baka!",
+                "parameters": [
+                    {
+                        "name": "mitglied",
+                        "description": "Wen bezeichnen Sie als baka?",
+                        "required": False,
+                    }
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("baka_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def baka(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -311,6 +406,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).baka(ctx, member)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).baka(ctx, member)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).baka(ctx, member)
 
     @Jeanne.command(
         name=T("feed_name"),
@@ -338,11 +435,22 @@ class SlashReactions(Cog, name="ReactionsSlash"):
                     }
                 ],
             },
+            "de": {
+                "name": "füttern",
+                "description": "Füttern Sie jemanden oder sich selbst",
+                "parameters": [
+                    {
+                        "name": "mitglied",
+                        "description": "Wen füttern Sie?",
+                        "required": False,
+                    }
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("feed_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def feed(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -350,6 +458,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).feed(ctx, member)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).feed(ctx, member)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).feed(ctx, member)
 
     @Jeanne.command(
         name=T("cry_name"),
@@ -357,11 +467,15 @@ class SlashReactions(Cog, name="ReactionsSlash"):
         extras={
             "en": {
                 "name": "cry",
-                "description": "Show a crying expression",
+                "description": "Make yourself cry",
             },
             "fr": {
                 "name": "pleurer",
                 "description": "Affichez une expression de pleurs",
+            },
+            "de": {
+                "name": "weinen",
+                "description": "Lassen Sie sich weinen",
             },
         },
     )
@@ -373,6 +487,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).cry(ctx)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).cry(ctx)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).cry(ctx)
 
     @Jeanne.command(
         name=T("bite_name"),
@@ -400,11 +516,22 @@ class SlashReactions(Cog, name="ReactionsSlash"):
                     }
                 ],
             },
+            "de": {
+                "name": "beißen",
+                "description": "Beißen Sie jemanden oder sich selbst",
+                "parameters": [
+                    {
+                        "name": "mitglied",
+                        "description": "Wen beißen Sie?",
+                        "required": False,
+                    }
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("bite_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def bite(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -412,6 +539,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).bite(ctx, member)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).bite(ctx, member)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).bite(ctx, member)
 
     @Jeanne.command(
         name=T("blush_name"),
@@ -425,6 +554,10 @@ class SlashReactions(Cog, name="ReactionsSlash"):
                 "name": "rougir",
                 "description": "Affichez une expression rougissante",
             },
+            "de": {
+                "name": "erröten",
+                "description": "Zeigen Sie einen errötenden Ausdruck",
+            },
         },
     )
     @Jeanne.check(is_suspended)
@@ -435,6 +568,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).blush(ctx)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).blush(ctx)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).blush(ctx)
 
     @Jeanne.command(
         name=T("cuddle_name"),
@@ -462,11 +597,22 @@ class SlashReactions(Cog, name="ReactionsSlash"):
                     }
                 ],
             },
+            "de": {
+                "name": "kuscheln",
+                "description": "Kuscheln Sie mit jemandem oder sich selbst",
+                "parameters": [
+                    {
+                        "name": "mitglied",
+                        "description": "Mit wem kuscheln Sie?",
+                        "required": False,
+                    }
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("cuddle_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def cuddle(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -474,6 +620,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).cuddle(ctx, member)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).cuddle(ctx, member)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).cuddle(ctx, member)
 
     @Jeanne.command(
         name=T("dance_name"),
@@ -501,11 +649,22 @@ class SlashReactions(Cog, name="ReactionsSlash"):
                     }
                 ],
             },
+            "de": {
+                "name": "tanzen",
+                "description": "Tanzen Sie mit jemandem oder sich selbst",
+                "parameters": [
+                    {
+                        "name": "mitglied",
+                        "description": "Mit wem tanzen Sie?",
+                        "required": False,
+                    }
+                ],
+            },
         },
     )
     @Jeanne.check(is_suspended)
     @Jeanne.rename(member=T("member_parm_name"))
-    @Jeanne.describe(member=T("member_parm_desc"))
+    @Jeanne.describe(member=T("dance_member_parm_desc"))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
     async def dance(self, ctx: Interaction, member: Optional[Member] = None) -> None:
@@ -513,6 +672,8 @@ class SlashReactions(Cog, name="ReactionsSlash"):
             await en.Reactions(self.bot).dance(ctx, member)
         elif ctx.locale.value == "fr":
             await fr.Reactions(self.bot).dance(ctx, member)
+        elif ctx.locale.value == "de":
+            await de.Reactions(self.bot).dance(ctx, member)
 
 
 async def setup(bot: Bot):

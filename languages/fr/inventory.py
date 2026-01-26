@@ -120,7 +120,7 @@ class Background_Group():
         image = await Profile(self.bot).generate_profile(ctx,
             ctx.user, link, True, True, "southafrica"
         )
-        if image == False:
+        if not image:
             size_error = Embed(
                 description="L'image est inférieure à la taille 900x500.\nVeuillez agrandir l'image et réessayer"
             )
@@ -138,7 +138,7 @@ class Background_Group():
                 text="Veuillez noter que si le fond d'écran personnalisé enfreint les CGU ou est NSFW, il sera supprimé SANS REMBOURSEMENT !"
             )
         )
-        view = Confirmation(ctx.user)
+        view = Confirmation(ctx, ctx.user)
         await ctx.edit_original_response(embed=preview, attachments=[file], view=view)
         await view.wait()
         if view.value:

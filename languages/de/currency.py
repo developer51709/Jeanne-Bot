@@ -34,7 +34,7 @@ class vote_button(ui.View):
         )
 
 
-class Guess_Group:
+class Guess_Group():
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
         self.topggpy = DBLClient(bot=self.bot, token=TOPGG)
@@ -44,7 +44,7 @@ class Guess_Group:
         await ctx.response.defer()
         await ctx.followup.send(
             embed=Embed(
-                description="Guess my number by clicking on one of the buttons below",
+                description="Raad mijn nummer door op een van de onderstaande knoppen te klikken",
                 color=Color.random(),
             ),
             view=view,
@@ -54,22 +54,23 @@ class Guess_Group:
         if view.value == answer:
             await Currency(ctx.user).add_qp(20)
             correct = Embed(
-                description="YES! YOU GUESSED IT CORRECTLY!\nYou have been given 20 <:quantumpiece:1161010445205905418>!",
+                description="JA! JE HEBT HET GOED GERADEN!\nJe hebt 20 <:quantumpiece:1161010445205905418> ontvangen!",
                 color=Color.random(),
             )
-
+            
             if await BetaTest(self.bot).check(ctx.user):
-                await Currency(ctx.user).add_qp(round((20 * 1.25), 2))
-                correct.add_field(
-                    name="Beta User Bonus",
-                    value=f"{round((20 * 1.25),2)} <:quantumpiece:1161010445205905418>",
-                )
+                    await Currency(ctx.user).add_qp(round((20 * 1.25), 2))
+                    correct.add_field(
+                        name="Beta Gebruiker Bonus",
+                        value=f"{round((20 * 1.25),2)} <:quantumpiece:1161010445205905418>",
+                    )
             correct.set_image(url="https://files.catbox.moe/phqnb1.gif")
             await ctx.edit_original_response(embed=correct, view=None)
             return
-        wrong = Embed(description=f"Wrong answer. It was {answer}", color=Color.red())
+        wrong = Embed(description=f"Fout antwoord. Het was {answer}", color=Color.red())
         wrong.set_image(url="https://files.catbox.moe/mbk0nm.jpg")
         await ctx.edit_original_response(embed=wrong, view=None)
+
 
     async def bet(
         self,
@@ -80,20 +81,20 @@ class Guess_Group:
         balance = Currency(ctx.user).get_balance
         if bet > balance:
             betlower = Embed(
-                description=f"Your balance is too low!\nPlease bet lower than {balance} <:quantumpiece:1161010445205905418>"
+                description=f"Je saldo is te laag!\nZet minder dan {balance} <:quantumpiece:1161010445205905418> in"
             )
             await ctx.followup.send(embed=betlower)
             return
         if balance == 0:
             zerobal = Embed(
-                description="Unfortunately, you have 0 <:quantumpiece:1161010445205905418>."
+                description="Helaas heb je 0 <:quantumpiece:1161010445205905418>."
             )
             await ctx.followup.send(embed=zerobal)
             return
         view = Guess_Buttons(ctx.user)
         await ctx.followup.send(
             embed=Embed(
-                description="Guess my number by clicking on one of the buttons below",
+                description="Raad mijn nummer door op een van de onderstaande knoppen te klikken",
                 color=Color.random(),
             ),
             view=view,
@@ -103,45 +104,46 @@ class Guess_Group:
         if view.value == answer:
             await Currency(ctx.user).add_qp(bet)
             correct = Embed(
-                description=f"YES! YOU GUESSED IT CORRECTLY!\nYou have been given {bet} <:quantumpiece:1161010445205905418>!",
+                description=f"JA! JE HEBT HET GOED GERADEN!\nJe hebt {bet} <:quantumpiece:1161010445205905418> ontvangen!",
                 color=Color.random(),
             )
-
+            
+            
             if await BetaTest(self.bot).check(ctx.user):
-                await Currency(ctx.user).add_qp(round((bet * 1.25), 2))
-                correct.add_field(
-                    name="Beta User Bonus",
-                    value=f"{round((bet * 1.25),2)} <:quantumpiece:1161010445205905418>",
-                )
+                    await Currency(ctx.user).add_qp(round((bet * 1.25), 2))
+                    correct.add_field(
+                        name="Beta Gebruiker Bonus",
+                        value=f"{round((bet * 1.25),2)} <:quantumpiece:1161010445205905418>",
+                    )
             correct.set_image(url="https://files.catbox.moe/phqnb1.gif")
             await ctx.followup.send(embed=correct, view=view)
             return
         await Currency(ctx.user).remove_qp(bet)
         wrong = Embed(
-            description=f"Wrong answer. It was {answer}\nAfraid I have to take {bet} <:quantumpiece:1161010445205905418> from you...",
+            description=f"Fout antwoord. Het was {answer}\nHelaas moet ik {bet} <:quantumpiece:1161010445205905418> van je afnemen...",
             color=Color.red(),
         )
         wrong.set_image(url="https://files.catbox.moe/mbk0nm.jpg")
         await ctx.followup.send(embed=wrong)
 
     async def free_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
-        reset_hour_time = datetime.now() + timedelta(seconds=error.retry_after)
-        reset_hour = round(reset_hour_time.timestamp())
-        cooldown = Embed(
-            description=f"You have already used your free chance\nTry again after <t:{reset_hour}:R>",
-            color=Color.red(),
-        )
-        await ctx.response.send_message(embed=cooldown)
+            reset_hour_time = datetime.now() + timedelta(seconds=error.retry_after)
+            reset_hour = round(reset_hour_time.timestamp())
+            cooldown = Embed(
+                description=f"Je hebt je gratis kans al gebruikt\nProbeer het opnieuw na <t:{reset_hour}:R>",
+                color=Color.red(),
+            )
+            await ctx.response.send_message(embed=cooldown)
 
     async def bet_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
-        cooldown = Embed(
-            description=f"WOAH! Calm down!\nTry again after `{round(error.retry_after, 2)} seconds`",
-            color=Color.red(),
-        )
-        await ctx.response.send_message(embed=cooldown)
+            cooldown = Embed(
+                description=f"WOAH! Rustig aan!\nProbeer het opnieuw na `{round(error.retry_after, 2)} seconden`",
+                color=Color.red(),
+            )
+            await ctx.response.send_message(embed=cooldown)
 
 
-class Dice_Group:
+class Dice_Group():
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
         self.topggpy = DBLClient(bot=self.bot, token=TOPGG)
@@ -151,7 +153,7 @@ class Dice_Group:
         view = Dice_Buttons(ctx.user)
         await ctx.followup.send(
             embed=Embed(
-                description="What do you think the dice will roll?",
+                description="Wat denk je dat de dobbelsteen zal gooien?",
                 color=Color.random(),
             ),
             view=view,
@@ -164,34 +166,39 @@ class Dice_Group:
             await Currency(ctx.user).add_qp(20)
             embed = Embed(color=Color.random())
             embed.add_field(
-                name="YAY! You got it!\n20 <:quantumpiece:1161010445205905418> has been added",
-                value=f"Dice rolled: **{rolled}**\nYou guessed: **{view.value}**!",
+                name="YAY! Je hebt het goed!\nEr is 20 <:quantumpiece:1161010445205905418> toegevoegd",
+                value=f"De dobbelsteen gooide: **{rolled}**\nJij gokte: **{view.value}**!",
                 inline=False,
             )
             await ctx.edit_original_response(embed=embed, view=None)
             return
-        embed = Embed(description=f"Oh no. It rolled a **{rolled}**", color=Color.red())
+        embed = Embed(description=f"Oh nee. Het werd een **{rolled}**", color=Color.red())
         await ctx.edit_original_response(embed=embed, view=None)
 
-    async def bet(self, ctx: Interaction, bet: int):
+
+    async def bet(
+        self,
+        ctx: Interaction,
+        bet: int
+    ):
         await ctx.response.defer()
         balance = Currency(ctx.user).get_balance
         if bet > balance:
             betlower = Embed(
-                description=f"Your balance is too low!\nPlease bet lower than {balance} <:quantumpiece:1161010445205905418>"
+                description=f"Je saldo is te laag!\nZet minder dan {balance} <:quantumpiece:1161010445205905418> in"
             )
             await ctx.followup.send(embed=betlower)
             return
         if balance == 0:
             zerobal = Embed(
-                description="Unfortunately, you have 0 <:quantumpiece:1161010445205905418>."
+                description="Helaas heb je 0 <:quantumpiece:1161010445205905418>."
             )
             await ctx.followup.send(embed=zerobal)
             return
         view = Dice_Buttons(ctx.user)
         await ctx.followup.send(
             embed=Embed(
-                description="What do you think the dice will roll?",
+                description="Wat denk je dat de dobbelsteen zal gooien?",
                 color=Color.random(),
             ),
             view=view,
@@ -204,42 +211,45 @@ class Dice_Group:
             await Currency(ctx.user).add_qp(bet)
             embed = Embed(color=Color.random())
             embed.add_field(
-                name=f"YAY! You got it!\n{bet} <:quantumpiece:1161010445205905418> has been added",
-                value=f"Dice rolled: **{rolled}**\nYou guessed: **{view.value}**!",
+                name=f"YAY! Je hebt het goed!\nEr is {bet} <:quantumpiece:1161010445205905418> toegevoegd",
+                value=f"De dobbelsteen gooide: **{rolled}**\nJij gokte: **{view.value}**!",
                 inline=False,
             )
+            
+            
 
             if await BetaTest(self.bot).check(ctx.user):
-                await Currency(ctx.user).add_qp(round((bet * 1.25), 2))
-                embed.add_field(
-                    name="Beta User Bonus",
-                    value=f"{round((bet * 1.25),2)} <:quantumpiece:1161010445205905418>",
-                )
+                    await Currency(ctx.user).add_qp(round((bet * 1.25), 2))
+                    embed.add_field(
+                        name="Beta Gebruiker Bonus",
+                        value=f"{round((bet * 1.25),2)} <:quantumpiece:1161010445205905418>",
+                    )
             await ctx.edit_original_response(embed=embed, view=None)
             return
         await Currency(ctx.user).remove_qp(bet)
         embed = Embed(color=Color.red())
-        embed = Embed(description=f"Oh no. It rolled a **{rolled}**", color=Color.red())
+        embed = Embed(description=f"Oh nee. Het werd een **{rolled}**", color=Color.red())
         await ctx.edit_original_response(embed=embed, view=None)
 
+
     async def free_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
-        reset_hour_time = datetime.now() + timedelta(seconds=error.retry_after)
-        reset_hour = round(reset_hour_time.timestamp())
-        cooldown = Embed(
-            description=f"You have already used your free chance\nTry again after <t:{reset_hour}:R>",
-            color=Color.red(),
-        )
-        await ctx.response.send_message(embed=cooldown)
+            reset_hour_time = datetime.now() + timedelta(seconds=error.retry_after)
+            reset_hour = round(reset_hour_time.timestamp())
+            cooldown = Embed(
+                description=f"Je hebt je gratis kans al gebruikt\nProbeer het opnieuw na <t:{reset_hour}:R>",
+                color=Color.red(),
+            )
+            await ctx.response.send_message(embed=cooldown)
 
     async def bet_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
-        cooldown = Embed(
-            description=f"WOAH! Calm down!\nTry again after `{round(error.retry_after, 2)} seconds`",
-            color=Color.red(),
-        )
-        await ctx.response.send_message(embed=cooldown)
+            cooldown = Embed(
+                description=f"WOAH! Rustig aan!\nProbeer het opnieuw na `{round(error.retry_after, 2)} seconden`",
+                color=Color.red(),
+            )
+            await ctx.response.send_message(embed=cooldown)
 
 
-class Flip_Group:
+class Flip_Group():
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
         super().__init__()
@@ -256,31 +266,34 @@ class Flip_Group:
         if view.value == jeannes_pick:
             await Currency(ctx.user).add_qp(20)
             embed = Embed(
-                description="YAY! You got it!\n20 <:quantumpiece:1161010445205905418> has been added",
+                description="YAY! Je hebt het goed!\n20 <:quantumpiece:1161010445205905418> is toegevoegd",
                 color=Color.random(),
             )
+            
+            await Currency(ctx.user).add_qp(round((20 * 1.25), 2))
 
             if await BetaTest(self.bot).check(ctx.user):
-                await Currency(ctx.user).add_qp(round((20 * 1.25), 2))
-                embed.add_field(
-                    name="Beta User Bonus",
-                    value=f"{round((20 * 1.25),2)} <:quantumpiece:1161010445205905418>",
-                )
+                    await Currency(ctx.user).add_qp(round((20 * 1.25), 2))
+                    embed.add_field(
+                        name="Beta Gebruiker Bonus",
+                        value=f"{round((20 * 1.25),2)} <:quantumpiece:1161010445205905418>",
+                    )
             await ctx.edit_original_response(embed=embed, view=None)
             return
         if view.value != jeannes_pick:
             embed = Embed(color=Color.red())
             embed = Embed(
-                description="Oh no, it was {}".format(jeannes_pick),
+                description="Oh nee, het was {}".format(jeannes_pick),
                 color=Color.red(),
             )
             await ctx.edit_original_response(embed=embed, view=None)
             return
         timeout = Embed(
-            description=f"Sorry but you took too long. It was {jeannes_pick}",
+            description=f"Sorry maar je deed er te lang over. Het was {jeannes_pick}",
             color=Color.red(),
         )
         await ctx.edit_original_response(embed=timeout, view=None)
+
 
     async def bet(self, ctx: Interaction, bet: int):
         await ctx.response.defer()
@@ -289,13 +302,13 @@ class Flip_Group:
         balance = Currency(ctx.user).get_balance
         if balance < bet:
             betlower = Embed(
-                description=f"Your balance is too low!\nPlease bet lower than {balance} <:quantumpiece:1161010445205905418>"
+                description=f"Je saldo is te laag!\nZet minder dan {balance} <:quantumpiece:1161010445205905418> in"
             )
             await ctx.followup.send(embed=betlower)
             return
         if balance == 0:
             zerobal = Embed(
-                description="Unfortunately, you have 0 <:quantumpiece:1161010445205905418>."
+                description="Helaas heb je 0 <:quantumpiece:1161010445205905418>."
             )
             await ctx.followup.send(embed=zerobal)
             return
@@ -306,24 +319,26 @@ class Flip_Group:
         if view.value == jeannes_pick:
             await Currency(ctx.user).add_qp(bet)
             embed = Embed(
-                description="YAY! You got it!\n{} <:quantumpiece:1161010445205905418> has been added".format(
+                description="YAY! Je hebt het goed!\n{} <:quantumpiece:1161010445205905418> is toegevoegd".format(
                     bet
                 )
             )
+            
+            
 
             if await BetaTest(self.bot).check(ctx.user):
-                await Currency(ctx.user).add_qp(round((bet * 1.25), 2))
-                embed.add_field(
-                    name="Beta User Bonus",
-                    value=f"{round((bet * 1.25),2)} <:quantumpiece:1161010445205905418>",
-                )
+                    await Currency(ctx.user).add_qp(round((bet * 1.25), 2))
+                    embed.add_field(
+                        name="Beta Gebruiker Bonus",
+                        value=f"{round((bet * 1.25),2)} <:quantumpiece:1161010445205905418>",
+                    )
             await ctx.edit_original_response(embed=embed, view=None)
             return
         if view.value != jeannes_pick:
             await Currency(ctx.user).remove_qp(int(bet))
             embed = Embed(color=Color.red())
             embed = Embed(
-                description="Oh no, it was {}\nI'm afraid that I have to take {} <:quantumpiece:1161010445205905418> from you".format(
+                description="Oh nee, het was {}\nHet spijt me, maar ik moet {} <:quantumpiece:1161010445205905418> van je afnemen".format(
                     jeannes_pick, bet
                 ),
                 color=Color.red(),
@@ -331,29 +346,30 @@ class Flip_Group:
             await ctx.edit_original_response(embed=embed, view=None)
             return
         timeout = Embed(
-            description=f"Sorry but you took too long. It was {jeannes_pick}",
+            description=f"Sorry maar je deed er te lang over. Het was {jeannes_pick}",
             color=Color.red(),
         )
         await ctx.edit_original_response(embed=timeout, view=None)
 
     async def free_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
-        reset_hour_time = datetime.now() + timedelta(seconds=error.retry_after)
-        reset_hour = round(reset_hour_time.timestamp())
-        cooldown = Embed(
-            description=f"You have already used your free chance\nTry again after <t:{reset_hour}:R>",
-            color=Color.red(),
-        )
-        await ctx.response.send_message(embed=cooldown)
+            reset_hour_time = datetime.now() + timedelta(seconds=error.retry_after)
+            reset_hour = round(reset_hour_time.timestamp())
+            cooldown = Embed(
+                description=f"Je hebt je gratis kans al gebruikt\nProbeer het opnieuw na <t:{reset_hour}:R>",
+                color=Color.red(),
+            )
+            await ctx.response.send_message(embed=cooldown)
+
 
     async def bet_error(self, ctx: Interaction, error: Jeanne.errors.AppCommandError):
-        cooldown = Embed(
-            description=f"WOAH! Calm down!\nTry again after `{round(error.retry_after, 2)} seconds`",
-            color=Color.red(),
-        )
-        await ctx.response.send_message(embed=cooldown)
+            cooldown = Embed(
+                description=f"WOAH! Rustig aan!\nProbeer het opnieuw na `{round(error.retry_after, 2)} seconden`",
+                color=Color.red(),
+            )
+            await ctx.response.send_message(embed=cooldown)
 
 
-class Blackjack_Group:
+class Blackjack_Group():
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
@@ -381,7 +397,7 @@ class Blackjack_Group:
 
         if view.value is None:
             timeout = Embed(
-                description="Sorry but you took too long. Please try again",
+                description="Sorry maar je deed er te lang over. Probeer het opnieuw",
                 color=Color.red(),
             )
             await ctx.edit_original_response(embed=timeout, view=None)
@@ -391,13 +407,13 @@ class Blackjack_Group:
         balance = Currency(ctx.user).get_balance
         if balance < bet:
             betlower = Embed(
-                description=f"Your balance is too low!\nPlease bet lower than {balance} <:quantumpiece:1161010445205905418>"
+                description=f"Je saldo is te laag!\nZet minder dan {balance} <:quantumpiece:1161010445205905418> in"
             )
             await ctx.followup.send(embed=betlower)
             return
         if balance == 0:
             zerobal = Embed(
-                description="Unfortunately, you have 0 <:quantumpiece:1161010445205905418>."
+                description="Helaas heb je 0 <:quantumpiece:1161010445205905418>."
             )
             await ctx.followup.send(embed=zerobal)
             return
@@ -423,7 +439,7 @@ class Blackjack_Group:
 
         if view.value is None:
             timeout = Embed(
-                description="Sorry but you took too long. Please try again",
+                description="Sorry maar je deed er te lang over. Probeer het opnieuw",
                 color=Color.red(),
             )
             await ctx.edit_original_response(embed=timeout, view=None)
@@ -432,40 +448,40 @@ class Blackjack_Group:
         reset_hour_time = datetime.now() + timedelta(seconds=error.retry_after)
         reset_hour = round(reset_hour_time.timestamp())
         cooldown = Embed(
-            description=f"You have already used your free chance\nTry again after <t:{reset_hour}:R>",
+            description=f"Je hebt je gratis kans al gebruikt\nProbeer het opnieuw na <t:{reset_hour}:R>",
             color=Color.red(),
         )
         await ctx.response.send_message(embed=cooldown)
 
     async def bet_error(self, ctx: Interaction, error: Jeanne.errors.AppCommandError):
         cooldown = Embed(
-            description=f"WOAH! Calm down!\nTry again after `{round(error.retry_after, 2)} seconds`",
+            description=f"WOAH! Rustig aan!\nProbeer het opnieuw na `{round(error.retry_after, 2)} seconden`",
             color=Color.red(),
         )
         await ctx.response.send_message(embed=cooldown)
 
 
-class currency:
+class currency():
     def __init__(self, bot: Bot):
         self.bot = bot
 
     async def balance_callback_error(self, ctx: Interaction, error: Exception):
-        cooldown = Embed(
-            description=f"WOAH! Calm down! Why keep checking again quickly?\nTry again after `{round(error.retry_after, 2)} seconds`",
-            color=Color.red(),
-        )
-        await ctx.response.send_message(embed=cooldown)
+            cooldown = Embed(
+                description=f"WOAH! Rustig aan! Waarom blijf je zo snel controleren?\nProbeer het opnieuw na `{round(error.retry_after, 2)} seconden`",
+                color=Color.red(),
+            )
+            await ctx.response.send_message(embed=cooldown)
 
     async def get_balance(self, ctx: Interaction, member: Member):
         await ctx.response.defer()
         bal = Currency(member).get_balance
         balance = Embed(
-            description=f"{'You' if (member == ctx.user) else member} have {bal} <:quantumpiece:1161010445205905418>",
+            description=f"{'Je' if (member == ctx.user) else member} heeft {bal} <:quantumpiece:1161010445205905418>",
             color=Color.blue(),
         )
         balance.add_field(
-            name="If you want more <:quantumpiece:1161010445205905418>:",
-            value="[Vote for me in TopGG](https://top.gg/bot/831993597166747679/vote)",
+            name="Als je meer wilt <:quantumpiece:1161010445205905418>:",
+            value="[Stem op mij in TopGG](https://top.gg/bot/831993597166747679/vote)",
             inline=True,
         )
         await ctx.followup.send(embed=balance)
@@ -478,16 +494,16 @@ class currency:
             await bank.give_daily()
             daily = Embed(
                 title="Daily",
-                description=f"**{ctx.user}**, you claimed your daily reward.",
+                description=f"**{ctx.user}**, je hebt je dagelijkse beloning opgeëist.",
                 color=Color.random(),
             )
             check_beta = await BetaTest(self.bot).check(ctx.user)
             is_weekend = datetime.today().weekday() >= 5
-            rewards_text = "Rewards (weekend):" if is_weekend else "Rewards:"
+            rewards_text = "Beloningen (weekend):" if is_weekend else "Beloningen:"
             rewards_value = (
-                "You received 200 <:quantumpiece:1161010445205905418>"
+                "Je hebt 200 <:quantumpiece:1161010445205905418> ontvangen"
                 if is_weekend
-                else "You received 100 <:quantumpiece:1161010445205905418>"
+                else "Je hebt 100 <:quantumpiece:1161010445205905418> ontvangen"
             )
             bonus_text = "Beta Bonus (weekend)" if is_weekend else "Beta Bonus"
             bonus_value = (
@@ -506,14 +522,14 @@ class currency:
                     value=bonus_value,
                 )
             daily.add_field(
-                name="Balance",
+                name="Saldo",
                 value=f"{bank.get_balance} <:quantumpiece:1161010445205905418>",
             )
-            daily.add_field(name="Next Daily:", value=f"<t:{tomorrow}:f>")
+            daily.add_field(name="Volgende Daily:", value=f"<t:{tomorrow}:f>")
             await ctx.followup.send(embed=daily)
         else:
             cooldown = Embed(
-                description=f"You have already claimed your daily.\nYour next claim is <t:{bank.check_daily}:R>",
+                description=f"Je hebt je dagelijkse beloning al opgeëist.\nJe volgende claim is <t:{bank.check_daily}:R>",
                 color=Color.red(),
             )
             await ctx.followup.send(embed=cooldown)
@@ -521,101 +537,104 @@ class currency:
     async def balance_error(
         self, ctx: Interaction, error: Jeanne.errors.AppCommandError
     ):
-        cooldown = Embed(
-            description=f"WOAH! Calm down! Why keep checking again quickly?\nTry again after `{round(error.retry_after, 2)} seconds`",
-            color=Color.red(),
-        )
-        await ctx.response.send_message(embed=cooldown)
+            cooldown = Embed(
+                description=f"WOAH! Rustig aan! Waarom blijf je zo snel controleren?\nProbeer het opnieuw na `{round(error.retry_after, 2)} seconden`",
+                color=Color.red(),
+            )
+            await ctx.response.send_message(embed=cooldown)
 
     async def vote(self, ctx: Interaction):
         embed = Embed(
             color=Color.random(),
-            description="You can vote for me by clicking one of the buttons below to get the following perks:",
+            description="Je kunt op mij stemmen door op een van de onderstaande knoppen te klikken om de volgende voordelen te krijgen:",
         )
         topgg_perks = """
 - 100 QP
-- 5XP times their global level
-- - Rewards are double on weekends
+- 5XP keer hun wereldwijde niveau
+- - Beloningen zijn dubbel in het weekend
 """
-        embed.add_field(name="Voting perks", value=topgg_perks, inline=True)
+        embed.add_field(name="Stemvoordelen", value=topgg_perks, inline=True)
         await ctx.response.send_message(
             embed=embed,
             view=vote_button(),
         )
 
     async def slots(self, ctx: Interaction, bet: int):
-        await ctx.response.defer()
-        embed = Embed(color=Color.random())
+            await ctx.response.defer()
+            embed = Embed(color=Color.random())
 
-        emojis = (
-            ["🍒"] * 60 
-            + ["🍋"] * 25
-            + ["🍉"] * 10 
-            + ["🔔"] * 4 
-            + ["⭐"] * 1 
-            + ["💎"] * 0 
-        )
-
-        def spin_symbol():
-            if randint(1, 2000) == 1: 
-                return "💎"
-            return choice(emojis)
-
-        def spin_grid():
-            return [spin_symbol() for _ in range(9)]
-
-        def format_grid(grid):
-            return (
-                f"{grid[0]} {grid[1]} {grid[2]}\n"
-                f"{grid[3]} {grid[4]} {grid[5]}  ⬅️\n"
-                f"{grid[6]} {grid[7]} {grid[8]}"
+            emojis = (
+                ["🍒"] * 60 
+                + ["🍋"] * 25
+                + ["🍉"] * 10 
+                + ["🔔"] * 4 
+                + ["⭐"] * 1 
+                + ["💎"] * 0 
             )
 
-        grid = spin_grid()
-        embed.description = f"🎰 **SLOTS**\n{format_grid(grid)}\n\nSpinning..."
-        await ctx.edit_original_response(embed=embed)
+            def spin_symbol():
+                if randint(1, 2000) == 1: 
+                    return "💎"
+                return choice(emojis)
 
-        for _ in range(8):
-            await asyncio.sleep(0.45)
+            def spin_grid():
+                return [spin_symbol() for _ in range(9)]
+
+            def format_grid(grid):
+                return (
+                    f"{grid[0]} {grid[1]} {grid[2]}\n"
+                    f"{grid[3]} {grid[4]} {grid[5]}  ⬅️\n"
+                    f"{grid[6]} {grid[7]} {grid[8]}"
+                )
+
             grid = spin_grid()
-            embed.color = Color.random()
-            embed.description = f"🎰 **SLOTS**\n{format_grid(grid)}\n\nSpinning..."
+            # "Am Drehen..." means "Spinning..."
+            embed.description = f"🎰 **SPIELAUTOMAT**\n{format_grid(grid)}\n\nAm Drehen..."
             await ctx.edit_original_response(embed=embed)
 
-        await asyncio.sleep(0.6)
-        final_grid = spin_grid()
-        middle = final_grid[3:6]  
+            for _ in range(8):
+                await asyncio.sleep(0.45)
+                grid = spin_grid()
+                embed.color = Color.random()
+                embed.description = f"🎰 **SPIELAUTOMAT**\n{format_grid(grid)}\n\nAm Drehen..."
+                await ctx.edit_original_response(embed=embed)
 
-        payout = bet
-        result_text = f"💀 You lost **{bet}** <:quantumpiece:1161010445205905418>."
-        await Currency(ctx.user).remove_qp(bet)
+            await asyncio.sleep(0.6)
+            final_grid = spin_grid()
+            middle = final_grid[3:6]  
 
-        if middle == ["💎", "💎", "💎"]:
-            payout = bet * 10
-            result_text = f"💎💎💎 **LEGENDARY JACKPOT!**\nYou won **{payout}** <:quantumpiece:1161010445205905418>!"
-        elif middle == ["⭐", "⭐", "⭐"]:
-            payout = bet * 5
-            result_text = f"⭐ **Triple Stars!**\nYou won **{payout}** <:quantumpiece:1161010445205905418>!"
-        elif middle == ["🔔", "🔔", "🔔"]:
-            payout = bet * 3
-            result_text = f"🔔 **Triple Bells!**\nYou won **{payout}** <:quantumpiece:1161010445205905418>!"
-        elif middle.count("🍉") == 3:
-            payout = bet * 2
-            result_text = f"🍉 **Triple Melons!**\nYou won **{payout}** <:quantumpiece:1161010445205905418>!"
-        elif middle.count("🍒") == 3:
             payout = bet
-            result_text = "🍒 **Barely a win.**\nYou got your bet back."
-        await Currency(ctx.user).add_qp(payout)
+            
+            result_text = f"💀 Du hast **{bet}** <:quantumpiece:1161010445205905418> verloren."
+            await Currency(ctx.user).remove_qp(bet)
 
-        embed.description = (
-            f"🎰 **RESULT**\n" f"{format_grid(final_grid)}\n\n" f"{result_text}"
-        )
+            if middle == ["💎", "💎", "💎"]:
+                payout = bet * 10
+                result_text = f"💎💎💎 **LEGENDÄRER JACKPOT!**\nDu hast **{payout}** <:quantumpiece:1161010445205905418> gewonnen!"
+            elif middle == ["⭐", "⭐", "⭐"]:
+                payout = bet * 5
+                result_text = f"⭐ **Dreifache Sterne!**\nDu hast **{payout}** <:quantumpiece:1161010445205905418> gewonnen!"
+            elif middle == ["🔔", "🔔", "🔔"]:
+                payout = bet * 3
+                result_text = f"🔔 **Dreifache Glocken!**\nDu hast **{payout}** <:quantumpiece:1161010445205905418> gewonnen!"
+            elif middle.count("🍉") == 3:
+                payout = bet * 2
+                result_text = f"🍉 **Dreifache Melonen!**\nDu hast **{payout}** <:quantumpiece:1161010445205905418> gewonnen!"
+            elif middle.count("🍒") == 3:
+                payout = bet
+                result_text = "🍒 **Knapp gewonnen.**\nEinsatz zurückerstattet."
+            
+            await Currency(ctx.user).add_qp(payout)
 
-        await ctx.edit_original_response(embed=embed)
+            embed.description = (
+                f"🎰 **ERGEBNIS**\n" f"{format_grid(final_grid)}\n\n" f"{result_text}"
+            )
+
+            await ctx.edit_original_response(embed=embed)
 
     async def slots_error(self, ctx: Interaction, error: Jeanne.AppCommandError):
-        cooldown = Embed(
-            description=f"WOAH! Calm down!\nTry again after `{round(error.retry_after, 2)} seconds`",
-            color=Color.red(),
-        )
-        await ctx.response.send_message(embed=cooldown)
+            cooldown = Embed(
+                description=f"WOAH! Rustig aan!\nProbeer het opnieuw na `{round(error.retry_after, 2)} seconden`",
+                color=Color.red(),
+            )
+            await ctx.response.send_message(embed=cooldown)

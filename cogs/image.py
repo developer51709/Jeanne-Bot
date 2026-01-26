@@ -3,7 +3,7 @@ from functions import (
     check_disabled_app_command,
     is_suspended,
 )
-from discord import Color, Embed, Interaction, app_commands as Jeanne
+from discord import Interaction, app_commands as Jeanne
 from discord.ext.commands import GroupCog, Bot
 from assets.images import (
     get_jeanne_pic,
@@ -13,7 +13,6 @@ from assets.images import (
     get_neko_pic,
     get_saber_pic,
     get_wallpaper_pic,
-    safebooru_pic,
 )
 from discord.app_commands import locale_str as T
 
@@ -30,6 +29,10 @@ class images(GroupCog, name="image"):
             "fr": {
                 "name": "kitsune",
                 "description": "Obtenez une image de kitsune aléatoire",
+            },
+            "de": {
+                "name": "kitsune",
+                "description": "Holen Sie sich ein zufälliges Kitsune-Bild",
             },
         },
     )
@@ -52,6 +55,10 @@ class images(GroupCog, name="image"):
                 "name": "wallpaper",
                 "description": "Obtenez un fond d'écran aléatoire pour votre PC ou téléphone",
             },
+            "de": {
+                "name": "wallpaper",
+                "description": "Holen Sie sich ein zufälliges Wallpaper für Ihren PC oder Ihr Telefon",
+            },
         },
     )
     @Jeanne.check(check_botbanned_app_command)
@@ -73,6 +80,10 @@ class images(GroupCog, name="image"):
                 "name": "jeanne",
                 "description": "Obtenez une image aléatoire de Jeanne d'Arc",
             },
+            "de": {
+                "name": "jeanne",
+                "description": "Holen Sie sich ein zufälliges Bild von Jeanne d'Arc",
+            },
         },
     )
     @Jeanne.check(check_botbanned_app_command)
@@ -91,6 +102,10 @@ class images(GroupCog, name="image"):
                 "name": "saber",
                 "description": "Obtenez une image aléatoire de Saber",
             },
+            "de": {
+                "name": "saber",
+                "description": "Holen Sie sich ein zufälliges Saber-Bild",
+            },
         },
     )
     @Jeanne.check(check_botbanned_app_command)
@@ -108,6 +123,10 @@ class images(GroupCog, name="image"):
             "fr": {
                 "name": "neko",
                 "description": "Obtenez une image aléatoire de Neko",
+            },
+            "de": {
+                "name": "neko",
+                "description": "Holen Sie sich ein zufälliges Neko-Bild",
             },
         },
     )
@@ -130,6 +149,10 @@ class images(GroupCog, name="image"):
                 "name": "morgan",
                 "description": "Obtenez une image aléatoire de Morgan Le Fay",
             },
+            "de": {
+                "name": "morgan",
+                "description": "Holen Sie sich ein zufälliges Bild von Morgan Le Fay",
+            },
         },
     )
     @Jeanne.check(check_botbanned_app_command)
@@ -148,6 +171,10 @@ class images(GroupCog, name="image"):
                 "name": "medusa",
                 "description": "Obtenez une image aléatoire de Medusa",
             },
+            "de": {
+                "name": "medusa",
+                "description": "Holen Sie sich ein zufälliges Bild von Medusa",
+            },
         },
     )
     @Jeanne.check(check_botbanned_app_command)
@@ -157,36 +184,6 @@ class images(GroupCog, name="image"):
         await ctx.response.defer()
         embed, file = get_medusa_pic(ctx)
         await ctx.followup.send(embed=embed, file=file)
-
-    @Jeanne.command(
-        description=T("safebooru_desc"),
-        extras={
-            "en": {
-                "name": "safebooru",
-                "description": "Get a random image from Safebooru",
-            },
-            "fr": {
-                "name": "safebooru",
-                "description": "Obtenez une image aléatoire de Safebooru",
-            },
-        },
-    )
-    @Jeanne.check(check_botbanned_app_command)
-    @Jeanne.check(check_disabled_app_command)
-    @Jeanne.check(is_suspended)
-    async def safebooru(self, ctx: Interaction):
-        await ctx.response.defer()
-        embed = Embed(color=Color.random())
-        embed.set_image(url=safebooru_pic())
-        if ctx.locale.value == "en-GB" or ctx.locale.value == "en-US":
-            embed.set_footer(
-                text="Fetched from Safebooru • Credits must go to the artist"
-            )
-        elif ctx.locale.value == "fr":
-            embed.set_footer(
-                text="Récupéré depuis Safebooru • Les crédits doivent aller à l'artiste"
-            )
-        await ctx.followup.send(embed=embed)
 
 
 async def setup(bot: Bot):
