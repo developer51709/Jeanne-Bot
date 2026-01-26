@@ -683,6 +683,8 @@ class currency(Cog, name="CurrencySlash"):
             },
         },
     )
+    @Jeanne.describe(bet=T("bet_parm_desc"))
+    @Jeanne.rename(bet=T("bet_parm_name"))
     @Jeanne.checks.cooldown(1, 60, key=lambda i: (i.user.id))
     @Jeanne.check(check_botbanned_app_command)
     @Jeanne.check(check_disabled_app_command)
