@@ -1221,7 +1221,7 @@ class MyTranslator(Jeanne.Translator):
                 "fr": "lister commandes désactivées",
                 "de": "liste deaktivierten befehle",
             },
-            #must be 3 words
+            # must be 3 words
             "level role_reward_group_name add_role_reward_name": {
                 "en-GB": "add role reward",
                 "en-US": "add role reward",
@@ -2729,6 +2729,24 @@ class MyTranslator(Jeanne.Translator):
                 "en-US": "Play the slots game",
                 "fr": "Jouer au jeu de machines à sous",
                 "de": "Spiele das Spielautomaten-Spiel",
+            },
+            "delete_msg_history_param_desc": {
+                "en-GB": "Delete messages from past 7 days?",
+                "en-US": "Delete messages from past 7 days?",
+                "fr": "Supprimer les messages des 7 derniers jours?",
+                "de": "Meldungen der letzten 7 Tage löschen?",
+            },
+            "delete_msg_history_param_name": {
+                "en-GB": "delete_message_history",
+                "en-US": "delete_message_history",
+                "fr": "supprimer_historique_messages",
+                "de": "löschen_nachricht_verlauf",
+            },
+            "temp_time_param_desc": {
+                "en-GB": "How long should they be tempbanned? (1m, 1h30m, etc)",
+                "en-US": "How long should they be tempbanned? (1m, 1h30m, etc)",
+                "fr": "Combien de temps devraient-ils être temporairement bannis? (1m, 1h30m, etc)",
+                "de": "Wie lange sollten sie vorübergehend gesperrt werden? (1m, 1h30m, etc)",
             },
         }
         return translations.get(string.message, {}).get(
