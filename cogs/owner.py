@@ -195,9 +195,8 @@ class OwnerCog(Cog, name="Owner"):
         await DevPunishment(user).add_botbanned_user(reason)
         await ctx.send("User botbanned", ephemeral=True)
         orleans = await self.bot.fetch_guild(740584420645535775)
-        ha = await self.bot.fetch_guild(925790259160166460)
         vhf = await self.bot.fetch_guild(974028573893595146)
-        for server in [orleans, ha, vhf]:
+        for server in [orleans, vhf]:
             await server.ban(user, reason=f"DevPunishmentned - {reason}")
 
     @command(
@@ -208,7 +207,7 @@ class OwnerCog(Cog, name="Owner"):
     async def hentaiblacklist(self, ctx: Context, link: str):
         if DevPunishment(ctx.author).check_botbanned_user:
             return
-        await Hentai().add_blacklisted_link(link)
+        Hentai().add_blacklisted_link(link)
         await ctx.send("Link blacklisted")
         await ctx.message.delete()
 
