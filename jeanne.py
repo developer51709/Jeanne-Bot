@@ -13,8 +13,11 @@ class Jeanne(AutoShardedBot):
         for i in dirs:
             for filename in listdir(i):
                 if filename.endswith(".py"):
-                    await self.load_extension(f"{i[2:]}.{filename[:-3]}")
-                    print(f"{i}.{filename} loaded")
+                    try:
+                        await self.load_extension(f"{i[2:]}.{filename[:-3]}")
+                        print(f"{i}.{filename} loaded")
+                    except Exception as e:
+                        print(f"Failed to load {i}.{filename[:-3]}: {e}")
                 else:
                     print(f"Unable to load {i}.{filename[:-3]}")
         self.translator = MyTranslator()
@@ -69,5 +72,7 @@ async def on_ready():
             print(f"An error occurred while chunking {guild.name}: {e}")
     print("Listening to {} users".format(len(bot.users)))
 
-
-bot.run(TOKEN)
+try:
+    bot.run(TOKEN)
+except Exception as e:
+    print(f"Error starting bot: {e}")

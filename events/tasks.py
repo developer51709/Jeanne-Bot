@@ -14,80 +14,89 @@ class tasksCog(Cog):
 
     @tasks.loop(seconds=60, reconnect=True)
     async def check_softbanned_members(self):
-        for bans in Moderation().get_softban_data():
-            if int(round(datetime.now().timestamp())) > int(bans[2]):
-                guild = await self.bot.fetch_guild(bans[1])
-                member = await self.bot.fetch_user(bans[0])
-                await guild.unban(member, reason="Softban expired")
-                await Moderation(guild, member).remove_softban()
-                modlog = Moderation(guild).get_modlog_channel
-                if modlog is not None:
-                    if guild.preferred_locale.value in ["en-GB", "en-US"]:
-                        unmute = Embed(title="Member unbanned", color=0xFF0000)
-                        unmute.add_field(name="Member", value=member, inline=True)
-                        unmute.add_field(name="ID", value=member.id, inline=True)
-                        unmute.add_field(
-                            name="Reason", value="Softban expired", inline=True
-                        )
-                        unmute.set_thumbnail(url=member.display_avatar)
+        try:
+            for bans in Moderation().get_softban_data():
+                if int(round(datetime.now().timestamp())) > int(bans[2]):
+                    guild = await self.bot.fetch_guild(bans[1])
+                    member = await self.bot.fetch_user(bans[0])
+                    await guild.unban(member, reason="Softban expired")
+                    await Moderation(guild, member).remove_softban()
+                    modlog = Moderation(guild).get_modlog_channel
+                    if modlog is not None:
+                        if guild.preferred_locale.value in ["en-GB", "en-US"]:
+                            unmute = Embed(title="Member unbanned", color=0xFF0000)
+                            unmute.add_field(name="Member", value=member, inline=True)
+                            unmute.add_field(name="ID", value=member.id, inline=True)
+                            unmute.add_field(
+                                name="Reason", value="Softban expired", inline=True
+                            )
+                            unmute.set_thumbnail(url=member.display_avatar)
+
+                            await modlog.send(embed=unmute)
+                        elif guild.preferred_locale.value == "fr":
+                            unmute = Embed(title="Membre débanni", color=0xFF0000)
+                            unmute.add_field(name="Membre", value=member, inline=True)
+                            unmute.add_field(name="ID", value=member.id, inline=True)
+                            unmute.add_field(
+                                name="Raison", value="Softban expiré", inline=True
+                            )
+                            unmute.set_thumbnail(url=member.display_avatar)
+
+                            await modlog.send(embed=unmute)
+                        elif guild.preferred_locale.value == "de":
+                            unmute = Embed(title="Mitglied entbannt", color=0xFF0000)
+                            unmute.add_field(name="Mitglied", value=member, inline=True)
+                            unmute.add_field(name="ID", value=member.id, inline=True)
+                            unmute.add_field(
+                                name="Grund", value="Softban abgelaufen", inline=True
+                            )
+                            unmute.set_thumbnail(url=member.display_avatar)
 
                         await modlog.send(embed=unmute)
-                    elif guild.preferred_locale.value == "fr":
-                        unmute = Embed(title="Membre débanni", color=0xFF0000)
-                        unmute.add_field(name="Membre", value=member, inline=True)
-                        unmute.add_field(name="ID", value=member.id, inline=True)
-                        unmute.add_field(
-                            name="Raison", value="Softban expiré", inline=True
-                        )
-                        unmute.set_thumbnail(url=member.display_avatar)
-
-                        await modlog.send(embed=unmute)
-                    elif guild.preferred_locale.value == "de":
-                        unmute = Embed(title="Mitglied entbannt", color=0xFF0000)
-                        unmute.add_field(name="Mitglied", value=member, inline=True)
-                        unmute.add_field(name="ID", value=member.id, inline=True)
-                        unmute.add_field(
-                            name="Grund", value="Softban abgelaufen", inline=True
-                        )
-                        unmute.set_thumbnail(url=member.display_avatar)
-
-                    await modlog.send(embed=unmute)
-                else:
-                    continue
-
+                    else:
+                        continue
+        except Exception as e:
+            print(f"[events/tasks.py] Error in check_softbanned_members: {e}")
+    
     @tasks.loop(seconds=60, reconnect=True)
     async def check_reminders(self):
-        data = Reminder().get_all_reminders
-        if data is None:
-            return
-        for reminder in data:
-            if int(round(datetime.now().timestamp())) > int(reminder[2]):
-                member = await self.bot.fetch_user(reminder[0])
-                reminder_id = reminder[1]
-                reason = reminder[3]
-                try:
-                    embed = Embed(title="Reminder ended", color=Color.random())
-                    embed.add_field(name="Reminder", value=reason, inline=False)
-                    await member.send(embed=embed)
-                except Exception:
-                    pass
-                await Reminder(member).remove(reminder_id)
-            else:
-                continue
+        try:
+            data = Reminder().get_all_reminders
+            if data is None:
+                return
+            for reminder in data:
+                if int(round(datetime.now().timestamp())) > int(reminder[2]):
+                    member = await self.bot.fetch_user(reminder[0])
+                    reminder_id = reminder[1]
+                    reason = reminder[3]
+                    try:
+                        embed = Embed(title="Reminder ended", color=Color.random())
+                        embed.add_field(name="Reminder", value=reason, inline=False)
+                        await member.send(embed=embed)
+                    except Exception:
+                        pass
+                    await Reminder(member).remove(reminder_id)
+                else:
+                    continue
+        except Exception as e:
+            print(f"[events/tasks.py] Error in check_reminders: {e}")
 
     @tasks.loop(seconds=60, reconnect=True)
     async def check_suspended_users(self):
-        data = DevPunishment().get_suspended_users()
-        if data is None:
-            return
-        for i in data:
-            current_time = int(round(datetime.now().timestamp()))
-            suspended_time = int(i[2])
-            user = await self.bot.fetch_user(int(i[0]))
-            if current_time > suspended_time:
-                await DevPunishment(user).remove_suspended_user()
-            else:
-                continue
+        try:
+            data = DevPunishment().get_suspended_users()
+            if data is None:
+                return
+            for i in data:
+                current_time = int(round(datetime.now().timestamp()))
+                suspended_time = int(i[2])
+                user = await self.bot.fetch_user(int(i[0]))
+                if current_time > suspended_time:
+                    await DevPunishment(user).remove_suspended_user()
+                else:
+                    continue
+        except Exception as e:
+            print(f"[events/tasks.py] Error in check_suspended_users: {e}")
 
     @check_softbanned_members.before_loop
     async def before_softbans(self):

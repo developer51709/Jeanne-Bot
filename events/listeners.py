@@ -21,8 +21,11 @@ class listenersCog(Cog):
 
     @Cog.listener()
     async def on_message(self, message: Message):
-        if DevPunishment(message.author).check_botbanned_user:
-            return
+        try:
+            if DevPunishment(message.author).check_botbanned_user:
+                return
+        except Exception as e:
+            print(f"[events/listeners.py] Error in botbanned check: {e}")
 
         try:
             if not message.author.bot and not isinstance(message.channel, DMChannel):

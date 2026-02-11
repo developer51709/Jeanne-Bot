@@ -1,7 +1,10 @@
 import aiohttp
 from functions import BetaTest, Currency, Levelling, DevPunishment
 from config import DB_AUTH, TOPGG, TOPGG_AUTH
-from topgg import DBLClient, WebhookManager
+try:
+    from topgg import DBLClient, WebhookManager
+except Exception as e:
+    print(f"[events/dbl.py] Failed to import topgg: {e}")
 from discord.ext import tasks
 from discord.ext.commands import Cog, Bot
 from datetime import datetime
@@ -21,6 +24,9 @@ class DBL(Cog, name="DBL"):
 
     @tasks.loop(minutes=60, reconnect=True)
     async def update_stats(self):
+        if not TOPGG:
+            print("Top.gg token not found. Skipping stats update.")
+            return
         servers = len(self.bot.guilds)
         dbheaders = {
             "Content-Type": "application/json",
