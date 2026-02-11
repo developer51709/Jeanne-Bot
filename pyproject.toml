@@ -7,6 +7,10 @@ dependencies = [
     "aiohttp>=3.13.3",
     "discord-py>=2.6.4",
     "humanfriendly>=10.0",
+    "openai>=2.20.0",
+    "pillow>=12.1.0",
     "python-dotenv>=1.2.1",
     "requests>=2.32.5",
+    "tenorpy>=1.0.4",
+    "topggpy>=1.4.0",
 ]
