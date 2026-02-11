@@ -1,7 +1,7 @@
 # This file scans the database for missing tables and creates them if they are missing.
 # Tables:
 # reminderData: user_id, reminder_id, time, reason
-# softbannedMebers: user_id, guild_id, time, reason
+# softbannedMembers: user_id, guild_id, time, reason
 # suspentionData: user_id, time, reason
 from config import db
 from sqlite3 import Error
@@ -41,16 +41,16 @@ def check_db():
 
             # softbannedMebers table
             cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='softbannedMebers'"
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='softbannedMembers'"
             )
             if cursor.fetchone() is None:
-                print("Creating softbannedMebers table...")
+                print("Creating softbannedMembers table...")
                 cursor.execute(
-                    "CREATE TABLE softbannedMebers (user_id INTEGER, guild_id INTEGER, time TEXT, reason TEXT)"
+                    "CREATE TABLE softbannedMembers (user_id INTEGER, guild_id INTEGER, time TEXT, reason TEXT)"
                 )
-                print("softbannedMebers table created.")
+                print("softbannedMembers table created.")
             else:
-                print("softbannedMebers table found.")
+                print("softbannedMembers table found.")
 
             # suspentionData table
             cursor.execute(
