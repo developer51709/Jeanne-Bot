@@ -14,23 +14,23 @@ WEBHOOK = getenv("report_webhook")
 BB_WEBHOOK = getenv("botban_webhook")
 TENOR = getenv("tenor")
 CLIENTKEY = getenv("client_key")
-JEANNE = str(getenv("jeanne_album"))
-SABER = str(getenv("saber_album"))
-WALLPAPER = str(getenv("wallpaper_album"))
-MEDUSA = str(getenv("medusa_album"))
-ANIMEME = str(getenv("animeme_album"))
-NEKO = str(getenv("neko_album"))
-MORGAN = str(getenv("morgan_album"))
-KITSUNE = str(getenv("kitsune_album"))
+JEANNE = getenv("jeanne_album")
+SABER = getenv("saber_album")
+WALLPAPER = getenv("wallpaper_album")
+MEDUSA = getenv("medusa_album")
+ANIMEME = getenv("animeme_album")
+NEKO = getenv("neko_album")
+MORGAN = getenv("morgan_album")
+KITSUNE = getenv("kitsune_album")
 CATBOX_HASH = str(getenv("catbox_hash"))
-BADGES = str(getenv("badges_album"))
-STATUS_WEBHOOK=str(getenv("status"))
+BADGES = getenv("badges_album")
+STATUS_WEBHOOK = getenv("status")
 
-GELBOORU_API=environ["GELBOORU_API_KEY"]
-GELBOORU_USER=environ["GELBOORU_USER_ID"]
-RULE34_API=environ["RULE34_API_KEY"]
-RULE34_USER=environ["RULE34_USER_ID"]
-OPENAI_API=environ["OPENAI_API_KEY"]
+GELBOORU_API = getenv("GELBOORU_API_KEY")
+GELBOORU_USER = getenv("GELBOORU_USER_ID")
+RULE34_API = getenv("RULE34_API_KEY")
+RULE34_USER = getenv("RULE34_USER_ID")
+OPENAI_API = getenv("OPENAI_API_KEY")
 
 db = connect("database.db", autocommit=True)
 

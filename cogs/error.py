@@ -36,8 +36,11 @@ class ErrorsCog(Cog, name="ErrorsSlash"):
             "Error": [{f"{error_traceback}"}],
         }
         df_new = pd.DataFrame(new_data)
-        df_existing = pd.read_excel(existing_file)
-        df_combined = df_existing._append(df_new, ignore_index=True)
+        try:
+            df_existing = pd.read_excel(existing_file)
+            df_combined = pd.concat([df_existing, df_new], ignore_index=True)
+        except Exception:
+            df_combined = df_new
         df_combined.to_excel(existing_file, index=False)
 
         if isinstance(error, Jeanne.MissingPermissions):
