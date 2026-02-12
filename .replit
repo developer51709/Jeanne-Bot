@@ -10,24 +10,6 @@ packages = ["freetype", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp
 runButton = "Project"
 
 [[workflows.workflow]]
-name = "Run"
-mode = "sequential"
-author = 54319966
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python jeanne.py"
-
-[[workflows.workflow]]
-name = "requirements.py"
-mode = "sequential"
-author = 54319966
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python requirements.py"
-
-[[workflows.workflow]]
 name = "Project"
 mode = "parallel"
 author = "agent"
@@ -50,3 +32,7 @@ outputType = "console"
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[deployment]
+deploymentTarget = "vm"
+run = ["python3", "db_check.py", "&&", "python3", "jeanne.py"]
