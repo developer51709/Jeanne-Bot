@@ -16,7 +16,7 @@ def check_db():
                 "suspentionData": "CREATE TABLE suspentionData (user_id INTEGER, time TEXT, reason TEXT)",
                 "botbannedData": "CREATE TABLE botbannedData (user_id INTEGER PRIMARY KEY, reason TEXT)",
                 "devWarnData": "CREATE TABLE devWarnData (user_id INTEGER, reason TEXT, warn_id INTEGER, revoke_date INTEGER)",
-                "suspensionData": "CREATE TABLE suspensionData (user, modules, timeout)",
+                "suspensionData": "CREATE TABLE suspensionData (user INTEGER, modules TEXT, timeout INTEGER)",
                 "bankData": "CREATE TABLE bankData (user_id INTEGER PRIMARY KEY, amount INTEGER DEFAULT 0, claimed_date INTEGER)",
                 "userWallpaperInventory": "CREATE TABLE userWallpaperInventory (user_id INTEGER, wallpaper TEXT, link TEXT, brightness INTEGER, selected INTEGER, country TEXT)",
                 "wallpapers": "CREATE TABLE wallpapers (name TEXT PRIMARY KEY, link TEXT, price INTEGER)",
